@@ -1,5 +1,5 @@
 import { TRL } from 'src/models/enums'
-import { CardData } from 'src/components/cards-select'
+import { CardData } from 'src/components/proposal-register/cards-select'
 import {
   AddShoppingCartIcon,
   CenterFocusStrongIcon,

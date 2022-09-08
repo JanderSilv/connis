@@ -1,5 +1,5 @@
 import { ProposalType } from 'src/models/enums'
-import { CardData } from 'src/components/cards-select'
+import { CardData } from 'src/components/proposal-register/cards-select'
 import { AttachMoneyIcon, BiotechIcon, SyncIcon, VolunteerActivismIcon } from 'src/assets/icons'
 
 export const proposalTypeOptions: CardData[] = [
