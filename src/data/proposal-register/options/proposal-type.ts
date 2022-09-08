@@ -24,8 +24,8 @@ export const proposalTypeOptions: CardData[] = [
   {
     id: ProposalType.research,
     icon: BiotechIcon,
-    title: 'Pesquisa e Desenvolvimento',
-    description: 'Deseja realizar o processo de P&D através do ICT Cimatec.',
+    title: 'P&D',
+    description: 'Deseja realizar o processo de Pesquisa e Desenvolvimento através do ICT Cimatec.',
     solo: true,
   },
 ]
