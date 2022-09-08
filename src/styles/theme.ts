@@ -15,5 +15,9 @@ export const theme = createTheme({
   },
   typography: {
     fontFamily: 'Rubik',
+    h2: {
+      fontSize: '1.5rem',
+      fontWeight: 'bold',
+    },
   },
 })
