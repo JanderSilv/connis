@@ -13,11 +13,12 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
 export default Proposals
 
 export const getStaticProps: GetStaticProps = async () => {
-  const { data } = await axios.get<Proposal[]>('http://localhost:3000/api/proposals')
+  const fs = (await import('fs')).default
+  const proposals: Proposal[] = JSON.parse(fs.readFileSync('src/data/proposals/proposals.json', 'utf8'))
 
   return {
     props: {
-      proposals: data,
+      proposals,
     },
     revalidate: 60, // 1 minute
   }

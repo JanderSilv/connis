@@ -59,7 +59,7 @@ const ProposalRegister: NextPage = () => {
   }
 
   const onSubmit = (data: Proposal) => {
-    axios.post('http://localhost:3000/api/proposals', data)
+    axios.post('/api/proposals', data)
   }
 
   return (
