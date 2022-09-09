@@ -1,5 +1,6 @@
+import { Ref } from 'react'
 import { SvgIcon } from '@mui/material'
-import { CarouselProps } from 'react-multi-carousel'
+import Carousel, { CarouselProps } from 'react-multi-carousel'
 
 export type CardData = {
   id: number
@@ -26,4 +27,5 @@ export type CardsSelectProps = {
   carousel?: CarouselProps
   error?: boolean
   helperText?: string
+  carouselRef?: Ref<Carousel>
 } & (CardsSelectUnique | CardsSelectMultiple)

@@ -28,7 +28,7 @@ const responsive: ResponsiveType = {
 }
 
 export const CardsSelect = (props: CardsSelectProps) => {
-  const { value, onChange, helperText, error, carousel, options, multiple } = props
+  const { value, onChange, helperText, error, carousel, options, multiple, carouselRef } = props
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
 
   const handleOnChange = (id: number, solo?: boolean) => {
@@ -44,6 +44,7 @@ export const CardsSelect = (props: CardsSelectProps) => {
   return (
     <>
       <Carousel
+        ref={carouselRef}
         responsive={responsive}
         beforeChange={nextSlide => {
           if (isMobile) handleOnChange(nextSlide, options[nextSlide].solo)
