@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import fs from 'fs'
 import { Proposal } from 'src/models/types'
 
-const proposalsPath = 'src/data/proposals/proposals.json'
+const proposalsPath = '../../data/proposals/proposals.json'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<Proposal | Proposal[]>) {
   if (req.method === 'GET') {
