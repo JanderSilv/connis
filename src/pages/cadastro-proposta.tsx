@@ -17,6 +17,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Wizard } from 'react-use-wizard'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
+import axios from 'axios'
 
 import { proposalCategoryOptions, proposalTypeOptions, trlOptions } from 'src/data/proposal-register/options'
 import { ProposalCategory } from 'src/models/enums'
@@ -58,7 +59,7 @@ const ProposalRegister: NextPage = () => {
   }
 
   const onSubmit = (data: Proposal) => {
-    console.log(data)
+    axios.post('http://localhost:3000/api/proposals', data)
   }
 
   return (
