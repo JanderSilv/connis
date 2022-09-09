@@ -33,7 +33,7 @@ export const CardsSelect = (props: CardsSelectProps) => {
 
   const handleOnChange = (id: number, solo?: boolean) => {
     if (!multiple) return onChange(id)
-    if (solo) onChange([id])
+    if (solo || !value) onChange([id])
     else {
       if (value.includes(id)) return onChange(value.filter(item => item !== id))
       const filteredIds = value.filter(id => !options.find(option => option.id === id)?.solo)
