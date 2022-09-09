@@ -59,7 +59,12 @@ const ProposalRegister: NextPage = () => {
   }
 
   const onSubmit = (data: Proposal) => {
-    axios.post('/api/proposals', data)
+    axios.post('https://api.jsonbin.io/v3/b', data, {
+      headers: {
+        'X-Master-Key': '$2b$10$AZS8O9vbnQ22oOD6kb3cDucYvYwySweKMgOCr5voMV51D/zKISEt6',
+        'X-Bin-Name': data.title
+      },
+    })
   }
 
   return (
