@@ -38,15 +38,24 @@ export const proposalRegisterSchema: yup.SchemaOf<Proposal> = yup.object().shape
       .of(yup.number().required(messages.proposalType))
       .required(messages.proposalType)
       .min(1, 'Selecione pelo menos uma opção'),
-    proposalCategoryQuestions: yup.object().shape({
-      waste: yup
-        .object()
-        .shape({
-          testHasBeenPerformed: yup.boolean().notRequired(),
-          toxicity: yup.boolean().notRequired(),
-          productionVolume: yup.string().notRequired(),
-        })
-        .notRequired(),
+    categoryQuestions: yup.object({
+      waste: yup.object({
+        testHasBeenPerformed: yup.boolean().notRequired(),
+        toxicity: yup.boolean().notRequired(),
+        production: yup.object({
+          volume: yup.string().notRequired(),
+          unit: yup
+            .string()
+            .test('unit', 'A unidade é obrigatória', (value, context) => !context.parent.volume || !!value),
+          periodicity: yup
+            .string()
+            .test(
+              'periodicity',
+              'A periodicidade é obrigatória',
+              (value, context) => !context.parent.volume || !!value
+            ),
+        }),
+      }),
     }),
   },
   [['projectDescription', 'projectDescription']]
