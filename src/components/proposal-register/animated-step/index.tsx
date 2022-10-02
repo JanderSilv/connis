@@ -1,5 +1,5 @@
 import { MutableRefObject, ReactNode, useEffect } from 'react'
-import { Box } from '@mui/material'
+import { Paper } from '@mui/material'
 import { motion, Variants } from 'framer-motion'
 import { useWizard } from 'react-use-wizard'
 
@@ -35,7 +35,7 @@ export const AnimatedStep = ({ children, previousStep }: AnimatedStepProps) => {
   }, [previousStep, activeStep])
 
   return (
-    <Box
+    <Paper
       component={motion.section}
       custom={activeStep - previousStep.current}
       variants={variants}
@@ -47,9 +47,16 @@ export const AnimatedStep = ({ children, previousStep }: AnimatedStepProps) => {
         stiffness: 70,
         damping: 15,
       }}
-      minHeight={130}
+      sx={{
+        minHeight: 130,
+        padding: {
+          xs: 2,
+          sm: 4,
+        },
+        borderRadius: 4,
+      }}
     >
       {children}
-    </Box>
+    </Paper>
   )
 }
