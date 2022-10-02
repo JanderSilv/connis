@@ -3,7 +3,6 @@ import CarouselComponent from 'react-multi-carousel'
 import 'react-multi-carousel/lib/styles.css'
 
 export const Carousel = styled(CarouselComponent)(({ theme }) => ({
-  marginTop: theme.spacing(2),
   '& .trl-carousel-item': {
     padding: theme.spacing(1),
     '&:first-of-type': {
