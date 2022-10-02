@@ -28,7 +28,7 @@ const responsive: ResponsiveType = {
 }
 
 export const CardsSelect = (props: CardsSelectProps) => {
-  const { value, onChange, helperText, error, carousel, options, multiple, carouselRef } = props
+  const { id: cardsSelectId, value, onChange, helperText, error, carousel, options, multiple, carouselRef } = props
   const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
 
   const handleOnChange = (id: number, solo?: boolean) => {
@@ -51,10 +51,11 @@ export const CardsSelect = (props: CardsSelectProps) => {
         }}
         {...carousel}
       >
-        {options.map(cardData => {
+        {options.map((cardData, index) => {
           const { id, label, title, icon: Icon, description, solo } = cardData
           return (
             <Card
+              id={index === 0 ? cardsSelectId : undefined}
               key={id}
               onClick={() => handleOnChange(id, solo)}
               sx={(() => {

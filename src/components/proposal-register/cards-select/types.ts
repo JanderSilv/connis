@@ -23,6 +23,7 @@ type CardsSelectMultiple = {
 }
 
 export type CardsSelectProps = {
+  id?: string
   options: CardData[]
   carousel?: CarouselProps
   error?: boolean
