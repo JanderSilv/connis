@@ -8,6 +8,8 @@ import {
   FormControlLabel,
   FormHelperText,
   FormLabel,
+  ListSubheader,
+  MenuItem,
   Radio,
   RadioGroup,
   TextField,
@@ -27,7 +29,8 @@ import { proposalRegisterSchema } from 'src/validations/proposal-register'
 import { AnimatedStep, WizardFooter } from 'src/components/proposal-register'
 import { CardsSelect } from 'src/components/proposal-register/cards-select'
 import { Container } from 'src/components/container'
-import { Wrapper } from 'src/styles/proposal-register'
+import { ProductionContainer, Wrapper } from 'src/styles/proposal-register'
+import { measurementUnitsOptions, periodicityOptions } from 'src/data/proposal-register/options/production-volume'
 
 const checkProposalCategoryHasQuestions = (proposalCategory: ProposalCategory) => {
   if (proposalCategory === ProposalCategory.waste) return true
@@ -36,9 +39,16 @@ const checkProposalCategoryHasQuestions = (proposalCategory: ProposalCategory) =
 const ProposalRegister: NextPage = () => {
   const formMethods = useForm<Proposal>({
     resolver: yupResolver(proposalRegisterSchema),
-    reValidateMode: 'onSubmit',
     defaultValues: {
       keywords: [],
+      categoryQuestions: {
+        waste: {
+          production: {
+            unit: '',
+            periodicity: '',
+          },
+        },
+      },
     },
   })
   const {
@@ -235,24 +245,27 @@ const ProposalRegister: NextPage = () => {
                 <Typography variant="h2" mb={0.5} textAlign="center">
                   Descrições adicionais sobre a proposta {proposalCategoryOptions[watchedProposalCategory].title}
                 </Typography>
-                <Typography mb="1rem" textAlign="center">
+                <Typography mb={2} textAlign="center">
                   Essas descrições são opcionais, mas ajudarão as empresas a entender o atual estado do resíduo.
                 </Typography>
                 {(() => {
                   if (watchedProposalCategory === ProposalCategory.waste) {
-                    const wasteErrors = errors.proposalCategoryQuestions?.waste
+                    const wasteErrors = errors.categoryQuestions?.waste
+
+                    const hasError = (() => {
+                      if (!wasteErrors?.production) return false
+                      const { periodicity, unit, volume } = wasteErrors.production
+                      return volume?.message || unit?.message || periodicity?.message
+                    })()
+
                     return (
                       <>
                         <Controller
-                          name="proposalCategoryQuestions.waste.testHasBeenPerformed"
+                          name="categoryQuestions.waste.testHasBeenPerformed"
                           control={control}
                           render={({ field }) => (
-                            <FormControl
-                              error={!!wasteErrors?.testHasBeenPerformed}
-                              sx={{ marginTop: '2rem' }}
-                              fullWidth
-                            >
-                              <FormLabel id="test-has-been-performed-label">
+                            <FormControl error={!!wasteErrors?.testHasBeenPerformed} sx={{ marginTop: 4 }} fullWidth>
+                              <FormLabel id="test-has-been-performed-label" sx={{ color: 'text.primary' }}>
                                 Já foi realizado algum tipo de ensaio nesse resíduo?
                               </FormLabel>
                               <RadioGroup
@@ -272,11 +285,11 @@ const ProposalRegister: NextPage = () => {
                         />
 
                         <Controller
-                          name="proposalCategoryQuestions.waste.toxicity"
+                          name="categoryQuestions.waste.toxicity"
                           control={control}
                           render={({ field }) => (
                             <FormControl error={!!wasteErrors?.toxicity} sx={{ marginTop: '2rem' }} fullWidth>
-                              <FormLabel id="toxicity-label">
+                              <FormLabel id="toxicity-label" sx={{ color: 'text.primary' }}>
                                 Já foi realizado algum estudo de toxicidade ou nocividade nesse resíduo?
                               </FormLabel>
                               <RadioGroup aria-labelledby="toxicity-label" defaultValue={null} {...field} row>
@@ -288,15 +301,53 @@ const ProposalRegister: NextPage = () => {
                           )}
                         />
 
-                        <TextField
-                          label="Qual o volume de produção?"
-                          variant="standard"
-                          {...register('proposalCategoryQuestions.waste.productionVolume')}
-                          helperText={wasteErrors?.productionVolume?.message}
-                          error={!!wasteErrors?.productionVolume}
-                          sx={{ marginTop: '1rem' }}
-                          fullWidth
-                        />
+                        <Typography component="label" htmlFor="production-volume" mt={4}>
+                          Qual o volume de produção?
+                        </Typography>
+                        <ProductionContainer>
+                          <TextField
+                            id="production-volume"
+                            label="Valor"
+                            variant="standard"
+                            {...register('categoryQuestions.waste.production.volume')}
+                            error={!!wasteErrors?.production?.volume}
+                            size="small"
+                            sx={{ maxWidth: 130 }}
+                            fullWidth
+                          />
+                          <TextField
+                            {...register('categoryQuestions.waste.production.unit')}
+                            variant="standard"
+                            label="Unidade"
+                            error={!!wasteErrors?.production?.unit}
+                            size="small"
+                            select
+                          >
+                            {measurementUnitsOptions.map(({ label, units }) => [
+                              <ListSubheader key={label}>{label}</ListSubheader>,
+                              ...units.map(unit => (
+                                <MenuItem key={unit} value={unit}>
+                                  {unit}
+                                </MenuItem>
+                              )),
+                            ])}
+                          </TextField>
+                          <TextField
+                            {...register('categoryQuestions.waste.production.periodicity')}
+                            variant="standard"
+                            label="Periodicidade"
+                            error={!!wasteErrors?.production?.periodicity}
+                            size="small"
+                            select
+                          >
+                            {periodicityOptions.map(periodicity => (
+                              <MenuItem key={periodicity} value={periodicity}>
+                                {periodicity}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        </ProductionContainer>
+                        {hasError && <FormHelperText error={true}>{hasError}</FormHelperText>}
                       </>
                     )
                   }
