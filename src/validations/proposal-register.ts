@@ -11,7 +11,11 @@ const messages = {
 export const proposalRegisterSchema: yup.SchemaOf<Proposal> = yup.object().shape(
   {
     title: yup.string().required('O título da proposta é obrigatório'),
-    proposalCategory: yup.number().required(messages.proposalCategory).typeError(messages.proposalCategory),
+    proposalCategory: yup
+      .number()
+      .min(0, messages.proposalCategory)
+      .required(messages.proposalCategory)
+      .typeError(messages.proposalCategory),
     proposalCategoryOther: yup.string().when('proposalCategory', {
       is: ProposalCategory.others,
       then: yup.string().required('A categoria da proposta é obrigatória'),
