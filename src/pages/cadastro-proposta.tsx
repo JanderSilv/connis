@@ -72,7 +72,7 @@ const ProposalRegister: NextPage = () => {
     axios.post('https://api.jsonbin.io/v3/b', data, {
       headers: {
         'X-Master-Key': '$2b$10$AZS8O9vbnQ22oOD6kb3cDucYvYwySweKMgOCr5voMV51D/zKISEt6',
-        'X-Bin-Name': data.title
+        'X-Bin-Name': data.title,
       },
     })
   }
@@ -170,10 +170,10 @@ const ProposalRegister: NextPage = () => {
                 fullWidth
               />
 
-              <Typography component="h3" mt={3}>
+              <Typography component="label" htmlFor="keywords" mt={3}>
                 Palavras chaves nos ajudarão a identificar soluções ou conexões para sua proposta.
               </Typography>
-              <Typography mt={0.3} fontSize="0.75rem">
+              <Typography component="span" variant="caption" mt={0.3}>
                 Exemplo: Setor têxtil; Papel; Reciclagem.
               </Typography>
 
@@ -182,6 +182,7 @@ const ProposalRegister: NextPage = () => {
                 control={control}
                 render={({ field: { onChange, ...rest } }) => (
                   <Autocomplete
+                    id="keywords"
                     options={[]}
                     renderInput={params => (
                       <TextField
@@ -202,7 +203,7 @@ const ProposalRegister: NextPage = () => {
                 )}
               />
 
-              <Typography component="h3" mt={3} mb={2}>
+              <Typography component="label" htmlFor="trl" mt={3}>
                 Qual o nível de maturidade da sua proposta?
               </Typography>
               <Controller
@@ -210,6 +211,7 @@ const ProposalRegister: NextPage = () => {
                 control={control}
                 render={({ field: { onChange, ref, ...rest } }) => (
                   <CardsSelect
+                    id="trl"
                     options={trlOptions}
                     onChange={value => onChange(value)}
                     helperText={errors.trl?.message}
@@ -220,7 +222,7 @@ const ProposalRegister: NextPage = () => {
                 )}
               />
 
-              <Typography component="h3" mt={3} mb={2}>
+              <Typography component="label" htmlFor="proposal-type" mt={3}>
                 Qual será o tipo da proposta?
               </Typography>
               <Controller
@@ -228,6 +230,7 @@ const ProposalRegister: NextPage = () => {
                 control={control}
                 render={({ field: { onChange, ref, ...rest } }) => (
                   <CardsSelect
+                    id="proposal-type"
                     options={proposalTypeOptions}
                     onChange={value => onChange(value)}
                     helperText={errors.proposalType?.message}
