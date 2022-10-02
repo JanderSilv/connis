@@ -9,11 +9,15 @@ export type Proposal = {
   keywords: string[]
   trl: number
   proposalType: number[]
-  proposalCategoryQuestions: {
+  categoryQuestions: {
     waste?: {
       testHasBeenPerformed?: boolean
       toxicity?: boolean
-      productionVolume?: string
+      production: {
+        volume?: string
+        unit?: string
+        periodicity?: string
+      }
     }
   }
 }
