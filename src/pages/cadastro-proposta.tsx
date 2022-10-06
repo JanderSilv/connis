@@ -202,10 +202,16 @@ const ProposalRegister: NextPage = () => {
                   />
                 )}
               />
+            </AnimatedStep>
 
-              <Typography component="label" htmlFor="trl" mt={3}>
-                Qual o nível de maturidade da sua proposta?
+            <AnimatedStep previousStep={previousStep}>
+              <Typography variant="h2" mb={4} textAlign="center">
+                Níveis de Maturidade (TRL)
               </Typography>
+
+              <FormLabel htmlFor="trl" sx={{ mt: 3 }}>
+                Qual o nível de maturidade da sua proposta?
+              </FormLabel>
               <Controller
                 name="trl"
                 control={control}
@@ -222,22 +228,21 @@ const ProposalRegister: NextPage = () => {
                 )}
               />
 
-              <Typography component="label" htmlFor="proposal-type" mt={3}>
-                Qual será o tipo da proposta?
-              </Typography>
+              <FormLabel htmlFor="goal-trl" sx={{ mt: 3 }}>
+                Qual o nível de maturidade que almeja alcançar?
+              </FormLabel>
               <Controller
-                name="proposalType"
+                name="goalTrl"
                 control={control}
                 render={({ field: { onChange, ref, ...rest } }) => (
                   <CardsSelect
-                    id="proposal-type"
-                    options={proposalTypeOptions}
+                    id="goal-trl"
+                    options={trlOptions}
                     onChange={value => onChange(value)}
-                    helperText={errors.proposalType?.message}
-                    error={!!errors.proposalType}
+                    helperText={errors.goalTrl?.message}
+                    error={!!errors.goalTrl}
                     carouselRef={ref}
                     {...rest}
-                    multiple
                   />
                 )}
               />

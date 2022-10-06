@@ -16,7 +16,7 @@ const steps: (ProposalKey | ProposalKey[])[] = [
   ['proposalCategory', 'proposalCategoryOther'],
   'projectDescription',
   ['proposalDescription', 'keywords'],
-  'proposalType',
+  ['trl', 'goalTrl'],
 ]
 
 export const WizardFooter = ({ nextButtonRef }: WizardStepsProps) => {
