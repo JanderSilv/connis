@@ -1,4 +1,4 @@
-import { ProposalCategory, TRL } from '../enums'
+import { ProposalCategory, ProposalType, TRL } from '../enums'
 
 export type Proposal = {
   title: string
@@ -9,7 +9,7 @@ export type Proposal = {
   keywords: string[]
   trl: TRL
   goalTrl: TRL
-  proposalType: number[]
+  proposalType: ProposalType[]
   categoryQuestions: {
     waste?: {
       testHasBeenPerformed?: boolean

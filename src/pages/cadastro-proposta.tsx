@@ -135,6 +135,26 @@ const ProposalRegister: NextPage = () => {
                   fullWidth
                 />
               </Collapse>
+
+              <FormLabel htmlFor="proposal-type" sx={{ mt: 3 }}>
+                Qual será o tipo da proposta?
+              </FormLabel>
+              <Controller
+                name="proposalType"
+                control={control}
+                render={({ field: { onChange, ref, ...rest } }) => (
+                  <CardsSelect
+                    id="proposal-type"
+                    options={proposalTypeOptions}
+                    onChange={value => onChange(value)}
+                    helperText={errors.proposalType?.message}
+                    error={!!errors.proposalType}
+                    carouselRef={ref}
+                    {...rest}
+                    multiple
+                  />
+                )}
+              />
             </AnimatedStep>
 
             <AnimatedStep previousStep={previousStep}>
@@ -309,9 +329,9 @@ const ProposalRegister: NextPage = () => {
                           )}
                         />
 
-                        <Typography component="label" htmlFor="production-volume" mt={4}>
+                        <FormLabel htmlFor="production-volume" sx={{ mt: 4 }}>
                           Qual o volume de produção?
-                        </Typography>
+                        </FormLabel>
                         <ProductionContainer>
                           <TextField
                             id="production-volume"
