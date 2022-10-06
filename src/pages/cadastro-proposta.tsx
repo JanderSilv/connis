@@ -1,4 +1,4 @@
-import { KeyboardEvent, useRef } from 'react'
+import { KeyboardEvent, useRef, useState } from 'react'
 import Head from 'next/head'
 import type { NextPage } from 'next'
 import {
@@ -60,6 +60,8 @@ const ProposalRegister: NextPage = () => {
   } = formMethods
 
   const watchedProposalCategory = watch('proposalCategory')
+
+  const [keywordsInputValue, setKeywordsInputValue] = useState('')
 
   const previousStep = useRef(0)
   const nextButtonRef = useRef<HTMLButtonElement>(null)
@@ -182,6 +184,7 @@ const ProposalRegister: NextPage = () => {
 
               <TextField
                 label="Descreva de maneira detalhada o que deseja-se resolver."
+                variant="standard"
                 placeholder="Descreva o problema"
                 {...register('proposalDescription')}
                 helperText={errors.proposalDescription?.message}
@@ -190,33 +193,46 @@ const ProposalRegister: NextPage = () => {
                 fullWidth
               />
 
-              <Typography component="label" htmlFor="keywords" mt={3}>
+              <FormLabel htmlFor="keywords" sx={{ mt: 4 }}>
                 Palavras chaves nos ajudarão a identificar soluções ou conexões para sua proposta.
-              </Typography>
+              </FormLabel>
               <Typography component="span" variant="caption" mt={0.3}>
-                Exemplo: Setor têxtil; Papel; Reciclagem.
+                Exemplo: Têxtil; Papel; Reciclagem.
               </Typography>
 
               <Controller
                 name="keywords"
                 control={control}
-                render={({ field: { onChange, ...rest } }) => (
+                render={({ field: { value, onChange, ...rest } }) => (
                   <Autocomplete
                     id="keywords"
                     options={[]}
                     renderInput={params => (
                       <TextField
                         {...params}
+                        variant="standard"
                         label="Defina algumas palavras chaves"
                         helperText={
                           !errors.keywords ? 'Pressione enter para registrar uma palavra' : errors.keywords?.message
                         }
                         error={!!errors.keywords}
-                        sx={{ marginTop: '0.5rem' }}
+                        sx={{ marginTop: 1 }}
                       />
                     )}
                     {...rest}
-                    onChange={(_, value) => onChange(value)}
+                    value={value}
+                    onChange={(_, optionsValue) => onChange(optionsValue)}
+                    inputValue={keywordsInputValue}
+                    onInputChange={(_, inputValue) => {
+                      if (inputValue.length > 1 && [',', ';', ' '].includes(inputValue[inputValue.length - 1])) {
+                        onChange([...value, inputValue.slice(0, -1)])
+                        return setKeywordsInputValue('')
+                      }
+                      if (inputValue.match(/^[a-zA-Z0-9\u00C0-\u00FF\-]+$/i) || inputValue === '') {
+                        setKeywordsInputValue(inputValue)
+                      }
+                    }}
+                    clearText="Limpar"
                     freeSolo
                     multiple
                   />
