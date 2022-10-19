@@ -7,6 +7,8 @@ export {
   GrainRounded as GrainIcon,
   InsightsRounded as InsightsIcon,
   LocalShippingRounded as LocalShippingIcon,
+  LockRounded as LockIcon,
+  PersonRounded as PersonIcon,
   PlusOneRounded as PlusOneIcon,
   QuestionMarkRounded as QuestionMarkIcon,
   RocketRounded as RocketIcon,
@@ -14,6 +16,8 @@ export {
   SearchRounded as SearchIcon,
   SyncRounded as SyncIcon,
   TipsAndUpdatesRounded as TipsAndUpdatesIcon,
+  VisibilityRounded as VisibilityIcon,
+  VisibilityOffRounded as VisibilityOffIcon,
   VolunteerActivismRounded as VolunteerActivismIcon,
   WorkspacesRounded as WorkspacesIcon,
 } from '@mui/icons-material'
