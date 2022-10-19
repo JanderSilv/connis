@@ -2,19 +2,34 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import { Button, Typography, TextField, InputAdornment } from '@mui/material'
+import { useForm } from 'react-hook-form'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
 import { Link } from 'src/components/link'
 import { GoogleIcon, LockIcon, MicrosoftIcon, PersonIcon } from 'src/assets/icons'
 import { ForgotPasswordTypography, Form, OrTypography, Wrapper } from 'src/styles/login'
 
 const Login: NextPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginSchema>({
+    resolver: yupResolver(loginSchemaValidation),
+  })
+
+  const handleLogin = (data: LoginSchema) => {
+    console.log(data)
+  }
+
   return (
     <Wrapper>
       <Head>
         <title>Login - Connis</title>
       </Head>
       <Image src="/assets/logo/logo.svg" width="117" height="40" alt="Logo do Connis" />
-      <Form>
+      <Form onSubmit={handleSubmit(handleLogin)}>
         <Typography variant="h1" color="primary" mb={2}>
           Login
         </Typography>
@@ -30,6 +45,9 @@ const Login: NextPage = () => {
               </InputAdornment>
             ),
           }}
+          {...register('email')}
+          error={!!errors.email}
+          helperText={errors.email?.message}
           fullWidth
         />
         <TextField
@@ -43,6 +61,9 @@ const Login: NextPage = () => {
               </InputAdornment>
             ),
           }}
+          {...register('password')}
+          error={!!errors.password}
+          helperText={errors.password?.message}
           sx={{ mt: 1 }}
           fullWidth
         />
@@ -60,7 +81,7 @@ const Login: NextPage = () => {
           Esqueceu a senha?
         </Link>
 
-        <Button variant="contained" fullWidth>
+        <Button type="submit" variant="contained" fullWidth>
           Entrar
         </Button>
 
