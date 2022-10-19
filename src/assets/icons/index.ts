@@ -18,3 +18,5 @@ export {
   WorkspacesRounded as WorkspacesIcon,
 } from '@mui/icons-material'
 export * from './recycling'
+export * from './microsoft'
+export * from './google'
