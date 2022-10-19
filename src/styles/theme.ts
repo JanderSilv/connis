@@ -24,4 +24,13 @@ export const theme = createTheme({
       fontWeight: 'bold',
     },
   },
+  components: {
+    MuiButton: {
+      defaultProps: {
+        sx: {
+          padding: 1,
+        },
+      },
+    },
+  },
 })
