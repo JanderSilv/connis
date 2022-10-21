@@ -1,14 +1,14 @@
 import { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import { Button, Typography, TextField, InputAdornment } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
+import { Layout } from 'src/layouts/auth'
 import { Link } from 'src/components/link'
 import { GoogleIcon, LockIcon, MicrosoftIcon, PersonIcon } from 'src/assets/icons'
-import { ForgotPasswordTypography, Form, OrTypography, Wrapper } from 'src/styles/login'
+import { ForgotPasswordTypography, Form, OrTypography } from 'src/styles/login'
 
 const Login: NextPage = () => {
   const {
@@ -24,11 +24,11 @@ const Login: NextPage = () => {
   }
 
   return (
-    <Wrapper>
+    <Layout>
       <Head>
         <title>Login - Connis</title>
       </Head>
-      <Image src="/assets/logo/logo.svg" width="117" height="40" alt="Logo do Connis" />
+
       <Form onSubmit={handleSubmit(handleLogin)}>
         <Typography variant="h1" color="primary" mb={2}>
           Login
@@ -98,7 +98,7 @@ const Login: NextPage = () => {
           Não possui uma conta? <Link href="/cadastro">Cadastre-se aqui</Link>
         </ForgotPasswordTypography>
       </Form>
-    </Wrapper>
+    </Layout>
   )
 }
 
