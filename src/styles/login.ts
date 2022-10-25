@@ -37,18 +37,3 @@ export const ForgotPasswordTypography = styled(Typography)(({ theme }) => ({
 ForgotPasswordTypography.defaultProps = {
   variant: 'body2',
 }
-
-export const OrTypography = styled(Typography)(({ theme }) => ({
-  width: '100%',
-  color: theme.palette.grey[600],
-  display: 'flex',
-  alignItems: 'center',
-  gap: theme.spacing(1),
-
-  '&:before, &:after': {
-    content: '""',
-    width: '100%',
-    borderBottom: `1px solid ${theme.palette.divider}`,
-    flex: 1,
-  },
-}))

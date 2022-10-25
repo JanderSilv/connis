@@ -7,8 +7,9 @@ import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
 import { Layout } from 'src/layouts/auth'
 import { Link } from 'src/components/link'
-import { GoogleIcon, LockIcon, MicrosoftIcon, PersonIcon } from 'src/assets/icons'
-import { ForgotPasswordTypography, Form, OrTypography } from 'src/styles/login'
+import { SocialLoginButtons } from 'src/components/social-login-buttons'
+import { LockIcon, PersonIcon } from 'src/assets/icons'
+import { ForgotPasswordTypography, Form } from 'src/styles/login'
 
 const Login: NextPage = () => {
   const {
@@ -85,14 +86,7 @@ const Login: NextPage = () => {
           Entrar
         </Button>
 
-        <OrTypography>Ou</OrTypography>
-
-        <Button variant="outlined" startIcon={<GoogleIcon />} fullWidth>
-          Entrar com o Google
-        </Button>
-        <Button variant="outlined" startIcon={<MicrosoftIcon />} fullWidth>
-          Entrar com a Microsoft
-        </Button>
+        <SocialLoginButtons mt={1} />
 
         <ForgotPasswordTypography>
           Não possui uma conta? <Link href="/cadastro">Cadastre-se aqui</Link>
