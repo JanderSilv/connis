@@ -1,4 +1,4 @@
-import { KeyboardEvent, useRef } from 'react'
+import { KeyboardEvent, useRef, useState } from 'react'
 import Head from 'next/head'
 import type { NextPage } from 'next'
 import {
@@ -60,6 +60,8 @@ const ProposalRegister: NextPage = () => {
   } = formMethods
 
   const watchedProposalCategory = watch('proposalCategory')
+
+  const [keywordsInputValue, setKeywordsInputValue] = useState('')
 
   const previousStep = useRef(0)
   const nextButtonRef = useRef<HTMLButtonElement>(null)
@@ -135,6 +137,26 @@ const ProposalRegister: NextPage = () => {
                   fullWidth
                 />
               </Collapse>
+
+              <FormLabel htmlFor="proposal-type" sx={{ mt: 3 }}>
+                Qual será o tipo da proposta?
+              </FormLabel>
+              <Controller
+                name="proposalType"
+                control={control}
+                render={({ field: { onChange, ref, ...rest } }) => (
+                  <CardsSelect
+                    id="proposal-type"
+                    options={proposalTypeOptions}
+                    onChange={value => onChange(value)}
+                    helperText={errors.proposalType?.message}
+                    error={!!errors.proposalType}
+                    carouselRef={ref}
+                    {...rest}
+                    multiple
+                  />
+                )}
+              />
             </AnimatedStep>
 
             <AnimatedStep previousStep={previousStep}>
@@ -162,6 +184,7 @@ const ProposalRegister: NextPage = () => {
 
               <TextField
                 label="Descreva de maneira detalhada o que deseja-se resolver."
+                variant="standard"
                 placeholder="Descreva o problema"
                 {...register('proposalDescription')}
                 helperText={errors.proposalDescription?.message}
@@ -170,42 +193,61 @@ const ProposalRegister: NextPage = () => {
                 fullWidth
               />
 
-              <Typography component="label" htmlFor="keywords" mt={3}>
+              <FormLabel htmlFor="keywords" sx={{ mt: 4 }}>
                 Palavras chaves nos ajudarão a identificar soluções ou conexões para sua proposta.
-              </Typography>
+              </FormLabel>
               <Typography component="span" variant="caption" mt={0.3}>
-                Exemplo: Setor têxtil; Papel; Reciclagem.
+                Exemplo: Têxtil; Papel; Reciclagem.
               </Typography>
 
               <Controller
                 name="keywords"
                 control={control}
-                render={({ field: { onChange, ...rest } }) => (
+                render={({ field: { value, onChange, ...rest } }) => (
                   <Autocomplete
                     id="keywords"
                     options={[]}
                     renderInput={params => (
                       <TextField
                         {...params}
+                        variant="standard"
                         label="Defina algumas palavras chaves"
                         helperText={
                           !errors.keywords ? 'Pressione enter para registrar uma palavra' : errors.keywords?.message
                         }
                         error={!!errors.keywords}
-                        sx={{ marginTop: '0.5rem' }}
+                        sx={{ marginTop: 1 }}
                       />
                     )}
                     {...rest}
-                    onChange={(_, value) => onChange(value)}
+                    value={value}
+                    onChange={(_, optionsValue) => onChange(optionsValue)}
+                    inputValue={keywordsInputValue}
+                    onInputChange={(_, inputValue) => {
+                      if (inputValue.length > 1 && [',', ';', ' '].includes(inputValue[inputValue.length - 1])) {
+                        onChange([...value, inputValue.slice(0, -1)])
+                        return setKeywordsInputValue('')
+                      }
+                      if (inputValue.match(/^[a-zA-Z0-9\u00C0-\u00FF\-]+$/i) || inputValue === '') {
+                        setKeywordsInputValue(inputValue)
+                      }
+                    }}
+                    clearText="Limpar"
                     freeSolo
                     multiple
                   />
                 )}
               />
+            </AnimatedStep>
 
-              <Typography component="label" htmlFor="trl" mt={3}>
-                Qual o nível de maturidade da sua proposta?
+            <AnimatedStep previousStep={previousStep}>
+              <Typography variant="h2" mb={4} textAlign="center">
+                Níveis de Maturidade (TRL)
               </Typography>
+
+              <FormLabel htmlFor="trl" sx={{ mt: 3 }}>
+                Qual o nível de maturidade da sua proposta?
+              </FormLabel>
               <Controller
                 name="trl"
                 control={control}
@@ -222,22 +264,21 @@ const ProposalRegister: NextPage = () => {
                 )}
               />
 
-              <Typography component="label" htmlFor="proposal-type" mt={3}>
-                Qual será o tipo da proposta?
-              </Typography>
+              <FormLabel htmlFor="goal-trl" sx={{ mt: 3 }}>
+                Qual o nível de maturidade que almeja alcançar?
+              </FormLabel>
               <Controller
-                name="proposalType"
+                name="goalTrl"
                 control={control}
                 render={({ field: { onChange, ref, ...rest } }) => (
                   <CardsSelect
-                    id="proposal-type"
-                    options={proposalTypeOptions}
+                    id="goal-trl"
+                    options={trlOptions}
                     onChange={value => onChange(value)}
-                    helperText={errors.proposalType?.message}
-                    error={!!errors.proposalType}
+                    helperText={errors.goalTrl?.message}
+                    error={!!errors.goalTrl}
                     carouselRef={ref}
                     {...rest}
-                    multiple
                   />
                 )}
               />
@@ -304,9 +345,9 @@ const ProposalRegister: NextPage = () => {
                           )}
                         />
 
-                        <Typography component="label" htmlFor="production-volume" mt={4}>
+                        <FormLabel htmlFor="production-volume" sx={{ mt: 4 }}>
                           Qual o volume de produção?
-                        </Typography>
+                        </FormLabel>
                         <ProductionContainer>
                           <TextField
                             id="production-volume"

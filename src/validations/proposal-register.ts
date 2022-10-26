@@ -32,7 +32,14 @@ export const proposalRegisterSchema: yup.SchemaOf<Proposal> = yup.object().shape
       .required(messages.keywords)
       .typeError(messages.keywords)
       .min(1, messages.keywords),
-    trl: yup.number().required('O TRL é obrigatório'),
+    trl: yup
+      .number()
+      .required('O TRL é obrigatório')
+      .max(yup.ref('goalTrl'), 'O TRL atual deve ser menor ou igual ao TRL que almeja alcançar'),
+    goalTrl: yup
+      .number()
+      .required('O TRL é obrigatório')
+      .min(yup.ref('trl'), 'O TRL que almeja alcançar deve ser maior ou igual ao TRL atual'),
     proposalType: yup
       .array()
       .of(yup.number().required(messages.proposalType))
