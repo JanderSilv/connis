@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { NextPage } from 'next'
 import Head from 'next/head'
-import { Button, Typography, TextField, InputAdornment } from '@mui/material'
+import { Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
@@ -8,7 +9,7 @@ import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 import { Layout } from 'src/layouts/auth'
 import { Link } from 'src/components/link'
 import { SocialLoginButtons } from 'src/components/social-login-buttons'
-import { LockIcon, PersonIcon } from 'src/assets/icons'
+import { LockIcon, PersonIcon, VisibilityIcon, VisibilityOffIcon } from 'src/assets/icons'
 import { ForgotPasswordTypography, Form } from 'src/styles/login'
 
 const Login: NextPage = () => {
@@ -19,6 +20,8 @@ const Login: NextPage = () => {
   } = useForm<LoginSchema>({
     resolver: yupResolver(loginSchemaValidation),
   })
+
+  const [shouldShowPassword, setShouldShowPassword] = useState(false)
 
   const handleLogin = (data: LoginSchema) => {
     console.log(data)
@@ -59,6 +62,16 @@ const Login: NextPage = () => {
             startAdornment: (
               <InputAdornment position="start">
                 <LockIcon color="primary" />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label={shouldShowPassword ? 'Esconder Senha' : 'Mostrar Senha'}
+                  onClick={() => setShouldShowPassword(prevState => !prevState)}
+                >
+                  {shouldShowPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </IconButton>
               </InputAdornment>
             ),
           }}
