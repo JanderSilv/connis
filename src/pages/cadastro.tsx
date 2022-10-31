@@ -1,6 +1,12 @@
+import { useState } from 'react'
 import { NextPage } from 'next'
 import Head from 'next/head'
-import { Autocomplete, Button, InputAdornment, TextField, Typography } from '@mui/material'
+import { Autocomplete, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
+import { useForm, Controller } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+import { cnaesData } from 'src/data/ibge'
+import { companySignUpValidationSchema, CompanySignUpSchema } from 'src/validations/company-sign-up'
 
 import { Layout } from 'src/layouts/auth'
 import { Link } from 'src/components/link'
@@ -13,6 +19,8 @@ import {
   LockOutlinedIcon,
   PersonOutlineIcon,
   PhoneOutlinedIcon,
+  VisibilityIcon,
+  VisibilityOffIcon,
 } from 'src/assets/icons'
 import { theme } from 'src/styles/theme'
 import { Form, LeftContainer, Wrapper } from 'src/styles/company-sign-up'
@@ -41,7 +49,26 @@ const Title = ({ isDesktop = false }: TitleProps) => (
   </Typography>
 )
 
-const CompanyRegister: NextPage = () => {
+const CompanySignUp: NextPage = () => {
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CompanySignUpSchema>({
+    resolver: zodResolver(companySignUpValidationSchema),
+    defaultValues: {
+      cnae: null,
+    },
+  })
+
+  const [shouldShowPassword, setShouldShowPassword] = useState(false)
+  const [shouldShowConfirmPassword, setShouldShowConfirmPassword] = useState(false)
+
+  const onSubmit = (data: CompanySignUpSchema) => {
+    console.log(data)
+  }
+
   return (
     <Layout
       illustration={{
@@ -89,7 +116,7 @@ const CompanyRegister: NextPage = () => {
           </div>
         </LeftContainer>
         <section>
-          <Form>
+          <Form onSubmit={handleSubmit(onSubmit)}>
             <Title isDesktop />
             <TextField
               variant="standard"
@@ -101,6 +128,9 @@ const CompanyRegister: NextPage = () => {
                   </InputAdornment>
                 ),
               }}
+              {...register('name')}
+              error={!!errors.name}
+              helperText={errors.name?.message}
               fullWidth
             />
 
@@ -115,12 +145,16 @@ const CompanyRegister: NextPage = () => {
                   </InputAdornment>
                 ),
               }}
+              {...register('cnpj')}
+              error={!!errors.cnpj}
+              helperText={errors.cnpj?.message}
               fullWidth
             />
 
             <TextField
               variant="standard"
               label="E-mail"
+              type="email"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -128,6 +162,9 @@ const CompanyRegister: NextPage = () => {
                   </InputAdornment>
                 ),
               }}
+              {...register('email')}
+              error={!!errors.email}
+              helperText={errors.email?.message}
               fullWidth
             />
 
@@ -142,52 +179,96 @@ const CompanyRegister: NextPage = () => {
                   </InputAdornment>
                 ),
               }}
+              {...register('phone')}
+              error={!!errors.phone}
+              helperText={errors.phone?.message}
               fullWidth
             />
 
-            <Autocomplete
-              options={[]}
-              renderInput={params => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  label="CNAE - Código de Atividade"
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AssignmentOutlinedIcon color="primary" />
-                      </InputAdornment>
-                    ),
-                  }}
+            <Controller
+              control={control}
+              name="cnae"
+              render={({ field: { value, onChange, ...rest } }) => (
+                <Autocomplete
+                  {...rest}
+                  value={value}
+                  options={[value, ...cnaesData]}
+                  filterOptions={() => cnaesData}
+                  noOptionsText="Nenhum CNAE encontrado"
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      label="CNAE - Código de Atividade"
+                      InputProps={{
+                        ...params.InputProps,
+                        startAdornment: (
+                          <InputAdornment position="start">
+                            <AssignmentOutlinedIcon color="primary" />
+                          </InputAdornment>
+                        ),
+                      }}
+                      error={!!errors.cnae}
+                      helperText={errors.cnae?.message}
+                    />
+                  )}
+                  onChange={(_, value) => onChange(value)}
+                  fullWidth
                 />
               )}
-              onChange={(_, value) => console.log(value)}
-              fullWidth
             />
 
             <TextField
               variant="standard"
               label="Senha"
+              type={shouldShowPassword ? 'text' : 'password'}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
                     <LockOutlinedIcon color="primary" />
                   </InputAdornment>
                 ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={shouldShowPassword ? 'Esconder Senha' : 'Mostrar Senha'}
+                      onClick={() => setShouldShowPassword(prevState => !prevState)}
+                    >
+                      {shouldShowPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
+              {...register('password')}
+              error={!!errors.password}
+              helperText={errors.password?.message}
               fullWidth
             />
 
             <TextField
               variant="standard"
               label="Confirmar a senha"
+              type={shouldShowConfirmPassword ? 'text' : 'password'}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
                     <LockOutlinedIcon color="primary" />
                   </InputAdornment>
                 ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={shouldShowConfirmPassword ? 'Esconder Senha' : 'Mostrar Senha'}
+                      onClick={() => setShouldShowConfirmPassword(prevState => !prevState)}
+                    >
+                      {shouldShowConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
               }}
+              {...register('passwordConfirmation')}
+              error={!!errors.passwordConfirmation}
+              helperText={errors.passwordConfirmation?.message}
               sx={{
                 mb: 2,
               }}
@@ -201,6 +282,7 @@ const CompanyRegister: NextPage = () => {
             <SocialLoginButtons
               mt={2}
               maxWidth={300}
+              mx="auto"
               sx={{
                 display: {
                   md: 'none',
@@ -214,4 +296,4 @@ const CompanyRegister: NextPage = () => {
   )
 }
 
-export default CompanyRegister
+export default CompanySignUp
