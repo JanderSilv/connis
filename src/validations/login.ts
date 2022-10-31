@@ -1,8 +1,8 @@
-import * as yup from 'yup'
+import * as zod from 'zod'
 
-export const loginSchemaValidation = yup.object({
-  email: yup.string().email('E-mail inválido').required('E-mail é obrigatório'),
-  password: yup.string().required('Senha é obrigatória'),
+export const loginSchemaValidation = zod.object({
+  email: zod.string().min(1, 'E-mail é obrigatório').email('E-mail inválido'),
+  password: zod.string().min(1, 'Senha é obrigatória'),
 })
 
-export type LoginSchema = yup.InferType<typeof loginSchemaValidation>
+export type LoginSchema = zod.infer<typeof loginSchemaValidation>

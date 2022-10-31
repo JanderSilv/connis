@@ -3,7 +3,7 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import { Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material'
 import { useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
 import { Layout } from 'src/layouts/auth'
@@ -18,7 +18,7 @@ const Login: NextPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginSchema>({
-    resolver: yupResolver(loginSchemaValidation),
+    resolver: zodResolver(loginSchemaValidation),
   })
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false)
