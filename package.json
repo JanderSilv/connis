@@ -25,7 +25,8 @@
     "react-imask": "^6.4.3",
     "react-multi-carousel": "^2.8.2",
     "react-use-wizard": "^2.2.1",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "zod": "^3.19.1"
   },
   "devDependencies": {
     "@types/node": "18.7.6",
