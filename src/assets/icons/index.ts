@@ -12,6 +12,8 @@ export {
   LocalShippingRounded as LocalShippingIcon,
   LockRounded as LockIcon,
   LockOutlined as LockOutlinedIcon,
+  NotificationsOutlined as NotificationsOutlinedIcon,
+  NotificationsRounded as NotificationsIcon,
   PersonRounded as PersonIcon,
   PersonOutline as PersonOutlineIcon,
   PhoneOutlined as PhoneOutlinedIcon,
