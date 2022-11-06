@@ -21,7 +21,13 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 
-import { proposalCategoryOptions, proposalTypeOptions, trlOptions } from 'src/data/proposal-register/options'
+import {
+  proposalCategoryOptions,
+  proposalTypeOptions,
+  trlOptions,
+  measurementUnitsOptions,
+  periodicityOptions,
+} from 'src/data/proposal/options'
 import { ProposalCategory } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
 import { proposalRegisterSchema } from 'src/validations/proposal-register'
@@ -30,7 +36,6 @@ import { AnimatedStep, WizardFooter } from 'src/components/proposal-register'
 import { CardsSelect } from 'src/components/proposal-register/cards-select'
 import { Container } from 'src/components/container'
 import { ProductionContainer, Wrapper } from 'src/styles/proposal-register'
-import { measurementUnitsOptions, periodicityOptions } from 'src/data/proposal-register/options/production-volume'
 
 const checkProposalCategoryHasQuestions = (proposalCategory: ProposalCategory) => {
   if (proposalCategory === ProposalCategory.waste) return true
