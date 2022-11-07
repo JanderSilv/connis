@@ -4,21 +4,25 @@ import { PlusOneIcon, QuestionMarkIcon, RecyclingIcon, RocketIcon } from 'src/as
 
 export const proposalCategories = {
   [ProposalCategory.waste]: {
+    id: ProposalCategory.waste,
     title: 'Resíduos',
     icon: RecyclingIcon,
     description: 'Resíduos sólidos, líquidos e gasosos',
   },
   [ProposalCategory.disruptiveInnovation]: {
+    id: ProposalCategory.disruptiveInnovation,
     title: 'Inovação Disruptiva',
     icon: RocketIcon,
     description: 'Almeja estudar novos conceitos e desenvolver algo totalmente inovador do zero',
   },
   [ProposalCategory.incrementalInnovation]: {
+    id: ProposalCategory.incrementalInnovation,
     title: 'Inovação Incremental',
     icon: PlusOneIcon,
     description: 'Almeja melhorar um produto existente',
   },
   [ProposalCategory.others]: {
+    id: ProposalCategory.others,
     title: 'Outros',
     icon: QuestionMarkIcon,
     description: 'Outros tipos de propostas',
@@ -27,19 +31,15 @@ export const proposalCategories = {
 
 export const proposalCategoryOptions: CardData[] = [
   {
-    id: ProposalCategory.waste,
     ...proposalCategories[ProposalCategory.waste],
   },
   {
-    id: ProposalCategory.disruptiveInnovation,
     ...proposalCategories[ProposalCategory.disruptiveInnovation],
   },
   {
-    id: ProposalCategory.incrementalInnovation,
     ...proposalCategories[ProposalCategory.incrementalInnovation],
   },
   {
-    id: ProposalCategory.others,
     ...proposalCategories[ProposalCategory.others],
   },
 ]
