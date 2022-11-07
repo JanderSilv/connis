@@ -27,7 +27,7 @@ import {
   trlOptions,
   measurementUnitsOptions,
   periodicityOptions,
-} from 'src/data/proposal/options'
+} from 'src/data/proposal'
 import { ProposalCategory } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
 import { proposalRegisterSchema } from 'src/validations/proposal-register'
