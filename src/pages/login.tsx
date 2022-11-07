@@ -83,7 +83,7 @@ const Login: NextPage = () => {
         />
 
         <Link
-          href="/esqueci-a-senha"
+          href="/recuperar-senha"
           muiLinkProps={{
             width: '100%',
             variant: 'body2',
