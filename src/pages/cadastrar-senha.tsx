@@ -3,19 +3,30 @@ import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
 
+import { RegisterPasswordSchema, registerPasswordSchemaValidation } from 'src/validations/register-password'
 import { Layout } from 'src/layouts/auth'
 import { LockIcon, VisibilityIcon, VisibilityOffIcon } from 'src/assets/icons'
 import { Form } from 'src/styles/auth'
 
 const RegisterPassword: NextPage = () => {
   const { query } = useRouter()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitSuccessful },
+  } = useForm<RegisterPasswordSchema>({
+    resolver: zodResolver(registerPasswordSchemaValidation),
+  })
+
   const [shouldShowPassword, setShouldShowPassword] = useState(false)
   const [shouldShowConfirmPassword, setShouldShowConfirmPassword] = useState(false)
 
-  const onSubmit = () => {
-    console.log(query.token)
+  const onSubmit = (data: RegisterPasswordSchema) => {
+    console.log({ token: query.token, data })
   }
 
   return (
@@ -24,8 +35,8 @@ const RegisterPassword: NextPage = () => {
         <title>Cadastrar Senha - Connis</title>
       </Head>
 
-      <Form onSubmit={onSubmit} maxWidth={500} textAlign="center">
-        {false ? (
+      <Form onSubmit={handleSubmit(onSubmit)} maxWidth={500} textAlign="center">
+        {!isSubmitSuccessful ? (
           <>
             <Typography variant="h1" color="primary" mb={2}>
               Cadastrar nova senha
@@ -52,6 +63,9 @@ const RegisterPassword: NextPage = () => {
                   </InputAdornment>
                 ),
               }}
+              {...register('password')}
+              error={!!errors.password}
+              helperText={errors.password?.message}
               sx={{ mb: 1 }}
               fullWidth
             />
@@ -77,6 +91,9 @@ const RegisterPassword: NextPage = () => {
                   </InputAdornment>
                 ),
               }}
+              {...register('passwordConfirmation')}
+              error={!!errors.passwordConfirmation}
+              helperText={errors.passwordConfirmation?.message}
               sx={{
                 mb: 2,
               }}
