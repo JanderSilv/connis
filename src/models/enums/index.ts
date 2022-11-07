@@ -24,3 +24,10 @@ export enum ProposalType {
   donate,
   research,
 }
+
+export enum ProposalStatus {
+  opened = 0,
+  onNegotiation,
+  canceled,
+  finished,
+}
