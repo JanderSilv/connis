@@ -1,7 +1,6 @@
 import { isValidCNPJ } from '@brazilian-utils/brazilian-utils'
+import { regex } from 'src/constants'
 import * as zod from 'zod'
-
-const strongPasswordRegex = /^(?=[^A-Z\s]*[A-Z])(?=[^a-z\s]*[a-z])(?=[^\d\s]*\d)(?=\w*[\W_])\S{8,}$/
 
 const messages = {
   cnae: 'Código de atividade da empresa é obrigatório',
@@ -43,7 +42,7 @@ export const companySignUpValidationSchema = zod
       .min(1, 'Senha é obrigatório')
       .min(8, 'Senha deve ter no mínimo 8 caracteres')
       .regex(
-        strongPasswordRegex,
+        regex.strongPassword,
         'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número'
       ),
     passwordConfirmation: zod.string().min(1, 'Confirmação de senha é obrigatório'),
