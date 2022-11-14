@@ -31,3 +31,5 @@ export enum ProposalStatus {
   canceled,
   finished,
 }
+
+export * from './company'

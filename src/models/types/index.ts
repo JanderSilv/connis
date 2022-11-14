@@ -24,3 +24,5 @@ export type Proposal = {
     }
   }
 }
+
+export * from './company'
