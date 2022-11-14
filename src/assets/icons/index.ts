@@ -20,6 +20,7 @@ export {
   PersonRounded as PersonIcon,
   PersonOutline as PersonOutlineIcon,
   PhoneOutlined as PhoneOutlinedIcon,
+  PlaylistAddRounded as PlaylistAddIcon,
   PlusOneRounded as PlusOneIcon,
   QuestionMarkRounded as QuestionMarkIcon,
   RocketRounded as RocketIcon,
