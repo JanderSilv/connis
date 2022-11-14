@@ -1,14 +1,19 @@
-import { ProposalCategory } from 'src/models/enums'
+import { ProposalCategory, ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
 import * as yup from 'yup'
+
+export type ProposalSchema = Omit<Proposal, 'id' | 'budget'> & {
+  budget?: string
+}
 
 const messages = {
   proposalCategory: 'A categoria da proposta é obrigatória',
   keywords: 'Pelo menos uma palavra-chave é obrigatória',
   proposalType: 'O tipo da proposta é obrigatório',
+  budget: 'O orçamento é obrigatório',
 }
 
-export const proposalRegisterSchema: yup.SchemaOf<Proposal> = yup.object().shape(
+export const proposalRegisterSchema: yup.SchemaOf<ProposalSchema> = yup.object().shape(
   {
     title: yup.string().required('O título da proposta é obrigatório'),
     proposalCategory: yup
@@ -45,6 +50,18 @@ export const proposalRegisterSchema: yup.SchemaOf<Proposal> = yup.object().shape
       .of(yup.number().required(messages.proposalType))
       .required(messages.proposalType)
       .min(1, 'Selecione pelo menos uma opção'),
+    budget: yup.string().when('proposalType', {
+      is: (value: ProposalType[]) => value.includes(ProposalType.buyOrSell) || value.includes(ProposalType.research),
+      then: yup
+        .string()
+        .required(messages.budget)
+        .test(
+          'is-bigger-than-zero',
+          'O orçamento deve ser maior que zero',
+          value => Number(value?.replaceAll('.', '')) > 0
+        ),
+      otherwise: yup.string().notRequired(),
+    }),
     categoryQuestions: yup.object({
       waste: yup.object({
         testHasBeenPerformed: yup.boolean().notRequired(),
