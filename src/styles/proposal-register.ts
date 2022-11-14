@@ -1,14 +1,14 @@
 import { Box, styled } from '@mui/material'
 
 export const Wrapper = styled(Box)(({ theme }) => ({
-  minHeight: '100vh',
   padding: theme.spacing(2),
   display: 'flex',
+  flex: 1,
   alignItems: 'center',
   justifyContent: 'center',
 
   [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
+    padding: theme.spacing(2, 4),
   },
 
   '& label': {
