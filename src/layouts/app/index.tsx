@@ -1,4 +1,5 @@
 import { useState, ReactNode, useCallback } from 'react'
+import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
 import { AppBar, Avatar, Badge, Box, IconButton, Toolbar } from '@mui/material'
@@ -43,7 +44,11 @@ export const Layout = ({ children }: LayoutProps) => {
       <AppBar color="transparent" elevation={0} position="static">
         <Toolbar>
           <Box flexGrow={1}>
-            <Image src="/assets/logo/logo.svg" width="117" height="40" alt="Logo do Connis" draggable="false" />
+            <Link href="/">
+              <a>
+                <Image src="/assets/logo/logo.svg" width="117" height="40" alt="Logo do Connis" draggable="false" />
+              </a>
+            </Link>
           </Box>
 
           <Box display="flex" alignItems="center" gap={3}>
