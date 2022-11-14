@@ -1,6 +1,7 @@
 import { ProposalCategory, ProposalType, TRL } from '../enums'
 
 export type Proposal = {
+  id: number
   title: string
   proposalCategory: ProposalCategory
   proposalCategoryOther?: string
@@ -10,6 +11,7 @@ export type Proposal = {
   trl: TRL
   goalTrl: TRL
   proposalType: ProposalType[]
+  budget?: number
   categoryQuestions: {
     waste?: {
       testHasBeenPerformed?: boolean
