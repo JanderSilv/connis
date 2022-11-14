@@ -45,7 +45,7 @@ const createCNAEsJSONFile = async () => {
   const filterProperties = (cnaes: CNAE[]) => {
     return cnaes.map(cnae => {
       const { id, descricao, grupo } = cnae
-      return { id, label: `${formatCNAEId(id, grupo.divisao.id)} ${capitalizeFirstLetters(descricao)}` }
+      return { id, label: `${formatCNAEId(id, grupo.divisao.id)}: ${capitalizeFirstLetters(descricao)}` }
     })
   }
 
