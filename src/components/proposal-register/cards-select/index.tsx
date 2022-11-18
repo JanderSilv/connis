@@ -57,14 +57,13 @@ export const CardsSelect = (props: CardsSelectProps) => {
             <Card
               id={index === 0 ? cardsSelectId : undefined}
               key={id}
-              onClick={() => handleOnChange(id, solo)}
               sx={(() => {
                 if (!multiple) return value === id ? selectedCard : {}
                 if (value?.includes(id)) return selectedCard
                 return {}
               })()}
             >
-              <CardActionArea>
+              <CardActionArea onClick={() => handleOnChange(id, solo)}>
                 <CardContent>
                   {!!label && <Typography component="h3">{label}</Typography>}
                   <Typography component={!!label ? 'h4' : 'h3'} mb={1}>
