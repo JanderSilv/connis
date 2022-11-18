@@ -1,4 +1,15 @@
-import { ProposalCategory, ProposalType, TRL } from '../enums'
+import { ProposalCategory, ProposalStatus, ProposalType, TRL } from '../enums'
+import { Company } from './company'
+
+export type ProposalWasteQuestions = {
+  testHasBeenPerformed?: boolean
+  toxicity?: boolean
+  production: {
+    volume?: string
+    unit?: string
+    periodicity?: string
+  }
+}
 
 export type Proposal = {
   id: number
@@ -15,15 +26,7 @@ export type Proposal = {
   budget?: number
   status: ProposalStatus
   categoryQuestions: {
-    waste?: {
-      testHasBeenPerformed?: boolean
-      toxicity?: boolean
-      production: {
-        volume?: string
-        unit?: string
-        periodicity?: string
-      }
-    }
+    waste?: ProposalWasteQuestions
   }
 }
 

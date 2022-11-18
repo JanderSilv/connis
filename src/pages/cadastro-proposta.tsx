@@ -28,6 +28,7 @@ import {
   trlOptions,
   measurementUnitsOptions,
   periodicityOptions,
+  proposalAdditionalQuestions,
 } from 'src/data/proposal'
 import { ProposalCategory, ProposalType } from 'src/models/enums'
 import { proposalRegisterSchema, ProposalSchema } from 'src/validations/proposal-register'
@@ -358,6 +359,8 @@ const ProposalRegister: NextPage = () => {
                         return volume?.message || unit?.message || periodicity?.message
                       })()
 
+                      const { production, testHasBeenPerformed, toxicity } = proposalAdditionalQuestions['waste']
+
                       return (
                         <>
                           <Controller
@@ -366,7 +369,7 @@ const ProposalRegister: NextPage = () => {
                             render={({ field }) => (
                               <FormControl error={!!wasteErrors?.testHasBeenPerformed} sx={{ marginTop: 4 }} fullWidth>
                                 <FormLabel id="test-has-been-performed-label" sx={{ color: 'text.primary' }}>
-                                  Já foi realizado algum tipo de ensaio nesse resíduo?
+                                  {testHasBeenPerformed}
                                 </FormLabel>
                                 <RadioGroup
                                   aria-labelledby="test-has-been-performed-label"
@@ -389,8 +392,8 @@ const ProposalRegister: NextPage = () => {
                             control={control}
                             render={({ field }) => (
                               <FormControl error={!!wasteErrors?.toxicity} sx={{ marginTop: '2rem' }} fullWidth>
-                                <FormLabel id="toxicity-label" sx={{ color: 'text.primary' }}>
-                                  Já foi realizado algum estudo de toxicidade ou nocividade nesse resíduo?
+                                <FormLabel id="toxicity-label" color="primary">
+                                  {toxicity}
                                 </FormLabel>
                                 <RadioGroup aria-labelledby="toxicity-label" defaultValue={null} {...field} row>
                                   <FormControlLabel value={true} control={<Radio />} label="Sim" />
@@ -404,7 +407,7 @@ const ProposalRegister: NextPage = () => {
                           />
 
                           <FormLabel htmlFor="production-volume" sx={{ mt: 4 }}>
-                            Qual o volume de produção?
+                            {production}
                           </FormLabel>
                           <ProductionContainer>
                             <TextField
