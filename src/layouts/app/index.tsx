@@ -2,19 +2,17 @@ import { useState, ReactNode, useCallback } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
-import { AppBar, Avatar, Badge, Box, IconButton, Toolbar } from '@mui/material'
+import { AppBar, AppBarProps, Avatar, Badge, Box, IconButton, Toolbar } from '@mui/material'
 
 import { NotificationPopover } from './notification'
 import { NotificationsIcon, NotificationsOutlinedIcon } from 'src/assets/icons'
 import { Wrapper } from './styles'
 
-type LayoutProps = {
-  children: ReactNode
-}
+type LayoutProps = AppBarProps
 
 const notificationPopoverId = 'notification-popover'
 
-export const Layout = ({ children }: LayoutProps) => {
+export const Layout = ({ children, ...rest }: LayoutProps) => {
   const [notificationAnchorElement, setNotificationAnchorElement] = useState<HTMLButtonElement | null>(null)
   const [notifications] = useState([
     {
@@ -41,7 +39,7 @@ export const Layout = ({ children }: LayoutProps) => {
         <title>Connis</title>
       </Head>
 
-      <AppBar color="transparent" elevation={0} position="static">
+      <AppBar id="back-to-top-anchor" color="transparent" elevation={0} position="static" {...rest}>
         <Toolbar>
           <Box flexGrow={1}>
             <Link href="/">
