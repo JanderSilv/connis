@@ -1,5 +1,6 @@
 export * from './aside-contents'
 export * from './data-sections'
+export * from './proposal-card'
 export * from './proposal-chip-status'
 export * from './proposal-type-data'
 export * from './trl-data'
