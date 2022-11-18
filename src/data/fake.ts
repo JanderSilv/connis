@@ -74,6 +74,7 @@ const offers: Offer[] = [
     company,
     message: 'Podemos agregar ao seu projeto',
     proposalType: ProposalType.buyOrSell,
+    budget: 100_000,
   },
 ]
 
@@ -84,6 +85,7 @@ const counterProposals: CounterProposal[] = [
     company,
     message: 'Podemos agregar ao seu projeto, mas com essas condições',
     proposalType: ProposalType.buyOrSell,
+    budget: 100_000,
   },
 ]
 
