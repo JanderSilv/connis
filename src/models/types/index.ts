@@ -30,4 +30,18 @@ export type Proposal = {
   }
 }
 
+export type Offer = {
+  id: number
+  createdAt: string
+  company: Company
+  message: string
+  proposalType: ProposalType
+  budget: number
+}
+
+export type CounterProposal = {
+  trl?: TRL
+  goalTRL?: TRL
+} & Offer
+
 export * from './company'
