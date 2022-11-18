@@ -51,7 +51,7 @@ export const proposalRegisterSchema: yup.SchemaOf<ProposalSchema> = yup.object()
       .required(messages.proposalType)
       .min(1, 'Selecione pelo menos uma opção'),
     budget: yup.string().when('proposalType', {
-      is: (value: ProposalType[]) => value.includes(ProposalType.buyOrSell) || value.includes(ProposalType.research),
+      is: (value?: ProposalType[]) => value?.includes(ProposalType.buyOrSell) || value?.includes(ProposalType.research),
       then: yup
         .string()
         .required(messages.budget)
