@@ -2,7 +2,7 @@ import { CompanySize, ProposalStatus, ProposalType } from 'src/models/enums'
 import { Company, CounterProposal, Offer, Proposal } from 'src/models/types'
 
 const userCompany: Company = {
-  id: 1,
+  id: 2,
   name: 'Empresa do usuário',
   cnae: {
     id: '123456',

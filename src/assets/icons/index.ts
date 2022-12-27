@@ -7,6 +7,8 @@ export {
   CenterFocusStrongRounded as CenterFocusStrongIcon,
   DoubleArrowRounded as DoubleArrowIcon,
   EmailOutlined as EmailOutlinedIcon,
+  ExpandLessRounded as ExpandLessIcon,
+  ExpandMoreRounded as ExpandMoreIcon,
   FormatListBulletedRounded as FormatListBulletedIcon,
   GrainRounded as GrainIcon,
   InsightsRounded as InsightsIcon,

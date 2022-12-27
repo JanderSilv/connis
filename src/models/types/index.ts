@@ -45,3 +45,4 @@ export type CounterProposal = {
 } & Offer
 
 export * from './company'
+export * from './others'
