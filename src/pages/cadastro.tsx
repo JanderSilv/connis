@@ -6,6 +6,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { cnaesData } from 'src/data/ibge'
+import { useCNPJDialog } from 'src/hooks/company-sign-up'
 import { companySignUpValidationSchema, CompanySignUpSchema } from 'src/validations/company-sign-up'
 
 import { Layout } from 'src/layouts/auth'
@@ -54,6 +55,7 @@ const CompanySignUp: NextPage = () => {
     register,
     control,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<CompanySignUpSchema>({
     resolver: zodResolver(companySignUpValidationSchema),
@@ -61,6 +63,7 @@ const CompanySignUp: NextPage = () => {
       cnae: null,
     },
   })
+  const { fetchedCompany, CNPJDialog } = useCNPJDialog(reset)
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false)
   const [shouldShowConfirmPassword, setShouldShowConfirmPassword] = useState(false)
@@ -85,6 +88,8 @@ const CompanySignUp: NextPage = () => {
       <Head>
         <title>Cadastro - Connis</title>
       </Head>
+
+      <CNPJDialog />
 
       <Wrapper>
         <LeftContainer>
@@ -131,6 +136,7 @@ const CompanySignUp: NextPage = () => {
               {...register('name')}
               error={!!errors.name}
               helperText={errors.name?.message}
+              disabled={!!fetchedCompany?.name}
               fullWidth
             />
 
@@ -152,6 +158,7 @@ const CompanySignUp: NextPage = () => {
                   {...field}
                   error={!!errors.cnpj}
                   helperText={errors.cnpj?.message}
+                  disabled={!!fetchedCompany?.cnpj}
                   fullWidth
                 />
               )}
@@ -225,6 +232,7 @@ const CompanySignUp: NextPage = () => {
                     />
                   )}
                   onChange={(_, value) => onChange(value)}
+                  disabled={!!fetchedCompany?.cnae?.id}
                   fullWidth
                 />
               )}
