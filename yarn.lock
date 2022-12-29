@@ -903,7 +903,7 @@ chokidar@^3.5.1:
   optionalDependencies:
     fsevents "~2.3.2"
 
-clsx@^1.2.1:
+clsx@^1.1.0, clsx@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
   integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
@@ -1579,6 +1579,11 @@ globby@^11.1.0:
     merge2 "^1.4.1"
     slash "^3.0.0"
 
+goober@^2.0.33:
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/goober/-/goober-2.1.11.tgz#bbd71f90d2df725397340f808dbe7acc3118e610"
+  integrity sha512-5SS2lmxbhqH0u9ABEWq7WPU69a4i2pYcHeCxqaNq6Cw3mnrF0ghWNM4tEGid4dKy8XNIAUbuThuozDHHKJVh3A==
+
 grapheme-splitter@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
@@ -2057,6 +2062,14 @@ normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-3.0.0.tgz#0dcd69ff23a1c9b11fd0978316644a0388216a65"
   integrity sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
+
+notistack@^3.0.0-alpha.11:
+  version "3.0.0-alpha.11"
+  resolved "https://registry.yarnpkg.com/notistack/-/notistack-3.0.0-alpha.11.tgz#9c089e6a8c3c37b8899b22a094471feebba89c64"
+  integrity sha512-QfiVC1On1Zfs1UADxgRRhcVhAWveD3lBUKhDwx0GdXoSKii0UARz0tfJyIwwOxy5Lr+DOeAHz8Mvl1GwpeVnQQ==
+  dependencies:
+    clsx "^1.1.0"
+    goober "^2.0.33"
 
 oauth@^0.9.15:
   version "0.9.15"
