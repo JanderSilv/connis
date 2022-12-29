@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app'
 import { CssBaseline, ThemeProvider } from '@mui/material'
 import { CacheProvider, EmotionCache } from '@emotion/react'
 import { SessionProvider } from 'next-auth/react'
+import { SnackbarProvider } from 'notistack'
 
 import createEmotionCache from 'src/helpers/createEmotionCache'
 import { theme } from 'src/styles/theme'
@@ -18,7 +19,9 @@ function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }: 
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <SessionProvider session={pageProps.session}>
-          <Component {...pageProps} />
+          <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+            <Component {...pageProps} />
+          </SnackbarProvider>
         </SessionProvider>
       </ThemeProvider>
     </CacheProvider>
