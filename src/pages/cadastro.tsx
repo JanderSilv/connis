@@ -134,21 +134,27 @@ const CompanySignUp: NextPage = () => {
               fullWidth
             />
 
-            <MaskedTextField
-              variant="standard"
-              label="CNPJ da Empresa"
-              mask="00.000.000/0000-00"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <BusinessOutlinedIcon color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-              {...register('cnpj')}
-              error={!!errors.cnpj}
-              helperText={errors.cnpj?.message}
-              fullWidth
+            <Controller
+              control={control}
+              name="cnpj"
+              render={({ field }) => (
+                <MaskedTextField
+                  variant="standard"
+                  label="CNPJ da Empresa"
+                  mask="00.000.000/0000-00"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <BusinessOutlinedIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...field}
+                  error={!!errors.cnpj}
+                  helperText={errors.cnpj?.message}
+                  fullWidth
+                />
+              )}
             />
 
             <TextField
@@ -168,21 +174,27 @@ const CompanySignUp: NextPage = () => {
               fullWidth
             />
 
-            <MaskedTextField
-              variant="standard"
-              label="Telefone"
-              mask="(00) 00000-0000"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <PhoneOutlinedIcon color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-              {...register('phone')}
-              error={!!errors.phone}
-              helperText={errors.phone?.message}
-              fullWidth
+            <Controller
+              control={control}
+              name="phone"
+              render={({ field }) => (
+                <MaskedTextField
+                  variant="standard"
+                  label="Telefone"
+                  mask="(00) 00000-0000"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <PhoneOutlinedIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                  }}
+                  {...field}
+                  error={!!errors.phone}
+                  helperText={errors.phone?.message}
+                  fullWidth
+                />
+              )}
             />
 
             <Controller
