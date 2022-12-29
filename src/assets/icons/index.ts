@@ -3,6 +3,7 @@ export {
   AssignmentOutlined as AssignmentOutlinedIcon,
   AttachMoneyRounded as AttachMoneyIcon,
   BiotechRounded as BiotechIcon,
+  BusinessRounded as BusinessIcon,
   BusinessOutlined as BusinessOutlinedIcon,
   CenterFocusStrongRounded as CenterFocusStrongIcon,
   DoubleArrowRounded as DoubleArrowIcon,
