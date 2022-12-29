@@ -10,6 +10,7 @@ import { useCNPJDialog } from 'src/hooks/company-sign-up'
 import { companySignUpValidationSchema, CompanySignUpSchema } from 'src/validations/company-sign-up'
 
 import { Layout } from 'src/layouts/auth'
+import { Title } from 'src/components/company-sign-up'
 import { Link } from 'src/components/link'
 import { MaskedTextField } from 'src/components/shared'
 import { SocialLoginButtons } from 'src/components/social-login-buttons'
@@ -25,30 +26,6 @@ import {
 } from 'src/assets/icons'
 import { theme } from 'src/styles/theme'
 import { Form, LeftContainer, Wrapper } from 'src/styles/company-sign-up'
-
-type TitleProps = {
-  isDesktop?: boolean
-}
-const Title = ({ isDesktop = false }: TitleProps) => (
-  <Typography
-    variant="h1"
-    color="primary"
-    mb={1}
-    sx={{
-      display: isDesktop
-        ? {
-            xs: 'none',
-            md: 'block',
-          }
-        : {
-            xs: 'block',
-            md: 'none',
-          },
-    }}
-  >
-    Cadastro
-  </Typography>
-)
 
 const CompanySignUp: NextPage = () => {
   const {
