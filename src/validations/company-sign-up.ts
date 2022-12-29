@@ -58,3 +58,12 @@ export const companySignUpValidationSchema = zod
   })
 
 export type CompanySignUpSchema = zod.infer<typeof companySignUpValidationSchema>
+
+export const cnpjValidationSchema = zod.object({
+  cnpj: zod
+    .string()
+    .min(1, 'CNPJ é obrigatório')
+    .refine(value => !!value && isValidCNPJ(value), 'CNPJ inválido'),
+})
+
+export type CnpjSchema = zod.infer<typeof cnpjValidationSchema>
