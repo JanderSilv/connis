@@ -1,6 +1,5 @@
 export enum CompanySize {
-  micro = 0,
-  small,
-  medium,
-  big,
+  micro = 1,
+  small = 3,
+  others = 5,
 }
