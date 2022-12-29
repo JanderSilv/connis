@@ -8,7 +8,8 @@ type CNAE = {
 type CompanyAddress = {
   id: number
   city: string
-  state: string
+  cep: string
+  uf: string
 }
 
 export type Company = {
