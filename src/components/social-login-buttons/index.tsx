@@ -1,4 +1,5 @@
 import { Box, BoxProps, Button, styled, Typography } from '@mui/material'
+import { signIn } from 'next-auth/react'
 import { GoogleIcon, MicrosoftIcon } from 'src/assets/icons'
 
 type SocialLoginButtonsProps = BoxProps
@@ -7,10 +8,10 @@ export const SocialLoginButtons = (props: SocialLoginButtonsProps) => {
   return (
     <Wrapper {...props}>
       <OrTypography>Ou</OrTypography>
-      <Button variant="outlined" startIcon={<GoogleIcon />} fullWidth>
+      <Button variant="outlined" startIcon={<GoogleIcon />} onClick={() => signIn('google')} fullWidth>
         Entrar com o Google
       </Button>
-      <Button variant="outlined" startIcon={<MicrosoftIcon />} fullWidth>
+      <Button variant="outlined" startIcon={<MicrosoftIcon />} onClick={() => signIn('azure-ad')} fullWidth>
         Entrar com a Microsoft
       </Button>
     </Wrapper>
