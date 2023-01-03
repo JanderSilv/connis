@@ -6,16 +6,21 @@ const messages = {
   cnae: 'Código de atividade da empresa é obrigatório',
 }
 
-export const companySignUpValidationSchema = zod
+export const cnpjValidationSchema = zod.object({
+  cnpj: zod
+    .string()
+    .min(1, 'CNPJ é obrigatório')
+    .refine(value => !!value && isValidCNPJ(value), 'CNPJ inválido'),
+})
+
+export type CnpjSchema = zod.infer<typeof cnpjValidationSchema>
+
+export const companySocialSignUpValidationSchema = zod
   .object({
     name: zod
       .string()
       .min(1, 'Nome da empresa é obrigatório')
       .min(3, 'Nome da empresa deve ter no mínimo 3 caracteres'),
-    cnpj: zod
-      .string()
-      .min(1, 'CNPJ é obrigatório')
-      .refine(value => !!value && isValidCNPJ(value), 'CNPJ inválido'),
     email: zod.string().min(1, 'Email é obrigatório').email('Email inválido'),
     phone: zod.string().min(1, 'Telefone é obrigatório'),
     cnae: zod
@@ -37,6 +42,14 @@ export const companySignUpValidationSchema = zod
           })
         return value ?? null
       }),
+    logo: zod.string().nullable().optional(),
+  })
+  .merge(cnpjValidationSchema)
+
+export type CompanySocialSignUpSchema = zod.infer<typeof companySocialSignUpValidationSchema>
+
+export const companySignUpValidationSchema = companySocialSignUpValidationSchema
+  .extend({
     password: zod
       .string()
       .min(1, 'Senha é obrigatório')
@@ -58,12 +71,3 @@ export const companySignUpValidationSchema = zod
   })
 
 export type CompanySignUpSchema = zod.infer<typeof companySignUpValidationSchema>
-
-export const cnpjValidationSchema = zod.object({
-  cnpj: zod
-    .string()
-    .min(1, 'CNPJ é obrigatório')
-    .refine(value => !!value && isValidCNPJ(value), 'CNPJ inválido'),
-})
-
-export type CnpjSchema = zod.infer<typeof cnpjValidationSchema>
