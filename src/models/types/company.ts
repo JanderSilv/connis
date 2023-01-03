@@ -1,4 +1,5 @@
 import { CompanySize } from '../enums/company'
+import { AnalystUser } from './user'
 
 type CNAE = {
   id: string
@@ -23,4 +24,5 @@ export type Company = {
   cnae: CNAE | null
   socialCapital: number
   size: CompanySize
+  analysts: AnalystUser[]
 }
