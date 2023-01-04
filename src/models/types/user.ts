@@ -1,19 +1,14 @@
+import { Analyst } from './analyst'
 import { Company } from './company'
 import { ICT } from './ict'
-
-export type CompanyUser = {
-  type: 'company'
-} & Company
-export type ICTUser = {
-  type: 'ict'
-} & ICT
-export type AnalystUser = {
-  type: 'analyst'
-}
 
 export type User = {
   id: number
   name: string
   email: string
-  logo?: string
-} & (CompanyUser | ICTUser | AnalystUser)
+  image?: string
+} & (Company | ICT | Analyst)
+
+export type CompanyUser = User & Company
+export type ICTUser = User & ICT
+export type AnalystUser = User & Analyst
