@@ -4,6 +4,7 @@ import { unstable_getServerSession } from 'next-auth'
 
 import { pages } from 'src/constants'
 import { authOptions } from 'src/pages/api/auth/[...nextauth]'
+import { checkUserIsCompany } from './users'
 
 interface ServerContext extends GetServerSidePropsContext {
   session?: Session
@@ -21,10 +22,14 @@ export const withAuth = (getServerSideProps: ServerProps) => async (context: Get
       redirect: { permanent: false, destination: pages.login },
     }
 
-  if (!session.user.cnpj)
-    return {
-      redirect: { permanent: false, destination: pages.socialSignUp },
-    }
+  const checkIfCompanyUserHasCnpj = () => {
+    if (checkUserIsCompany(session.user) && !session.user.cnpj)
+      return {
+        redirect: { permanent: false, destination: pages.companySocialSignUp },
+      }
+  }
+
+  checkIfCompanyUserHasCnpj()
 
   const serverSession = { ...context, session }
 
