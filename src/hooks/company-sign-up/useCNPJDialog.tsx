@@ -1,11 +1,12 @@
-import { useState, memo, useRef } from 'react'
-import { useRouter } from 'next/router'
+import { Dispatch, SetStateAction, useCallback, useState } from 'react'
+import { Session } from 'next-auth'
+import { signOut } from 'next-auth/react'
 import { Button, Dialog, DialogTitle, DialogContent, DialogActions, Box } from '@mui/material'
 import { useForm, UseFormReset } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { useToast } from 'src/hooks/useToast'
-import { Company } from 'src/models/types'
+import { CompanyUser } from 'src/models/types'
 import { CompanySignUpSchema, CnpjSchema, cnpjValidationSchema } from 'src/validations/company-sign-up'
 import { brasilAPIService } from 'src/services/brasil-api'
 
@@ -13,8 +14,16 @@ import { MaskedTextField, SlideTransition } from 'src/components/shared'
 import { BusinessIcon } from 'src/assets/icons'
 import { Form } from 'src/styles/company-sign-up'
 
-export const useCNPJDialog = (reset: UseFormReset<CompanySignUpSchema>) => {
-  const { replace } = useRouter()
+type NullishCompany = CompanyUser | null
+
+type Props = {
+  session?: Session
+  fetchedCompany: NullishCompany
+  setFetchedCompany: Dispatch<SetStateAction<NullishCompany>>
+  reset: UseFormReset<CompanySignUpSchema>
+}
+
+const CNPJDialog = ({ session, fetchedCompany, setFetchedCompany, reset }: Props) => {
   const { showToast } = useToast()
   const {
     register,
@@ -23,22 +32,24 @@ export const useCNPJDialog = (reset: UseFormReset<CompanySignUpSchema>) => {
   } = useForm<CnpjSchema>({
     resolver: zodResolver(cnpjValidationSchema),
   })
-  const fetchedCompany = useRef<Company | null>(null)
 
   const fetchCNPJ = async (data: CnpjSchema) => {
     try {
-      // TODO: Discover why the Dialog is re-rendering when the company is fetched
       const company = await brasilAPIService.getCompany(data.cnpj.replace(/\D/g, ''))
-      fetchedCompany.current = company
-      reset(company)
+      setFetchedCompany(company)
+      reset({
+        ...company,
+        email: session?.user.email || company.email,
+        image: session?.user.image || company.image,
+      })
     } catch (error) {
       console.error(error)
       showToast('Não foi possível buscar a empresa, por favor, tente novamente mais tarde.', 'error')
     }
   }
 
-  const CNPJDialog = () => (
-    <Dialog open={!fetchedCompany.current} TransitionComponent={SlideTransition}>
+  return (
+    <Dialog open={!fetchedCompany} TransitionComponent={SlideTransition}>
       <Form onSubmit={handleSubmit(fetchCNPJ)} sx={{ gap: 0 }}>
         <Box mt={2} alignSelf="center">
           <BusinessIcon fontSize="large" />
@@ -58,7 +69,7 @@ export const useCNPJDialog = (reset: UseFormReset<CompanySignUpSchema>) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => replace('/')} disabled={isSubmitting}>
+          <Button onClick={() => signOut()} disabled={isSubmitting}>
             Cancelar
           </Button>
           <Button type="submit" disabled={isSubmitting}>
@@ -68,9 +79,23 @@ export const useCNPJDialog = (reset: UseFormReset<CompanySignUpSchema>) => {
       </Form>
     </Dialog>
   )
+}
+
+export const useCNPJDialog = (reset: UseFormReset<CompanySignUpSchema>, session?: Session) => {
+  const [fetchedCompany, setFetchedCompany] = useState<CompanyUser | null>(null)
 
   return {
-    CNPJDialog: memo(CNPJDialog),
-    fetchedCompany: fetchedCompany.current,
+    CNPJDialog: useCallback(
+      () => (
+        <CNPJDialog
+          session={session}
+          fetchedCompany={fetchedCompany}
+          setFetchedCompany={setFetchedCompany}
+          reset={reset}
+        />
+      ),
+      [session, fetchedCompany, reset]
+    ),
+    fetchedCompany,
   }
 }
