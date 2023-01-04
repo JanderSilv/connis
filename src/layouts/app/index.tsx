@@ -1,10 +1,14 @@
-import { useState, ReactNode, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
-import { AppBar, AppBarProps, Avatar, Badge, Box, IconButton, Toolbar } from '@mui/material'
+import { useRouter } from 'next/router'
+import { signOut, useSession } from 'next-auth/react'
+import { AppBar, AppBarProps, Avatar, Badge, Box, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
 
 import { NotificationPopover } from './notification'
+import { pages } from 'src/constants'
+
 import { NotificationsIcon, NotificationsOutlinedIcon } from 'src/assets/icons'
 import { Wrapper } from './styles'
 
@@ -13,6 +17,10 @@ type LayoutProps = AppBarProps
 const notificationPopoverId = 'notification-popover'
 
 export const Layout = ({ children, ...rest }: LayoutProps) => {
+  const { push } = useRouter()
+  const { data: session } = useSession()
+
+  const [menuAnchorElement, setMenuAnchorElement] = useState<HTMLElement | null>(null)
   const [notificationAnchorElement, setNotificationAnchorElement] = useState<HTMLButtonElement | null>(null)
   const [notifications] = useState([
     {
@@ -28,6 +36,12 @@ export const Layout = ({ children, ...rest }: LayoutProps) => {
       date: '10/10/2021',
     },
   ])
+
+  const menuData = {
+    id: 'user-menu',
+    buttonId: 'user-menu-button',
+    isOpen: !!menuAnchorElement,
+  }
 
   const handleCloseNotificationPopover = useCallback(() => {
     setNotificationAnchorElement(null)
@@ -70,9 +84,41 @@ export const Layout = ({ children, ...rest }: LayoutProps) => {
               notifications={notifications}
             />
 
-            <Avatar alt="Avatar do usuário" sx={{ width: 35, height: 35, bgcolor: 'primary.main' }}>
-              {/* <Image src="/assets/avatar/avatar.svg" width="35" height="35" alt="C" /> */}C
-            </Avatar>
+            <Box>
+              <IconButton
+                id={menuData.buttonId}
+                aria-haspopup="true"
+                aria-controls={menuData.isOpen ? menuData.id : undefined}
+                aria-expanded={menuData.isOpen ? 'true' : undefined}
+                onClick={event => setMenuAnchorElement(event.currentTarget)}
+              >
+                <Avatar
+                  alt={session?.user?.name || 'Avatar do usuário'}
+                  sx={{ width: 35, height: 35, bgcolor: 'primary.main' }}
+                >
+                  {session?.user?.image && (
+                    <Image
+                      src={session?.user?.image}
+                      width="35"
+                      height="35"
+                      alt={session?.user?.name || 'Avatar do usuário'}
+                    />
+                  )}
+                </Avatar>
+              </IconButton>
+              <Menu
+                id={menuData.id}
+                anchorEl={menuAnchorElement}
+                open={!!menuAnchorElement}
+                onClose={() => setMenuAnchorElement(null)}
+                MenuListProps={{
+                  'aria-labelledby': menuData.buttonId,
+                }}
+              >
+                <MenuItem onClick={() => push(pages.profile)}>Perfil</MenuItem>
+                <MenuItem onClick={() => signOut()}>Sair</MenuItem>
+              </Menu>
+            </Box>
           </Box>
         </Toolbar>
       </AppBar>
