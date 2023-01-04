@@ -42,7 +42,7 @@ export const companySocialSignUpValidationSchema = zod
           })
         return value ?? null
       }),
-    logo: zod.string().nullable().optional(),
+    image: zod.string().nullable().optional(),
   })
   .merge(cnpjValidationSchema)
 
