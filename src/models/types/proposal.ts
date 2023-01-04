@@ -1,5 +1,6 @@
 import { ProposalCategory, ProposalStatus, ProposalType, TRL } from '../enums'
 import { Offer } from './offer'
+import { CompanyUser } from './user'
 
 export type ProposalWasteQuestions = {
   testHasBeenPerformed?: boolean
@@ -14,6 +15,7 @@ export type ProposalWasteQuestions = {
 export type Proposal = {
   id: number
   title: string
+  company: CompanyUser
   createdAt: string
   updatedAt: string
   proposalCategory: ProposalCategory
