@@ -43,7 +43,7 @@ export const makeCompanyData = (company: Company) => [
   },
   {
     label: 'Local',
-    value: `${company.address.city} - ${company.address.state}`,
+    value: `${company.address.city} - ${company.address.uf}`,
   },
   {
     label: 'Capital Social',
