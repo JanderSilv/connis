@@ -14,13 +14,10 @@ type CompanyAddress = {
 }
 
 export type Company = {
-  id: number
-  name: string
+  type: 'company'
   cnpj: string
-  email: string
   phone: string
   address: CompanyAddress
-  logo?: string
   cnae: CNAE | null
   socialCapital: number
   size: CompanySize
