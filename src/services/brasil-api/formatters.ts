@@ -1,12 +1,13 @@
-import { Company } from 'src/models/types'
+import { CompanyUser } from 'src/models/types'
 import { BrasilApiCompany } from './types'
 
-export const formatCompany = (company: BrasilApiCompany): Company => {
+export const formatCompany = (company: BrasilApiCompany): CompanyUser => {
   const { uf, cnpj } = company
 
   return {
     id: 0,
     name: company.nome_fantasia,
+    type: 'company',
     cnpj,
     address: {
       id: 0,
@@ -22,5 +23,6 @@ export const formatCompany = (company: BrasilApiCompany): Company => {
     phone: company.ddd_telefone_1 || company.ddd_telefone_2,
     size: company.codigo_porte,
     socialCapital: company.capital_social,
+    analysts: [],
   }
 }
