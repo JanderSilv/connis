@@ -1,9 +1,12 @@
 import { useState } from 'react'
-import { NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
+import { signIn } from 'next-auth/react'
 import { Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+import { withPublic } from 'src/helpers/auth/withPublic'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
 import { Layout } from 'src/layouts/auth'
@@ -25,6 +28,10 @@ const Login: NextPage = () => {
 
   const handleLogin = (data: LoginSchema) => {
     console.log(data)
+    signIn('credentials', {
+      email: data.email,
+      password: data.password,
+    })
   }
 
   return (
@@ -57,7 +64,7 @@ const Login: NextPage = () => {
         <TextField
           variant="outlined"
           label="Senha"
-          type="password"
+          type={shouldShowPassword ? 'text' : 'password'}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -110,3 +117,9 @@ const Login: NextPage = () => {
 }
 
 export default Login
+
+export const getServerSideProps: GetServerSideProps = withPublic(async () => {
+  return {
+    props: {},
+  }
+})
