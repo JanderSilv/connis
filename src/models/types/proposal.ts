@@ -17,7 +17,7 @@ export type Proposal = {
   title: string
   company: CompanyUser
   createdAt: string
-  updatedAt: string
+  updatedAt?: string
   proposalCategory: ProposalCategory
   proposalCategoryOther?: string
   projectDescription?: string
@@ -33,5 +33,9 @@ export type Proposal = {
   }
   views: number
   viewed: boolean
-  offers: Offer[][]
 }
+
+export type ProposalWithOffers = {
+  offers: Record<number, Offer[]>
+  currentOfferId?: number
+} & Proposal
