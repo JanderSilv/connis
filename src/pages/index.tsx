@@ -2,20 +2,23 @@ import { GetServerSideProps, NextPage } from 'next'
 import Link from 'next/link'
 import { Box, Typography } from '@mui/material'
 
-import { ProposalCategory, ProposalStatus } from 'src/models/enums'
+import { fakeData } from 'src/data/fake'
+import { withAuth } from 'src/helpers/withAuth'
+import { OfferWithProposal, ProposalWithOffers } from 'src/models/types'
+
 import { Layout } from 'src/layouts/app'
-import { AdCard, RecentActivities } from 'src/components/home'
-import { ProposalCardProps } from 'src/components/proposal'
+import { AdCard, RecentOffers, RecentProposals } from 'src/components/home'
 
 import { LibraryBooksIcon, NoteAddIcon } from 'src/assets/icons'
 import { AsideB, ProposalButton, Title, Wrapper } from 'src/styles/home'
 
 type Props = {
-  proposals: ProposalCardProps[]
-  offers: ProposalCardProps[]
+  myProposals: ProposalWithOffers[]
+  myOffers: OfferWithProposal[]
 }
 
-const Home: NextPage<Props> = ({ offers, proposals }) => {
+const Home: NextPage<Props> = props => {
+  const { myOffers, myProposals } = props
   return (
     <Layout>
       <Title>Seja bem vindo ao Connis.</Title>
@@ -34,27 +37,8 @@ const Home: NextPage<Props> = ({ offers, proposals }) => {
         </Box>
 
         <Box width="100%" flex={1}>
-          <RecentActivities
-            title="Propostas Recentes"
-            activities={proposals}
-            seeMoreLink="/minhas-propostas"
-            emptyText="Nenhuma proposta recente"
-            listProps={{
-              'aria-label': 'Propostas Recentes',
-            }}
-            shouldHideMoreButton
-          />
-          <RecentActivities
-            title="Ofertas Recentes"
-            activities={offers}
-            seeMoreLink="/minhas-ofertas"
-            emptyText="Nenhuma oferta recente"
-            listProps={{
-              'aria-label': 'Ofertas Recentes',
-            }}
-            mt={4}
-            shouldHideMoreButton
-          />
+          <RecentProposals proposals={myProposals} />
+          <RecentOffers offers={myOffers} mt={4} />
         </Box>
 
         <AsideB>
@@ -89,56 +73,13 @@ const Home: NextPage<Props> = ({ offers, proposals }) => {
 
 export default Home
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const proposals = [
-    {
-      id: 1,
-      title: 'Título da proposta',
-      description: 'Descrição da proposta',
-      date: '10/01/2022',
-      views: 10,
-      status: ProposalStatus.opened,
-      category: ProposalCategory.waste,
-      recentActivities: 1,
-    },
-    {
-      id: 2,
-      title: 'Título da proposta 2',
-      description: 'Descrição da proposta',
-      date: '10/01/2022',
-      views: 5,
-      status: ProposalStatus.canceled,
-      category: ProposalCategory.disruptiveInnovation,
-      recentActivities: 0,
-    },
-  ]
-
-  const offers = [
-    {
-      id: 3,
-      title: 'Título da proposta 3',
-      description: 'Descrição da proposta',
-      date: '10/01/2022',
-      status: ProposalStatus.finished,
-      category: ProposalCategory.incrementalInnovation,
-      recentActivities: 0,
-    },
-    {
-      id: 4,
-      title: 'Título da proposta 4',
-      description: 'Descrição da proposta',
-      date: '07/08/2022',
-      status: ProposalStatus.onNegotiation,
-      category: ProposalCategory.others,
-      otherCategory: 'Serviços',
-      recentActivities: 3,
-    },
-  ]
+export const getServerSideProps: GetServerSideProps = withAuth(async () => {
+  const { myProposals, myOffers } = fakeData
 
   return {
     props: {
-      proposals,
-      offers,
+      myProposals,
+      myOffers,
     },
   }
-}
+})
