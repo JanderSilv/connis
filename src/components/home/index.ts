@@ -1,2 +1,2 @@
 export * from './ad-card'
-export * from './recent-activities'
+export * from './recent'
