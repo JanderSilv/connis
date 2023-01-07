@@ -4,11 +4,12 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { signOut, useSession } from 'next-auth/react'
-import { AppBar, AppBarProps, Avatar, Badge, Box, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
+import { AppBar, AppBarProps, Badge, Box, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
 
 import { NotificationPopover } from './notification'
 import { pages } from 'src/constants'
 
+import { UserAvatar } from 'src/components/shared'
 import { NotificationsIcon, NotificationsOutlinedIcon } from 'src/assets/icons'
 import { Wrapper } from './styles'
 
@@ -92,19 +93,7 @@ export const Layout = ({ children, ...rest }: LayoutProps) => {
                 aria-expanded={menuData.isOpen ? 'true' : undefined}
                 onClick={event => setMenuAnchorElement(event.currentTarget)}
               >
-                <Avatar
-                  alt={session?.user?.name || 'Avatar do usuário'}
-                  sx={{ width: 35, height: 35, bgcolor: 'primary.main' }}
-                >
-                  {session?.user?.image && (
-                    <Image
-                      src={session?.user?.image}
-                      width="35"
-                      height="35"
-                      alt={session?.user?.name || 'Avatar do usuário'}
-                    />
-                  )}
-                </Avatar>
+                <UserAvatar name={session?.user.name || ''} src={session?.user.image} />
               </IconButton>
               <Menu
                 id={menuData.id}

@@ -1,16 +1,18 @@
-import { Avatar, Box, Button, Stack, styled, Typography } from '@mui/material'
+import { Box, Button, Stack, styled, Typography } from '@mui/material'
+
 import { makeCompanyData } from 'src/helpers/proposal'
-import { Company } from 'src/models/types'
+import { CompanyUser } from 'src/models/types'
 import { KeyData } from 'src/styles/proposal'
+import { UserAvatar } from 'src/components/shared'
 
-type Props = Company
+type Props = CompanyUser
 
-export const AsideContentCompany = (company: Props) => {
-  const { logo, name } = company
+export const AsideContentOfferCompany = (company: Props) => {
+  const { image, name } = company
   return (
     <>
       <CompanyHeader>
-        <Avatar src={logo}>{name[0].toUpperCase()}</Avatar>
+        <UserAvatar name={name} src={image} />
         <Typography component="h2" variant="h3">
           {name}
         </Typography>
