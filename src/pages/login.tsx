@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { signIn } from 'next-auth/react'
 import { Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material'
@@ -23,6 +24,7 @@ const Login: NextPage = () => {
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchemaValidation),
   })
+  const { query } = useRouter()
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false)
 
@@ -31,6 +33,7 @@ const Login: NextPage = () => {
     signIn('credentials', {
       email: data.email,
       password: data.password,
+      callbackUrl: (query.callbackUrl as string) || undefined,
     })
   }
 
