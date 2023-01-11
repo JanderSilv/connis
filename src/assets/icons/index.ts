@@ -6,6 +6,7 @@ export {
   BusinessRounded as BusinessIcon,
   BusinessOutlined as BusinessOutlinedIcon,
   CenterFocusStrongRounded as CenterFocusStrongIcon,
+  DescriptionRounded as DescriptionIcon,
   DoubleArrowRounded as DoubleArrowIcon,
   EmailOutlined as EmailOutlinedIcon,
   FormatListBulletedRounded as FormatListBulletedIcon,
