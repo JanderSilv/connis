@@ -16,8 +16,5 @@ export type Offer = {
   budget?: number
   trl?: TRL
   goalTRL?: TRL
-}
-
-export type OfferWithProposal = Offer & {
-  proposal: Proposal
+  proposal?: Proposal
 }

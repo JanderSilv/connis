@@ -2,11 +2,11 @@ import { BoxProps, List, ListProps, Typography } from '@mui/material'
 import { Link } from 'src/components/link'
 import { OfferCard } from 'src/components/proposal'
 
-import { OfferWithProposal } from 'src/models/types'
+import { Offer } from 'src/models/types'
 import { EmptyTypography, Header, Wrapper } from '../styles'
 
 type RecentOffersProps = {
-  offers: OfferWithProposal[]
+  offers: Offer[]
   listProps?: ListProps
 } & BoxProps
 
