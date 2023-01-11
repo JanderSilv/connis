@@ -1,6 +1,5 @@
 import { ProposalCategory, ProposalStatus, ProposalType, TRL } from '../enums'
-import { Offer } from './offer'
-import { CompanyUser } from './user'
+import { CompanyUser, ICTUser } from './user'
 
 export type ProposalWasteQuestions = {
   testHasBeenPerformed?: boolean
@@ -18,6 +17,7 @@ export type Proposal = {
   company: CompanyUser
   createdAt: string
   updatedAt?: string
+  offerCompany?: CompanyUser | ICTUser
   proposalCategory: ProposalCategory
   proposalCategoryOther?: string
   projectDescription?: string
@@ -31,11 +31,7 @@ export type Proposal = {
   categoryQuestions: {
     waste?: ProposalWasteQuestions
   }
-  views: number
+  views?: number
   viewed: boolean
+  unseenActivities?: number
 }
-
-export type ProposalWithOffers = {
-  offers: Record<number, Offer[]>
-  currentOfferId?: number
-} & Proposal

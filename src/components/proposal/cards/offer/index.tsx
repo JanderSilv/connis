@@ -1,25 +1,26 @@
 import Link from 'next/link'
 import { Avatar, Badge, Box, ListItem, Stack, Typography } from '@mui/material'
 
-import { OfferWithProposal } from 'src/models/types'
+import { proposalTypeOptions } from 'src/data/proposal'
 import { formatDate } from 'src/helpers/formatters'
+import { Offer } from 'src/models/types'
 
 import { OfferStatusChip } from '../../chip-status'
 import { BadgeContainer, ContentContainer, Description, Header, ListItemButton } from '../styles'
-import { proposalTypeOptions } from 'src/data/proposal'
 
 export type OfferCardProps = {
+  href?: string
   unseenActivities: number
-} & OfferWithProposal
+} & Offer
 
 export const OfferCard = (props: OfferCardProps) => {
-  const { createdAt, updatedAt, message, company, status, type, unseenActivities, proposal } = props
+  const { createdAt, updatedAt, message, company, status, type, unseenActivities, proposal, href } = props
 
   const { icon: Icon, title: proposalTitle } = proposalTypeOptions[type]
 
   return (
     <ListItem disableGutters>
-      <Link href={`/proposta/${proposal.id}`} passHref>
+      <Link href={href || `/proposta/${proposal?.id}`} passHref>
         <ListItemButton LinkComponent="a">
           <ContentContainer>
             <OfferStatusChip status={status} sx={{ mb: 1, display: { sm: 'none' } }} />
@@ -34,7 +35,7 @@ export const OfferCard = (props: OfferCardProps) => {
                 <OfferStatusChip status={status} sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />
               </Box>
             </Header>
-            <Typography variant="h3">{proposal.title}</Typography>
+            <Typography variant="h3">{proposal?.title}</Typography>
 
             <Description>{message}</Description>
 

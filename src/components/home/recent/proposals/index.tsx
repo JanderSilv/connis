@@ -1,23 +1,13 @@
 import { BoxProps, List, ListProps, Typography } from '@mui/material'
+import { Proposal } from 'src/models/types'
 import { Link } from 'src/components/link'
 import { ProposalCard } from 'src/components/proposal'
-import { ProposalStatus } from 'src/models/enums'
-
-import { ProposalWithOffers } from 'src/models/types'
 import { EmptyTypography, Header, Wrapper } from '../styles'
 
 type RecentProposalsProps = {
-  proposals: ProposalWithOffers[]
+  proposals: Proposal[]
   listProps?: ListProps
 } & BoxProps
-
-const countUnseenProposals = (proposal: ProposalWithOffers) => {
-  const offers = Object.values(proposal.offers)
-  if (offers.length === 0) return 0
-  if (proposal.status === ProposalStatus.opened)
-    return offers.reduce((acc, offer) => (offer.at(-1)?.viewed ? acc : acc + 1), 0)
-  return 0
-}
 
 export const RecentProposals = (props: RecentProposalsProps) => {
   const { title, proposals, listProps, ...rest } = props
@@ -50,7 +40,7 @@ export const RecentProposals = (props: RecentProposalsProps) => {
       {hasProposals ? (
         <List {...listProps} aria-label="Propostas Recentes">
           {proposals.map(proposal => (
-            <ProposalCard key={proposal.id} {...proposal} unseenActivities={countUnseenProposals(proposal)} />
+            <ProposalCard key={proposal.id} {...proposal} />
           ))}
         </List>
       ) : (
