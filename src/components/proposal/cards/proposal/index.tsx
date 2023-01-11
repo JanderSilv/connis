@@ -9,9 +9,7 @@ import { ProposalCategory } from 'src/models/enums'
 import { ProposalStatusChip } from '../../chip-status'
 import { BadgeContainer, ContentContainer, Description, Header, ListItemButton } from '../styles'
 
-export type ProposalCardProps = {
-  unseenActivities: number
-} & Proposal
+export type ProposalCardProps = Proposal
 
 export const ProposalCard = (props: ProposalCardProps) => {
   const {
