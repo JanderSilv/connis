@@ -4,7 +4,7 @@ import { Box, Typography } from '@mui/material'
 
 import { fakeData } from 'src/data/fake'
 import { withAuth } from 'src/helpers/withAuth'
-import { OfferWithProposal, ProposalWithOffers } from 'src/models/types'
+import { Offer, Proposal } from 'src/models/types'
 
 import { Layout } from 'src/layouts/app'
 import { AdCard, RecentOffers, RecentProposals } from 'src/components/home'
@@ -13,8 +13,8 @@ import { LibraryBooksIcon, NoteAddIcon } from 'src/assets/icons'
 import { AsideB, ProposalButton, Title, Wrapper } from 'src/styles/home'
 
 type Props = {
-  myProposals: ProposalWithOffers[]
-  myOffers: OfferWithProposal[]
+  myProposals: Proposal[]
+  myOffers: Offer[]
 }
 
 const Home: NextPage<Props> = props => {
@@ -74,12 +74,12 @@ const Home: NextPage<Props> = props => {
 export default Home
 
 export const getServerSideProps: GetServerSideProps = withAuth(async () => {
-  const { myProposals, myOffers } = fakeData
+  const { myProposals, recentOffers } = fakeData
 
   return {
     props: {
       myProposals,
-      myOffers,
+      myOffers: recentOffers,
     },
   }
 })
