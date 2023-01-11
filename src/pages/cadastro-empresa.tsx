@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { Autocomplete, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { cnaesData } from 'src/data/ibge'
+import { withPublic } from 'src/helpers/auth/withPublic'
 import { useCNPJDialog } from 'src/hooks/company-sign-up'
 import { companySignUpValidationSchema, CompanySignUpSchema } from 'src/validations/company-sign-up'
 
@@ -294,3 +295,9 @@ const CompanySignUp: NextPage = () => {
 }
 
 export default CompanySignUp
+
+export const getServerSideProps: GetServerSideProps = withPublic(async () => {
+  return {
+    props: {},
+  }
+})
