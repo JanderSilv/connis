@@ -19,7 +19,7 @@ const notificationPopoverId = 'notification-popover'
 
 export const Layout = ({ children, ...rest }: LayoutProps) => {
   const { push } = useRouter()
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
   const [menuAnchorElement, setMenuAnchorElement] = useState<HTMLElement | null>(null)
   const [notificationAnchorElement, setNotificationAnchorElement] = useState<HTMLButtonElement | null>(null)
@@ -37,6 +37,8 @@ export const Layout = ({ children, ...rest }: LayoutProps) => {
       date: '10/10/2021',
     },
   ])
+
+  const isAuthenticated = status === 'authenticated'
 
   const menuData = {
     id: 'user-menu',
@@ -64,51 +66,53 @@ export const Layout = ({ children, ...rest }: LayoutProps) => {
             </Link>
           </Box>
 
-          <Box display="flex" alignItems="center" gap={3}>
-            <IconButton
-              aria-describedby={notificationPopoverId}
-              onClick={event => setNotificationAnchorElement(event.currentTarget)}
-            >
-              <Badge badgeContent={notifications.length} max={9} color="error">
-                {!!notifications.length ? (
-                  <NotificationsIcon color="primary" />
-                ) : (
-                  <NotificationsOutlinedIcon color="primary" />
-                )}
-              </Badge>
-            </IconButton>
-            <NotificationPopover
-              aria-describedby={notificationPopoverId}
-              anchorEl={notificationAnchorElement}
-              open={!!notificationAnchorElement}
-              onClose={handleCloseNotificationPopover}
-              notifications={notifications}
-            />
-
-            <Box>
+          {isAuthenticated && (
+            <Box display="flex" alignItems="center" gap={3}>
               <IconButton
-                id={menuData.buttonId}
-                aria-haspopup="true"
-                aria-controls={menuData.isOpen ? menuData.id : undefined}
-                aria-expanded={menuData.isOpen ? 'true' : undefined}
-                onClick={event => setMenuAnchorElement(event.currentTarget)}
+                aria-describedby={notificationPopoverId}
+                onClick={event => setNotificationAnchorElement(event.currentTarget)}
               >
-                <UserAvatar name={session?.user.name || ''} src={session?.user.image} />
+                <Badge badgeContent={notifications.length} max={9} color="error">
+                  {!!notifications.length ? (
+                    <NotificationsIcon color="primary" />
+                  ) : (
+                    <NotificationsOutlinedIcon color="primary" />
+                  )}
+                </Badge>
               </IconButton>
-              <Menu
-                id={menuData.id}
-                anchorEl={menuAnchorElement}
-                open={!!menuAnchorElement}
-                onClose={() => setMenuAnchorElement(null)}
-                MenuListProps={{
-                  'aria-labelledby': menuData.buttonId,
-                }}
-              >
-                <MenuItem onClick={() => push(pages.profile)}>Perfil</MenuItem>
-                <MenuItem onClick={() => signOut()}>Sair</MenuItem>
-              </Menu>
+              <NotificationPopover
+                aria-describedby={notificationPopoverId}
+                anchorEl={notificationAnchorElement}
+                open={!!notificationAnchorElement}
+                onClose={handleCloseNotificationPopover}
+                notifications={notifications}
+              />
+
+              <Box>
+                <IconButton
+                  id={menuData.buttonId}
+                  aria-haspopup="true"
+                  aria-controls={menuData.isOpen ? menuData.id : undefined}
+                  aria-expanded={menuData.isOpen ? 'true' : undefined}
+                  onClick={event => setMenuAnchorElement(event.currentTarget)}
+                >
+                  <UserAvatar name={session?.user.name || ''} src={session?.user.image} />
+                </IconButton>
+                <Menu
+                  id={menuData.id}
+                  anchorEl={menuAnchorElement}
+                  open={!!menuAnchorElement}
+                  onClose={() => setMenuAnchorElement(null)}
+                  MenuListProps={{
+                    'aria-labelledby': menuData.buttonId,
+                  }}
+                >
+                  <MenuItem onClick={() => push(pages.profile)}>Perfil</MenuItem>
+                  <MenuItem onClick={() => signOut()}>Sair</MenuItem>
+                </Menu>
+              </Box>
             </Box>
-          </Box>
+          )}
         </Toolbar>
       </AppBar>
 
