@@ -1,10 +1,12 @@
-import { GetServerSideProps, NextPage } from 'next'
+import { GetStaticProps, NextPage } from 'next'
 import Head from 'next/head'
 import { ParsedUrlQuery } from 'querystring'
-import { Box, Theme, useMediaQuery } from '@mui/material'
+import { Box, Theme, useMediaQuery, useScrollTrigger } from '@mui/material'
 
 import { fakeData } from 'src/data/fake'
-import { Company, Proposal } from 'src/models/types'
+import { checkUserIsICT } from 'src/helpers/users'
+import { useProposalSession, useTab } from 'src/hooks/proposal'
+import { Offer, Proposal } from 'src/models/types'
 
 import { Layout } from 'src/layouts/app'
 import {
@@ -12,25 +14,42 @@ import {
   ProposalDataSectionTwo,
   ProposalDataSectionThree,
   AsideContentOwner,
-  AsideContentCompany,
+  OfferCompanyAsideContent,
+  TabPanel,
+  OfferCard,
+  MobileNavigation,
+  DefaultAsideContent,
+  ICTAsideContent,
 } from 'src/components/proposal'
 import { ScrollTop } from 'src/components/shared'
-import { ProposalTitle, Section, Wrapper } from 'src/styles/proposal'
+import { ProposalTitle, Section, Tab, Tabs, Wrapper } from 'src/styles/proposal'
+import { ProposalType } from 'src/models/enums'
 
-type Props = {
-  proposal: {
-    company: Company
-  } & Proposal
+type ProposalSectionsProps = {
+  proposal: Proposal
 }
 
-const { userCompany } = fakeData
+const ProposalSections = ({ proposal }: ProposalSectionsProps) => (
+  <Box component="main">
+    <ProposalDataSectionOne {...proposal} />
+    <ProposalDataSectionTwo {...proposal} />
+    <ProposalDataSectionThree {...proposal} />
+  </Box>
+)
 
-const ProposalPage: NextPage<Props> = ({ proposal }) => {
+type ProposalPageProps = {
+  proposal: Proposal
+  offers: Offer[][]
+}
+
+const ProposalPage: NextPage<ProposalPageProps> = props => {
+  const { proposal, offers } = props
   const isMobile = useMediaQuery<Theme>(theme => theme.breakpoints.down('md'))
+  const scrollTrigger = useScrollTrigger()
+  const { userIsTheOwner, status, session } = useProposalSession(proposal)
+  const { tabs, selectedTab, handleChangeTab, a11yTabProps } = useTab()
 
   const documentTitle = `Proposta ${proposal.id} - Connis`
-  const company = proposal.company
-  const isTheOwner = userCompany.id === company.id
 
   return (
     <Layout>
@@ -40,24 +59,74 @@ const ProposalPage: NextPage<Props> = ({ proposal }) => {
 
       <ProposalTitle>{proposal.title}</ProposalTitle>
 
-      <Wrapper maxWidth="xl">
-        <Box component="main" flex={1}>
-          <ProposalDataSectionOne {...proposal} />
-          <ProposalDataSectionTwo {...proposal} />
-          <ProposalDataSectionThree {...proposal} />
-        </Box>
+      {userIsTheOwner && (
+        <Tabs value={selectedTab} onChange={handleChangeTab} aria-label="Abas de Navegação" centered>
+          {tabs.map(({ label }, index) => (
+            <Tab key={label} label={label} {...a11yTabProps(index)} />
+          ))}
+        </Tabs>
+      )}
 
-        <Box component="aside" flex={isTheOwner ? 0.3 : 0.4} position="relative">
+      <Wrapper maxWidth="xl">
+        <TabPanel value={selectedTab} index={0} flex={1}>
+          <ProposalSections proposal={proposal} />
+        </TabPanel>
+        {userIsTheOwner && (
+          <TabPanel value={selectedTab} index={1} flex={1}>
+            <Box component="main" maxWidth={750} ml="auto">
+              {offers.map(offerHistory => {
+                const lastOffer = offerHistory.at(-1)
+                return (
+                  lastOffer && (
+                    <OfferCard
+                      key={lastOffer.id}
+                      {...lastOffer}
+                      href={`/proposta/${lastOffer.proposal?.id}/oferta/${lastOffer.id}`}
+                      unseenActivities={lastOffer.viewed ? 0 : 1}
+                    />
+                  )
+                )
+              })}
+            </Box>
+          </TabPanel>
+        )}
+
+        <Box component="aside" flex={userIsTheOwner ? 0.3 : 0.4} position="relative">
           <Section sx={{ position: 'sticky', top: 32 }}>
             {(() => {
-              if (isTheOwner) return <AsideContentOwner {...proposal} />
-              else return <AsideContentCompany {...company} />
+              if (status === 'unauthenticated') return <DefaultAsideContent {...proposal.company} />
+              else if (
+                proposal.proposalType.includes(ProposalType.research) &&
+                session?.user &&
+                checkUserIsICT(session.user)
+              )
+                return <ICTAsideContent {...proposal.company} />
+              else if (userIsTheOwner) return <AsideContentOwner {...proposal} />
+              else return <OfferCompanyAsideContent {...proposal.company} />
             })()}
           </Section>
         </Box>
       </Wrapper>
 
-      <ScrollTop showCondition={isMobile} />
+      {userIsTheOwner && (
+        <MobileNavigation
+          tabs={tabs}
+          selectedTab={selectedTab}
+          handleChangeTab={handleChangeTab}
+          scrollTrigger={scrollTrigger}
+        />
+      )}
+
+      <ScrollTop
+        sx={
+          userIsTheOwner && isMobile
+            ? {
+                bottom: 70,
+                transform: scrollTrigger ? 'translateY(50px)' : 'translateY(0)',
+              }
+            : {}
+        }
+      />
     </Layout>
   )
 }
@@ -68,19 +137,32 @@ type Params = {
   id: string
 } & ParsedUrlQuery
 
-export const getServerSideProps: GetServerSideProps = async context => {
+export const getStaticPaths = async () => {
+  const { myProposals } = fakeData
+
+  const paths = myProposals.map(proposal => ({
+    params: {
+      id: proposal.id.toString(),
+    },
+  }))
+
+  return {
+    paths,
+    fallback: false,
+  }
+}
+
+export const getStaticProps: GetStaticProps = async context => {
+  const { proposal, myOffers } = fakeData
+
   const { id } = context.params as Params
 
   console.log({ id })
 
-  const { proposal, company } = fakeData
-
   return {
     props: {
-      proposal: {
-        ...proposal,
-        company,
-      },
+      proposal,
+      offers: myOffers,
     },
   }
 }
