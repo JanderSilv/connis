@@ -15,6 +15,7 @@ export type ICTLab = {
 }
 
 export type ICTAddress = {
+  id: number
   city: string
   uf: string
   cep: string
