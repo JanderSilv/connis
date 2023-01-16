@@ -15,7 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "types": ["vitest/globals"]
   },
   "ts-node": {
     "compilerOptions": {
