@@ -13,6 +13,8 @@ type ExcludedProposalKeys =
   | 'viewed'
   | 'currentOfferId'
   | 'company'
+  | 'unseenActivities'
+  | 'offerCompany'
 
 export type ProposalSchema = Omit<Proposal, ExcludedProposalKeys> & {
   budget?: string
