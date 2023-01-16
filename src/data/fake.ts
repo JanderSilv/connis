@@ -7,7 +7,7 @@ import {
   ProposalType,
   TRL,
 } from 'src/models/enums'
-import { Offer, OfferWithProposal, Proposal, User, ProposalWithOffers } from 'src/models/types'
+import { Offer, Proposal, User } from 'src/models/types'
 
 const userCompany: User = {
   id: 1,
@@ -55,6 +55,27 @@ const company: User = {
   analysts: [],
 }
 
+const ict: User = {
+  id: 2,
+  name: 'Empresa 1',
+  type: 'ict',
+  image: 'https://picsum.photos/200/200',
+  labs: [],
+  projects: [],
+  address: {
+    id: 1,
+    city: 'Salvador',
+    uf: 'BA',
+    cep: '41820790',
+    number: '1423',
+    street: 'Rua da Bahia',
+    complement: 'Casa',
+  },
+  email: 'company@email.com.br',
+  phone: '71999999999',
+  analysts: [],
+}
+
 const offer: Offer = {
   id: 1,
   createdAt: new Date('2021').toLocaleString(),
@@ -71,7 +92,7 @@ const offer: Offer = {
 const proposal: Proposal = {
   id: 1,
   createdAt: new Date(2022, 10).toLocaleString(),
-  company,
+  company: { ...company, id: 1 },
   keywords: ['Setor', 'Têxtil', 'Resíduos'],
   categoryQuestions: {
     waste: {
@@ -97,19 +118,15 @@ const proposal: Proposal = {
   viewed: false,
 }
 
-export const proposalWithOffers: ProposalWithOffers = {
-  ...proposal,
-  offers: {
-    1: [offer],
-    2: [{ ...offer, viewed: true }, offer],
-  },
-  currentOfferId: 1,
+const currentOffer = {
+  ...offer,
+  proposal,
 }
 
-const myProposals: ProposalWithOffers[] = [
-  { ...proposalWithOffers, status: ProposalStatus.opened },
+const myProposals: Proposal[] = [
+  { ...proposal, status: ProposalStatus.opened },
   {
-    ...proposalWithOffers,
+    ...proposal,
     id: 2,
     status: ProposalStatus.canceled,
     proposalCategory: ProposalCategory.disruptiveInnovation,
@@ -117,16 +134,26 @@ const myProposals: ProposalWithOffers[] = [
   },
 ]
 
-const myOffers: OfferWithProposal[] = [
-  { ...offer, proposal: proposal },
-  { ...offer, id: 2, status: OfferStatus.rejected, viewed: true, type: ProposalType.donate, proposal: proposal },
+const myOffers: Offer[][] = [
+  [
+    { ...offer, proposal },
+    { ...offer, id: 2, status: OfferStatus.saw, viewed: true, type: ProposalType.donate, proposal },
+  ],
+  [
+    { ...offer, proposal },
+    { ...offer, id: 2, status: OfferStatus.sended, viewed: true, type: ProposalType.donate, proposal },
+  ],
 ]
 
+const recentOffers = [myOffers[0].at(-1), myOffers[1].at(-1)]
+
 export const fakeData = {
+  ict,
   userCompany,
   company,
   proposal,
-  proposalWithOffers,
+  currentOffer,
   myProposals,
   myOffers,
+  recentOffers,
 }
