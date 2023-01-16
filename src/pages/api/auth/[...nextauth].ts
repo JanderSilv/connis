@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...fakeData.company,
           type: 'company',
-          logo: fakeData.company.image || (user?.image ? user.image : ''),
+          image: fakeData.company.image || (user?.image ? user.image : ''),
           email: fakeData.company.email || (user?.email ? user.email : ''),
           // cnpj: '',
         },
