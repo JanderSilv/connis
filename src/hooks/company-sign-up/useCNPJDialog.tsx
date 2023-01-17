@@ -65,6 +65,9 @@ const CNPJDialog = ({ session, fetchedCompany, setFetchedCompany, reset }: Props
             variant="standard"
             label="CNPJ"
             mask="00.000.000/0000-00"
+            inputProps={{
+              'data-testid': 'cnpj',
+            }}
             {...register('cnpj')}
             error={!!errors.cnpj}
             helperText={errors.cnpj?.message}
@@ -78,7 +81,7 @@ const CNPJDialog = ({ session, fetchedCompany, setFetchedCompany, reset }: Props
           >
             Cancelar
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button type="submit" data-testid="send-cnpj" disabled={isSubmitting}>
             Enviar
           </Button>
         </DialogActions>
