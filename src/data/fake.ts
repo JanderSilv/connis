@@ -92,7 +92,7 @@ const offer: Offer = {
 const proposal: Proposal = {
   id: 1,
   createdAt: new Date(2022, 10).toLocaleString(),
-  company: { ...company, id: 1 },
+  company: { ...company, id: 2 },
   keywords: ['Setor', 'Têxtil', 'Resíduos'],
   categoryQuestions: {
     waste: {
@@ -145,7 +145,7 @@ const myOffers: Offer[][] = [
   ],
 ]
 
-const recentOffers = [myOffers[0].at(-1), myOffers[1].at(-1)]
+const recentOffers = [myOffers[0].at(-1), { ...myOffers[1].at(-1), id: 3 }] as Offer[]
 
 export const fakeData = {
   ict,
