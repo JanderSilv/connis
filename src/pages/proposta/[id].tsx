@@ -6,24 +6,26 @@ import { Box, Theme, useMediaQuery, useScrollTrigger } from '@mui/material'
 import { fakeData } from 'src/data/fake'
 import { checkUserIsICT } from 'src/helpers/users'
 import { useProposalSession, useTab } from 'src/hooks/proposal'
+
+import { ProposalType } from 'src/models/enums'
 import { Offer, Proposal } from 'src/models/types'
 
-import { Layout } from 'src/layouts/app'
 import {
-  ProposalDataSectionOne,
-  ProposalDataSectionTwo,
-  ProposalDataSectionThree,
   AsideContentOwner,
-  OfferCompanyAsideContent,
-  TabPanel,
-  OfferCard,
-  MobileNavigation,
+  CompanyData,
   DefaultAsideContent,
   ICTAsideContent,
+  MobileNavigation,
+  OfferCard,
+  OfferCompanyAsideContent,
+  ProposalDataSectionOne,
+  ProposalDataSectionThree,
+  ProposalDataSectionTwo,
+  TabPanel,
 } from 'src/components/proposal'
 import { ScrollTop } from 'src/components/shared'
+import { Layout } from 'src/layouts/app'
 import { ProposalTitle, Section, Tab, Tabs, Wrapper } from 'src/styles/proposal'
-import { ProposalType } from 'src/models/enums'
 
 type ProposalSectionsProps = {
   proposal: Proposal
@@ -94,7 +96,8 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
         <Box component="aside" flex={userIsTheOwner ? 0.3 : 0.4} position="relative">
           <Section sx={{ position: 'sticky', top: 32 }}>
             {(() => {
-              if (status === 'unauthenticated') return <DefaultAsideContent {...proposal.company} />
+              if (status === 'loading') return <CompanyData {...proposal.company} />
+              else if (status === 'unauthenticated') return <DefaultAsideContent {...proposal.company} />
               else if (
                 proposal.proposalType.includes(ProposalType.research) &&
                 session?.user &&
