@@ -9,7 +9,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { pages } from 'src/constants'
 import { useToast } from 'src/hooks/useToast'
 import { CompanyUser } from 'src/models/types'
-import { CompanySignUpSchema, CnpjSchema, cnpjValidationSchema } from 'src/validations/company-sign-up'
+import {
+  CompanySignUpSchema,
+  CompanySocialSignUpSchema,
+  CnpjSchema,
+  cnpjValidationSchema,
+} from 'src/validations/company-sign-up'
 import { brasilAPIService } from 'src/services/brasil-api'
 
 import { MaskedTextField, SlideTransition } from 'src/components/shared'
@@ -17,12 +22,13 @@ import { BusinessIcon } from 'src/assets/icons'
 import { Form } from 'src/styles/company-sign-up'
 
 type NullishCompany = CompanyUser | null
+type CompanyUseFormReset = UseFormReset<CompanySignUpSchema> | UseFormReset<CompanySocialSignUpSchema>
 
 type Props = {
   session?: Session
   fetchedCompany: NullishCompany
   setFetchedCompany: Dispatch<SetStateAction<NullishCompany>>
-  reset: UseFormReset<CompanySignUpSchema>
+  reset: CompanyUseFormReset
 }
 
 const CNPJDialog = ({ session, fetchedCompany, setFetchedCompany, reset }: Props) => {
@@ -90,7 +96,7 @@ const CNPJDialog = ({ session, fetchedCompany, setFetchedCompany, reset }: Props
   )
 }
 
-export const useCNPJDialog = (reset: UseFormReset<CompanySignUpSchema>, session?: Session) => {
+export const useCNPJDialog = (reset: CompanyUseFormReset, session?: Session) => {
   const [fetchedCompany, setFetchedCompany] = useState<CompanyUser | null>(null)
 
   return {
