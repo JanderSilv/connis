@@ -13,8 +13,8 @@ export type Offer = {
   status: OfferStatus
   type: ProposalType
   viewed: boolean
-  budget?: number
-  trl?: TRL
-  goalTRL?: TRL
+  budget: number
+  trl: TRL
+  goalTRL: TRL
   proposal?: Proposal
 }
