@@ -3,7 +3,7 @@ import { OfferStatus } from 'src/models/enums'
 export const offerStatus = {
   [OfferStatus.accepted]: {
     color: 'success.light',
-    label: 'Aberto',
+    label: 'Aceito',
   },
   [OfferStatus.rejected]: {
     color: 'error.light',
@@ -14,7 +14,7 @@ export const offerStatus = {
     label: 'Aguardando Resposta',
   },
   [OfferStatus.saw]: {
-    color: 'warning.light',
+    color: 'info.light',
     label: 'Visualizado',
   },
 }
