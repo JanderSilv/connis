@@ -6,7 +6,7 @@ import { useOfferSession } from 'src/hooks/offer'
 
 import { proposalTypeOptions } from 'src/data/proposal'
 import { ProposalType } from 'src/models/enums'
-import { Offer } from 'src/models/types'
+import { Offer, Proposal } from 'src/models/types'
 
 import { ProposalTypeData, TRLData } from 'src/components/proposal'
 
@@ -14,6 +14,7 @@ import { DoubleArrowIcon } from 'src/assets/icons'
 import { DataContainer, Section, Title } from 'src/styles/proposal'
 
 type Props = {
+  proposal: Proposal
   currentOffer: Offer
   offers: Offer[]
 }
@@ -48,7 +49,7 @@ export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
               <Box>
                 <Title>Orçamento</Title>
                 <Typography>
-                  {makeProposalBudgetText(currentOffer, offers, userIsTheOwnerOfOffer)}{' '}
+                  {makeProposalBudgetText(proposal, currentOffer, offers, userIsTheOwnerOfOffer)}{' '}
                   <span>{formatCurrency(budget)}</span>{' '}
                 </Typography>
               </Box>
