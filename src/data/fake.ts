@@ -79,7 +79,7 @@ const ict: User = {
 
 const offer: Offer = {
   id: 1,
-  createdAt: new Date('2021').toLocaleString(),
+  createdAt: new Date(2022, 10).toLocaleString(),
   updatedAt: new Date().toLocaleString(),
   company: { ...company, id: 3 },
   message: 'Podemos agregar ao seu projeto',
@@ -141,13 +141,14 @@ const myProposals: Proposal[] = [
 
 const myOffers: Offer[][] = [
   [
-    { ...offer, proposal },
+    { ...offer, proposal, company },
     {
       ...offer,
       id: 2,
       status: OfferStatus.saw,
       viewed: true,
       type: ProposalType.buyOrSell,
+      category: OfferCategory.counterProposal,
       proposal,
       trl: TRL.trl2,
       goalTRL: TRL.trl3,
