@@ -1,7 +1,6 @@
-import { companySizes } from 'src/data/company'
 import { proposalAdditionalQuestions } from 'src/data/proposal'
 import { ProposalType } from 'src/models/enums'
-import { Company, ProposalWasteQuestions } from 'src/models/types'
+import { ProposalWasteQuestions } from 'src/models/types'
 
 export const makeProposalTypeText = (proposalType: ProposalType[]) => {
   if (proposalType[0] === ProposalType.research) return null
@@ -31,29 +30,6 @@ export const makeProposalTypeText = (proposalType: ProposalType[]) => {
   )
 }
 
-export const makeCompanyData = (company: Company) => [
-  {
-    label: 'CNAE',
-    value: company.cnae?.label,
-    displayBlock: true,
-  },
-  {
-    label: 'Porte',
-    value: companySizes[company.size],
-  },
-  {
-    label: 'Local',
-    value: `${company.address.city} - ${company.address.uf}`,
-  },
-  {
-    label: 'Capital Social',
-    value: new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(company.socialCapital),
-  },
-]
-
 export const makeWasteQuestionsData = (waste: ProposalWasteQuestions) => {
   const { production, testHasBeenPerformed, toxicity } = proposalAdditionalQuestions.waste
 
@@ -72,3 +48,6 @@ export const makeWasteQuestionsData = (waste: ProposalWasteQuestions) => {
     },
   ]
 }
+
+export * from './company'
+export * from './ict'
