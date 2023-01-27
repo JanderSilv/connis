@@ -36,3 +36,12 @@ export const proposalTypeOptions: CardData[] = [
   proposalTypes[ProposalType.exchange],
   proposalTypes[ProposalType.research],
 ]
+
+const proposalTypesTexts = {
+  [ProposalType.buyOrSell]: 'valores',
+  [ProposalType.exchange]: 'troca de bens',
+  [ProposalType.donate]: 'doação',
+  [ProposalType.research]: 'pesquisa e desenvolvimento',
+}
+
+export { proposalTypesTexts }
