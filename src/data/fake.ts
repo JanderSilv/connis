@@ -34,7 +34,7 @@ const userCompany: User = {
 
 const company: User = {
   id: 2,
-  name: 'Empresa 1',
+  name: 'Empresa Ofertante',
   type: 'company',
   cnae: {
     id: '123456',
@@ -57,8 +57,9 @@ const company: User = {
 
 const ict: User = {
   id: 2,
-  name: 'Empresa 1',
+  name: 'Senai Cimatec',
   type: 'ict',
+  cnpj: '03795071001350',
   image: 'https://picsum.photos/200/200',
   labs: [],
   projects: [],
@@ -80,19 +81,23 @@ const offer: Offer = {
   id: 1,
   createdAt: new Date('2021').toLocaleString(),
   updatedAt: new Date().toLocaleString(),
-  company,
+  company: { ...company, id: 3 },
   message: 'Podemos agregar ao seu projeto',
   type: ProposalType.buyOrSell,
   proposalId: 1,
   viewed: false,
   status: OfferStatus.sended,
   category: OfferCategory.default,
+  trl: TRL.trl1,
+  goalTRL: TRL.trl3,
+  budget: 50_000,
 }
 
 const proposal: Proposal = {
   id: 1,
   createdAt: new Date(2022, 10).toLocaleString(),
-  company: { ...company, id: 2 },
+  company: { ...userCompany, id: 2 },
+  offerCompany: { ...company, id: 1 },
   keywords: ['Setor', 'Têxtil', 'Resíduos'],
   categoryQuestions: {
     waste: {
@@ -137,11 +142,27 @@ const myProposals: Proposal[] = [
 const myOffers: Offer[][] = [
   [
     { ...offer, proposal },
-    { ...offer, id: 2, status: OfferStatus.saw, viewed: true, type: ProposalType.donate, proposal },
+    {
+      ...offer,
+      id: 2,
+      status: OfferStatus.saw,
+      viewed: true,
+      type: ProposalType.buyOrSell,
+      proposal,
+      trl: TRL.trl2,
+      goalTRL: TRL.trl3,
+    },
   ],
   [
     { ...offer, proposal },
-    { ...offer, id: 2, status: OfferStatus.sended, viewed: true, type: ProposalType.donate, proposal },
+    {
+      ...offer,
+      id: 3,
+      status: OfferStatus.sended,
+      viewed: true,
+      type: ProposalType.buyOrSell,
+      proposal,
+    },
   ],
 ]
 
