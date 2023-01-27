@@ -18,26 +18,12 @@ import {
   MobileNavigation,
   OfferCard,
   OfferCompanyAsideContent,
-  ProposalDataSectionOne,
-  ProposalDataSectionThree,
-  ProposalDataSectionTwo,
+  ProposalSections,
   TabPanel,
 } from 'src/components/proposal'
 import { ScrollTop } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
 import { ProposalTitle, Section, Tab, Tabs, Wrapper } from 'src/styles/proposal'
-
-type ProposalSectionsProps = {
-  proposal: Proposal
-}
-
-const ProposalSections = ({ proposal }: ProposalSectionsProps) => (
-  <Box component="main">
-    <ProposalDataSectionOne {...proposal} />
-    <ProposalDataSectionTwo {...proposal} />
-    <ProposalDataSectionThree {...proposal} />
-  </Box>
-)
 
 type ProposalPageProps = {
   proposal: Proposal
