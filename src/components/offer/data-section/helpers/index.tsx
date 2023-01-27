@@ -1,6 +1,6 @@
 import { proposalTypesTexts } from 'src/data/proposal'
 import { ProposalType } from 'src/models/enums'
-import { Offer } from 'src/models/types'
+import { Offer, Proposal } from 'src/models/types'
 
 const makeTRLText = (offer: Offer, isTheOfferOwner: boolean) => {
   const { proposal, trl, goalTRL } = offer
@@ -66,15 +66,19 @@ const makeProposalTypeText = (proposalType: ProposalType, isTheOfferOwner: boole
     ? `Você deseja seguir a negociação envolvendo ${proposalTypesTexts[proposalType]}`
     : `A empresa deseja seguir a negociação envolvendo ${proposalTypesTexts[proposalType]}`
 
-const makeProposalBudgetText = (currentOffer: Offer, offersHistory: Offer[], isTheOfferOwner: boolean) => {
+const makeProposalBudgetText = (
+  proposal: Proposal,
+  currentOffer: Offer,
+  offersHistory: Offer[],
+  isTheOfferOwner: boolean
+) => {
   const previousOffer = offersHistory.at(-2)
   if (isTheOfferOwner) {
     if (previousOffer) {
       if (previousOffer.budget === currentOffer.budget) return 'Você concordou com o orçamento definido pela empresa'
       else return `Você solicitou um orçamento de`
     } else {
-      if (currentOffer.proposal?.budget === currentOffer.budget)
-        return 'Você concordou com o orçamento definido pela empresa'
+      if (proposal.budget === currentOffer.budget) return 'Você concordou com o orçamento definido pela empresa'
       else return `Você solicitou um orçamento de`
     }
   } else {
