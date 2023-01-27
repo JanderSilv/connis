@@ -1,14 +1,14 @@
 import { Typography } from '@mui/material'
-import { makeCompanyData } from 'src/helpers/proposal'
-import { CompanyUser } from 'src/models/types'
+import { makeCompanyData, makeICTData } from 'src/helpers/proposal'
+import { CompanyUser, ICTUser } from 'src/models/types'
 import { KeyData } from 'src/styles/proposal'
 import { UserAvatar } from 'src/components/shared'
 import { CompanyHeader } from './styles'
 
-type Props = CompanyUser
+type Props = CompanyUser | ICTUser
 
 export const CompanyData = (company: Props) => {
-  const { name, image } = company
+  const { name, image, type } = company
   return (
     <>
       <CompanyHeader>
@@ -18,14 +18,20 @@ export const CompanyData = (company: Props) => {
         </Typography>
       </CompanyHeader>
 
-      {makeCompanyData(company).map(({ label, value, displayBlock }) => (
-        <KeyData key={label}>
-          <Typography component="strong" display={displayBlock ? 'block' : undefined}>
-            {label}:
-          </Typography>{' '}
-          {value}
-        </KeyData>
-      ))}
+      {type === 'company'
+        ? makeCompanyData(company).map(({ label, value, displayBlock }) => (
+            <KeyData key={label}>
+              <Typography component="strong" display={displayBlock ? 'block' : undefined}>
+                {label}:
+              </Typography>{' '}
+              {value}
+            </KeyData>
+          ))
+        : makeICTData(company).map(({ label, value }) => (
+            <KeyData key={label}>
+              <Typography component="strong">{label}:</Typography> {value}
+            </KeyData>
+          ))}
     </>
   )
 }
