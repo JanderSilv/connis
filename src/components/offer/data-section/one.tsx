@@ -11,14 +11,14 @@ import { makeMessageTitle } from './helpers'
 export const OfferDataSectionOne = (offer: Offer) => {
   const { message } = offer
 
-  const { userIsTheOwnerOfOffer, status } = useOfferSession(offer)
+  const { userIsTheOfferOwner, status } = useOfferSession(offer)
 
   return (
     <Section>
       <OfferStatusChip status={offer.status} />
 
       <DataContainer>
-        <Title>{makeMessageTitle(status, userIsTheOwnerOfOffer)}</Title>
+        <Title>{makeMessageTitle(status, userIsTheOfferOwner)}</Title>
         <Typography>{message}</Typography>
       </DataContainer>
     </Section>

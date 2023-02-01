@@ -8,12 +8,13 @@ export const useOfferSession = (offer?: Offer, serverSession?: Session) => {
   if (serverSession)
     return {
       session: serverSession,
-      userIsTheOwnerOfOffer: serverSession?.user.id === offer?.company.id,
+      status: 'authenticated',
+      userIsTheOfferOwner: serverSession?.user.id === offer?.company.id,
     }
 
   return {
     session,
     status,
-    userIsTheOwnerOfOffer: session?.user.id === offer?.company.id,
+    userIsTheOfferOwner: session?.user.id === offer?.company.id,
   }
 }

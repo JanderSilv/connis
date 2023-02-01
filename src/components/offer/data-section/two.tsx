@@ -22,7 +22,7 @@ type Props = {
 export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
   const { budget, trl, goalTRL, proposal, type } = currentOffer
 
-  const { userIsTheOwnerOfOffer } = useOfferSession(currentOffer)
+  const { userIsTheOfferOwner } = useOfferSession(currentOffer)
 
   if (!proposal) return null
 
@@ -31,7 +31,7 @@ export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
       <Box flex={1}>
         <Title>TRLs</Title>
 
-        <Typography>{makeTRLText(currentOffer, userIsTheOwnerOfOffer)}</Typography>
+        <Typography>{makeTRLText(currentOffer, userIsTheOfferOwner)}</Typography>
 
         <Stack mt={3} direction="row" alignItems="center" gap={1}>
           <TRLData trl={trl} />
@@ -49,7 +49,7 @@ export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
               <Box>
                 <Title>Orçamento</Title>
                 <Typography>
-                  {makeProposalBudgetText(proposal, currentOffer, offers, userIsTheOwnerOfOffer)}{' '}
+                  {makeProposalBudgetText(proposal, currentOffer, offers, userIsTheOfferOwner)}{' '}
                   <span>{formatCurrency(budget)}</span>{' '}
                 </Typography>
               </Box>
@@ -57,7 +57,7 @@ export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
 
             <DataContainer>
               <Title>Tipo da Proposta</Title>
-              <Typography>{makeProposalTypeText(type, userIsTheOwnerOfOffer)}</Typography>
+              <Typography>{makeProposalTypeText(type, userIsTheOfferOwner)}</Typography>
               <Stack mt={3} direction="row" alignItems="center" gap={1}>
                 {proposalTypeOptions.map(proposalType => (
                   <ProposalTypeData key={proposalType.id} {...proposalType} selected={proposalType.id === type} />

@@ -34,7 +34,7 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
   const currentOffer = offers.at(-1)
 
   const { userIsTheProposalOwner } = useProposalSession(proposal, session)
-  const { userIsTheOwnerOfOffer } = useOfferSession(currentOffer, session)
+  const { userIsTheOfferOwner } = useOfferSession(currentOffer, session)
 
   const [activatedOfferSteps, setActivatedOfferSteps] = useState(() => ({
     ...offers.reduce((acc, offer) => ({ ...acc, [offer.id]: true }), {} as Record<number, boolean>),
@@ -112,7 +112,7 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
             {!!currentOffer && (
               <>
                 <Divider sx={{ my: 2 }} />
-                {userIsTheOwnerOfOffer ? (
+                {userIsTheOfferOwner ? (
                   <Typography color="warning.light" fontWeight="bold" textAlign="center">
                     Aguardando resposta da empresa
                   </Typography>
