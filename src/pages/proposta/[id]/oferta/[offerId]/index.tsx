@@ -3,7 +3,19 @@ import { GetServerSideProps, NextPage } from 'next'
 import { Session } from 'next-auth'
 import Head from 'next/head'
 import { ParsedUrlQuery } from 'querystring'
-import { Box, Button, Divider, Stack, Step, StepButton, StepContent, Stepper, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  Popover,
+  Stack,
+  Step,
+  StepButton,
+  StepContent,
+  Stepper,
+  Typography,
+} from '@mui/material'
 
 import { fakeData } from 'src/data/fake'
 import { offerCategories } from 'src/data/offer'
@@ -19,7 +31,7 @@ import { CompanyData, ProposalSections } from 'src/components/proposal'
 import { ScrollTop } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
 
-import { DescriptionIcon } from 'src/assets/icons'
+import { DescriptionIcon, InfoIcon } from 'src/assets/icons'
 import { OfferStepIconRoot } from 'src/styles/offer'
 import { ProposalTitle, Section, Wrapper } from 'src/styles/proposal'
 import { useOfferSession } from 'src/hooks/offer'
@@ -40,8 +52,10 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
     ...offers.reduce((acc, offer) => ({ ...acc, [offer.id]: true }), {} as Record<number, boolean>),
   }))
   const [isProposalActive, setIsProposalActive] = useState(true)
+  const [helpButtonAnchorElement, setHelpButtonAnchorElement] = useState<HTMLButtonElement | null>(null)
 
   const documentTitle = `Oferta ${proposal.id} - ${proposal.title} - Connis`
+  const helpPopoverActionsId = !!helpButtonAnchorElement ? 'help-popover-actions' : undefined
 
   return (
     <Layout>
@@ -50,11 +64,9 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
       </Head>
 
       <ProposalTitle>Oferta</ProposalTitle>
-      {userIsTheOwner && (
-        <Typography component="h2" variant="h3" color="text.secondary" textAlign="center">
-          {proposal.title}
-        </Typography>
-      )}
+      <Typography component="h2" variant="h3" color="text.secondary" textAlign="center">
+        {proposal.title}
+      </Typography>
 
       <Wrapper maxWidth="xl">
         <Box component="main" flex={1}>
@@ -104,27 +116,74 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
 
         <Box component="aside" flex={0.4} position="relative">
           <Section sx={{ mt: 6, position: 'sticky', top: 32 }}>
-            {userIsTheOwner && proposal.offerCompany ? (
+            {userIsTheProposalOwner && proposal.offerCompany ? (
               <CompanyData {...proposal.offerCompany} />
             ) : (
               <CompanyData {...proposal.company} />
             )}
             {!!currentOffer && (
               <>
-                <Divider sx={{ my: 2 }} />
+                <Divider sx={{ mt: 2, mb: 1 }} />
                 {userIsTheOfferOwner ? (
                   <Typography color="warning.light" fontWeight="bold" textAlign="center">
                     Aguardando resposta da empresa
                   </Typography>
                 ) : (
                   <>
-                    <Typography variant="h5" component="h3" fontWeight="500">
-                      Ações:
-                    </Typography>
-                    <Stack mt={2} gap={1}>
-                      <Button variant="contained" color="success" fullWidth>
-                        Iniciar Negociação
-                      </Button>
+                    <Stack direction="row" alignItems="center">
+                      <Typography variant="h5" component="h3" fontWeight="500">
+                        Ações
+                      </Typography>
+                      <IconButton
+                        aria-describedby={helpPopoverActionsId}
+                        onClick={event => setHelpButtonAnchorElement(event.currentTarget)}
+                      >
+                        <InfoIcon fontSize="small" />
+                      </IconButton>
+                      <Popover
+                        id={helpPopoverActionsId}
+                        open={!!helpButtonAnchorElement}
+                        anchorEl={helpButtonAnchorElement}
+                        onClose={() => setHelpButtonAnchorElement(null)}
+                        PaperProps={{
+                          sx: {
+                            paddingRight: 2,
+                          },
+                        }}
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'left',
+                        }}
+                      >
+                        <Box component="ul">
+                          <li>
+                            <Typography>
+                              {userIsTheProposalOwner
+                                ? 'Iniciar a negociação significa que você concorda com os termos atuais da proposta, além de impedir que você siga com outras ofertas.'
+                                : 'Aceitar a oferta significa que você concorda com os termos atuais da proposta e irá aguardar a resposta da empresa para dar início a negociação.'}
+                            </Typography>
+                          </li>
+                          <li>
+                            <Typography>Fazer uma contra proposta serve para alterar pontos da proposta.</Typography>
+                          </li>
+                          <li>
+                            <Typography>
+                              Recusar a oferta significa não seguir em negociação com esta empresa.
+                            </Typography>
+                          </li>
+                        </Box>
+                      </Popover>
+                    </Stack>
+                    <Stack mt={1} gap={1}>
+                      {userIsTheProposalOwner ? (
+                        <Button variant="contained" color="success" fullWidth>
+                          Iniciar Negociação
+                        </Button>
+                      ) : (
+                        <Button variant="contained" color="success" fullWidth>
+                          Aceitar Oferta
+                        </Button>
+                      )}
                       <Button variant="contained" color="warning" fullWidth>
                         Fazer Contra Proposta
                       </Button>
