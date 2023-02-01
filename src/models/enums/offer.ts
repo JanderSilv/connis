@@ -1,6 +1,7 @@
 export enum OfferStatus {
   sended = 0,
   saw,
+  opposed,
   accepted,
   rejected,
 }
