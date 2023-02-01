@@ -9,12 +9,16 @@ export const offerStatus = {
     color: 'error.light',
     label: 'Cancelado',
   },
-  [OfferStatus.sended]: {
+  [OfferStatus.opposed]: {
+    label: 'Contraposto',
     color: 'warning.light',
+  },
+  [OfferStatus.sended]: {
+    color: 'info.light',
     label: 'Aguardando Resposta',
   },
   [OfferStatus.saw]: {
-    color: 'info.light',
+    color: 'primary.light',
     label: 'Visualizado',
   },
 }
