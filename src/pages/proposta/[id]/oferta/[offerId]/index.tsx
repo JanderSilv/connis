@@ -33,7 +33,7 @@ type OfferPageProps = {
 const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
   const currentOffer = offers.at(-1)
 
-  const { userIsTheOwner } = useProposalSession(proposal, session)
+  const { userIsTheProposalOwner } = useProposalSession(proposal, session)
   const { userIsTheOwnerOfOffer } = useOfferSession(currentOffer, session)
 
   const [activatedOfferSteps, setActivatedOfferSteps] = useState(() => ({

@@ -7,12 +7,12 @@ export const useProposalSession = (proposal: Proposal, serverSession?: Session) 
 
   if (serverSession)
     return {
-      userIsTheOwner: serverSession?.user.id === proposal.company.id,
+      userIsTheProposalOwner: serverSession?.user.id === proposal.company.id,
     }
 
   return {
     session: session,
     status,
-    userIsTheOwner: session?.user.id === proposal.company.id,
+    userIsTheProposalOwner: session?.user.id === proposal.company.id,
   }
 }

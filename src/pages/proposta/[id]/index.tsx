@@ -34,7 +34,7 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
   const { proposal, offers } = props
   const isMobile = useMediaQuery<Theme>(theme => theme.breakpoints.down('md'))
   const scrollTrigger = useScrollTrigger()
-  const { userIsTheOwner, status, session } = useProposalSession(proposal)
+  const { userIsTheProposalOwner, status, session } = useProposalSession(proposal)
   const { tabs, selectedTab, handleChangeTab, a11yTabProps } = useTab()
 
   const documentTitle = `Proposta ${proposal.id} - Connis`
@@ -47,7 +47,7 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
 
       <ProposalTitle>{proposal.title}</ProposalTitle>
 
-      {userIsTheOwner && (
+      {userIsTheProposalOwner && (
         <Tabs value={selectedTab} onChange={handleChangeTab} aria-label="Abas de Navegação" centered>
           {tabs.map(({ label }, index) => (
             <Tab key={label} label={label} {...a11yTabProps(index)} />
@@ -59,7 +59,7 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
         <TabPanel value={selectedTab} index={0} flex={1}>
           <ProposalSections proposal={proposal} />
         </TabPanel>
-        {userIsTheOwner && (
+        {userIsTheProposalOwner && (
           <TabPanel value={selectedTab} index={1} flex={1}>
             <Box component="main" maxWidth={750} ml="auto">
               {offers.map(offerHistory => {
@@ -79,7 +79,7 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
           </TabPanel>
         )}
 
-        <Box component="aside" flex={userIsTheOwner ? 0.3 : 0.4} position="relative">
+        <Box component="aside" flex={userIsTheProposalOwner ? 0.3 : 0.4} position="relative">
           <Section sx={{ position: 'sticky', top: 32 }}>
             {(() => {
               if (status === 'loading') return <CompanyData {...proposal.company} />
@@ -90,14 +90,14 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
                 checkUserIsICT(session.user)
               )
                 return <ICTAsideContent {...proposal.company} />
-              else if (userIsTheOwner) return <AsideContentOwner {...proposal} />
+              else if (userIsTheProposalOwner) return <AsideContentOwner {...proposal} />
               else return <OfferCompanyAsideContent {...proposal.company} />
             })()}
           </Section>
         </Box>
       </Wrapper>
 
-      {userIsTheOwner && (
+      {userIsTheProposalOwner && (
         <MobileNavigation
           tabs={tabs}
           selectedTab={selectedTab}
@@ -108,7 +108,7 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
 
       <ScrollTop
         sx={
-          userIsTheOwner && isMobile
+          userIsTheProposalOwner && isMobile
             ? {
                 bottom: 70,
                 transform: scrollTrigger ? 'translateY(50px)' : 'translateY(0)',
