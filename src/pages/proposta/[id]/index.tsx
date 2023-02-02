@@ -91,7 +91,7 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
               )
                 return <ICTAsideContent {...proposal.company} />
               else if (userIsTheProposalOwner) return <AsideContentOwner {...proposal} />
-              else return <OfferCompanyAsideContent {...proposal.company} />
+              else return <OfferCompanyAsideContent proposal={proposal} />
             })()}
           </Section>
         </Box>
