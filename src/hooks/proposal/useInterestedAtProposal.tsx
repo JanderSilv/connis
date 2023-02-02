@@ -25,8 +25,7 @@ import { ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
 
 import { DescriptionIcon } from 'src/assets/icons'
-import { CardData, CardsSelect } from 'src/components/proposal-register'
-import { SlideTransition } from 'src/components/shared'
+import { CardData, CardsSelect, SlideTransition } from 'src/components/shared'
 
 type Props = {
   isOpen: boolean

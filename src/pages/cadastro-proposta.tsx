@@ -36,9 +36,8 @@ import { proposalRegisterSchema, ProposalSchema } from 'src/validations/proposal
 
 import { Layout } from 'src/layouts/app'
 import { AnimatedStep, WizardFooter } from 'src/components/proposal-register'
-import { CardsSelect } from 'src/components/proposal-register/cards-select'
 import { Container } from 'src/components/container'
-import { MaskedTextField } from 'src/components/shared'
+import { CardsSelect, MaskedTextField } from 'src/components/shared'
 import { AttachMoneyIcon, PlaylistAddIcon } from 'src/assets/icons'
 import { ProductionContainer, Wrapper } from 'src/styles/proposal-register'
 
