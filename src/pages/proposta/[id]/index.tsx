@@ -69,7 +69,7 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
                     <OfferCard
                       key={lastOffer.id}
                       {...lastOffer}
-                      href={`/proposta/${lastOffer.proposal?.id}/oferta/${lastOffer.id}`}
+                      href={`/proposta/${lastOffer.proposalId}/oferta/${lastOffer.id}`}
                       unseenActivities={lastOffer.viewed ? 0 : 1}
                     />
                   )
