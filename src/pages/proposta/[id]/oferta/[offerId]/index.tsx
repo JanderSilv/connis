@@ -3,38 +3,26 @@ import { GetServerSideProps, NextPage } from 'next'
 import { Session } from 'next-auth'
 import Head from 'next/head'
 import { ParsedUrlQuery } from 'querystring'
-import {
-  Box,
-  Button,
-  Divider,
-  IconButton,
-  Popover,
-  Stack,
-  Step,
-  StepButton,
-  StepContent,
-  Stepper,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Divider, Stack, Step, StepButton, StepContent, Stepper, Typography } from '@mui/material'
 
 import { fakeData } from 'src/data/fake'
 import { offerCategories } from 'src/data/offer'
 import { formatDate } from 'src/helpers/formatters'
 import { withAuth } from 'src/helpers/withAuth'
+import { useOfferSession } from 'src/hooks/offer'
 import { useProposalSession } from 'src/hooks/proposal'
 
 import { OfferCategory } from 'src/models/enums'
 import { Offer, Proposal } from 'src/models/types'
 
 import { OfferDataSectionOne, OfferDataSectionTwo } from 'src/components/offer'
-import { CompanyData, ProposalSections } from 'src/components/proposal'
+import { ActionsHeader, CompanyData, ProposalSections } from 'src/components/proposal'
 import { ScrollTop } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
 
-import { DescriptionIcon, InfoIcon } from 'src/assets/icons'
+import { DescriptionIcon } from 'src/assets/icons'
 import { OfferStepIconRoot } from 'src/styles/offer'
 import { ProposalTitle, Section, Wrapper } from 'src/styles/proposal'
-import { useOfferSession } from 'src/hooks/offer'
 
 type OfferPageProps = {
   proposal: Proposal
@@ -52,10 +40,8 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
     ...offers.reduce((acc, offer) => ({ ...acc, [offer.id]: true }), {} as Record<number, boolean>),
   }))
   const [isProposalActive, setIsProposalActive] = useState(true)
-  const [helpButtonAnchorElement, setHelpButtonAnchorElement] = useState<HTMLButtonElement | null>(null)
 
   const documentTitle = `Oferta ${proposal.id} - ${proposal.title} - Connis`
-  const helpPopoverActionsId = !!helpButtonAnchorElement ? 'help-popover-actions' : undefined
 
   return (
     <Layout>
@@ -71,7 +57,7 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
       <Wrapper maxWidth="xl">
         <Box component="main" flex={1}>
           <Stepper orientation="vertical" nonLinear>
-            {offers.map(offer => (
+            {[...offers].reverse().map(offer => (
               <Step key={offer.id} active={activatedOfferSteps[offer.id]} completed={true}>
                 <StepButton
                   icon={
@@ -130,50 +116,22 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
                   </Typography>
                 ) : (
                   <>
-                    <Stack direction="row" alignItems="center">
-                      <Typography variant="h5" component="h3" fontWeight="500">
-                        Ações
-                      </Typography>
-                      <IconButton
-                        aria-describedby={helpPopoverActionsId}
-                        onClick={event => setHelpButtonAnchorElement(event.currentTarget)}
-                      >
-                        <InfoIcon fontSize="small" />
-                      </IconButton>
-                      <Popover
-                        id={helpPopoverActionsId}
-                        open={!!helpButtonAnchorElement}
-                        anchorEl={helpButtonAnchorElement}
-                        onClose={() => setHelpButtonAnchorElement(null)}
-                        PaperProps={{
-                          sx: {
-                            paddingRight: 2,
-                          },
-                        }}
-                        anchorOrigin={{
-                          vertical: 'bottom',
-                          horizontal: 'left',
-                        }}
-                      >
-                        <Box component="ul">
-                          <li>
-                            <Typography>
-                              {userIsTheProposalOwner
-                                ? 'Iniciar a negociação significa que você concorda com os termos atuais da proposta, além de impedir que você siga com outras ofertas.'
-                                : 'Aceitar a oferta significa que você concorda com os termos atuais da proposta e irá aguardar a resposta da empresa para dar início a negociação.'}
-                            </Typography>
-                          </li>
-                          <li>
-                            <Typography>Fazer uma contra proposta serve para alterar pontos da proposta.</Typography>
-                          </li>
-                          <li>
-                            <Typography>
-                              Recusar a oferta significa não seguir em negociação com esta empresa.
-                            </Typography>
-                          </li>
-                        </Box>
-                      </Popover>
-                    </Stack>
+                    <ActionsHeader>
+                      <li>
+                        <Typography>
+                          {userIsTheProposalOwner
+                            ? 'Iniciar a negociação significa que você concorda com os termos atuais da proposta, além de impedir que você siga com outras ofertas.'
+                            : 'Aceitar a oferta significa que você concorda com os termos atuais da proposta e irá aguardar a resposta da empresa para dar início a negociação.'}
+                        </Typography>
+                      </li>
+                      <li>
+                        <Typography>Fazer uma contra proposta serve para alterar pontos da proposta.</Typography>
+                      </li>
+                      <li>
+                        <Typography>Recusar a oferta significa não seguir em negociação com esta empresa.</Typography>
+                      </li>
+                    </ActionsHeader>
+
                     <Stack mt={1} gap={1}>
                       {userIsTheProposalOwner ? (
                         <Button variant="contained" color="success" fullWidth>
