@@ -95,7 +95,7 @@ export const CardsSelect = (props: CardsSelectProps) => {
         })}
       </Carousel>
       <Collapse in={!!helperText}>
-        <Typography color={error ? 'red' : undefined} fontSize="0.75rem">
+        <Typography variant="caption" color={error ? 'error.main' : undefined} marginLeft={2}>
           {helperText}
         </Typography>
       </Collapse>
