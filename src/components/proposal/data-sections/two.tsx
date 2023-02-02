@@ -33,38 +33,31 @@ export const ProposalDataSectionTwo = (props: Props) => {
         </Stack>
       </Box>
 
-      {proposalType[0] !== ProposalType.research && (
-        <>
-          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'flex' } }} />
+      <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'flex' } }} />
 
-          <Box flex={1}>
-            {!!budget && (
-              <Box>
-                <Title>Orçamento</Title>
-                <Typography>
-                  {new Intl.NumberFormat('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  }).format(budget)}
-                </Typography>
-              </Box>
-            )}
-
-            <DataContainer>
-              <Title>Tipo da Proposta</Title>
-              <Typography>{makeProposalTypeText(proposalType)}</Typography>
-              <Stack mt={3} direction="row" alignItems="center" gap={1}>
-                {proposalTypeOptions.map(
-                  type =>
-                    type.id !== ProposalType.research && (
-                      <ProposalTypeData key={type.id} {...type} selected={proposalType.includes(type.id)} />
-                    )
-                )}
-              </Stack>
-            </DataContainer>
+      <Box flex={1}>
+        {!!budget && (
+          <Box>
+            <Title>Orçamento</Title>
+            <Typography>
+              {new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+              }).format(budget)}
+            </Typography>
           </Box>
-        </>
-      )}
+        )}
+
+        <DataContainer>
+          <Title>Tipo da Proposta</Title>
+          <Typography>{makeProposalTypeText(proposalType)}</Typography>
+          <Stack mt={3} direction="row" alignItems="center" gap={1}>
+            {proposalTypeOptions.map(type => (
+              <ProposalTypeData key={type.id} {...type} selected={proposalType.includes(type.id)} />
+            ))}
+          </Stack>
+        </DataContainer>
+      </Box>
     </Section>
   )
 }
