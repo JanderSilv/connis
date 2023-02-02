@@ -9,6 +9,7 @@ export type CardData = {
   icon: typeof SvgIcon
   description: string
   solo?: boolean
+  disabled?: boolean
 }
 
 type CardsSelectUnique = {
@@ -25,8 +26,9 @@ type CardsSelectMultiple = {
 export type CardsSelectProps = {
   id?: string
   options: CardData[]
-  carousel?: CarouselProps
+  carousel?: Omit<CarouselProps, 'children'>
   error?: boolean
   helperText?: string
   carouselRef?: Ref<Carousel>
+  disabled?: boolean
 } & (CardsSelectUnique | CardsSelectMultiple)

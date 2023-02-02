@@ -1,4 +1,4 @@
-import { CardActionArea, Typography, useMediaQuery, Theme, Collapse } from '@mui/material'
+import { CardActionArea, Typography, Collapse } from '@mui/material'
 import { ResponsiveType } from 'react-multi-carousel'
 import { Card, CardContent, Carousel, selectedCard } from './styles'
 import { CardsSelectProps } from './types'
@@ -28,8 +28,18 @@ const responsive: ResponsiveType = {
 }
 
 export const CardsSelect = (props: CardsSelectProps) => {
-  const { id: cardsSelectId, value, onChange, helperText, error, carousel, options, multiple, carouselRef } = props
-  const isMobile = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm'))
+  const {
+    id: cardsSelectId,
+    value,
+    onChange,
+    helperText,
+    error,
+    carousel,
+    options,
+    multiple,
+    carouselRef,
+    disabled,
+  } = props
 
   const handleOnChange = (id: number, solo?: boolean) => {
     if (!multiple) return onChange(id)
@@ -43,16 +53,11 @@ export const CardsSelect = (props: CardsSelectProps) => {
 
   return (
     <>
-      <Carousel
-        ref={carouselRef}
-        responsive={responsive}
-        beforeChange={nextSlide => {
-          if (isMobile) handleOnChange(nextSlide, options[nextSlide].solo)
-        }}
-        {...carousel}
-      >
+      <Carousel ref={carouselRef} responsive={responsive} {...carousel}>
         {options.map((cardData, index) => {
-          const { id, label, title, icon: Icon, description, solo } = cardData
+          const { id, label, title, icon: Icon, description, solo, disabled: isOptionDisabled } = cardData
+          const isDisabled = disabled || isOptionDisabled
+
           return (
             <Card
               id={index === 0 ? cardsSelectId : undefined}
@@ -63,7 +68,19 @@ export const CardsSelect = (props: CardsSelectProps) => {
                 return {}
               })()}
             >
-              <CardActionArea onClick={() => handleOnChange(id, solo)}>
+              <CardActionArea
+                onClick={() => handleOnChange(id, solo)}
+                disabled={isDisabled}
+                sx={{
+                  opacity: multiple
+                    ? !value.includes(id) && isDisabled
+                      ? 0.5
+                      : 1
+                    : value !== id && isDisabled
+                    ? 0.5
+                    : 1,
+                }}
+              >
                 <CardContent>
                   {!!label && <Typography component="h3">{label}</Typography>}
                   <Typography component={!!label ? 'h4' : 'h3'} mb={1}>
