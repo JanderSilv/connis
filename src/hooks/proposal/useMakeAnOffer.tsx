@@ -19,7 +19,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { proposalTypeOptions } from 'src/data/proposal'
 import { useToast } from 'src/hooks/useToast'
 import { formatCurrency } from 'src/helpers/formatters'
-import { InterestAtProposalSchema, interestedAtProposalValidationSchema } from 'src/validations/proposal'
+import { makeAnOfferSchema, makeAnOfferValidationSchema } from 'src/validations/proposal'
 
 import { ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
@@ -54,7 +54,7 @@ const responsiveCarousel: ResponsiveType = {
   },
 }
 
-const InterestedAtProposalDialog = (props: Props) => {
+const MakeAnOfferDialog = (props: Props) => {
   const { isOpen, setIsOpen, proposal } = props
   const { showToast } = useToast()
   const {
@@ -63,8 +63,8 @@ const InterestedAtProposalDialog = (props: Props) => {
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
-  } = useForm<InterestAtProposalSchema>({
-    resolver: zodResolver(interestedAtProposalValidationSchema),
+  } = useForm<makeAnOfferSchema>({
+    resolver: zodResolver(makeAnOfferValidationSchema),
     defaultValues: {
       proposalType: proposal.proposalType.length === 1 ? proposal.proposalType[0] : undefined,
     },
@@ -79,7 +79,7 @@ const InterestedAtProposalDialog = (props: Props) => {
     return acc
   }, [] as CardData[])
 
-  const sendOffer = async (data: InterestAtProposalSchema) => {
+  const sendOffer = async (data: makeAnOfferSchema) => {
     console.log({ data })
     showToast('Oferta enviada com sucesso', 'success')
     setIsOpen(false)
@@ -160,12 +160,12 @@ const InterestedAtProposalDialog = (props: Props) => {
   )
 }
 
-export const useInterestedAtProposal = (proposal: Proposal) => {
+export const useMakeOffer = (proposal: Proposal) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   return {
-    InterestedAtProposalDialog: useCallback(
-      () => <InterestedAtProposalDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} proposal={proposal} />,
+    MakeAnOfferDialog: useCallback(
+      () => <MakeAnOfferDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} proposal={proposal} />,
       [isDialogOpen, proposal]
     ),
     isDialogOpen,

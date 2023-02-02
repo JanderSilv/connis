@@ -1,5 +1,5 @@
 import { Button, Divider, Stack, Typography } from '@mui/material'
-import { useInterestedAtProposal } from 'src/hooks/proposal'
+import { useMakeOffer } from 'src/hooks/proposal'
 import { Proposal } from 'src/models/types'
 import { ActionsHeader } from './actions-header'
 import { CompanyData } from './common'
@@ -9,7 +9,7 @@ type Props = {
 }
 
 export const OfferCompanyAsideContent = ({ proposal }: Props) => {
-  const { InterestedAtProposalDialog, setIsDialogOpen } = useInterestedAtProposal(proposal)
+  const { MakeAnOfferDialog, setIsDialogOpen } = useMakeOffer(proposal)
 
   return (
     <>
@@ -38,7 +38,7 @@ export const OfferCompanyAsideContent = ({ proposal }: Props) => {
         </Button>
       </Stack>
 
-      <InterestedAtProposalDialog />
+      <MakeAnOfferDialog />
     </>
   )
 }
