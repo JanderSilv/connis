@@ -1,6 +1,9 @@
 import { Button, Divider, Stack, Typography } from '@mui/material'
-import { useMakeOffer } from 'src/hooks/proposal'
+
+import { useMakeAnOffer } from 'src/hooks/proposal'
+import { OfferCategory } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
+
 import { ActionsHeader } from './actions-header'
 import { CompanyData } from './common'
 
@@ -9,7 +12,7 @@ type Props = {
 }
 
 export const OfferCompanyAsideContent = ({ proposal }: Props) => {
-  const { MakeAnOfferDialog, setIsDialogOpen } = useMakeOffer(proposal)
+  const { MakeAnOfferDialog, handleOpenMakeAnOfferDialog } = useMakeAnOffer(proposal)
 
   return (
     <>
@@ -29,11 +32,21 @@ export const OfferCompanyAsideContent = ({ proposal }: Props) => {
       </ActionsHeader>
 
       <Stack mt={1} gap={1}>
-        <Button variant="contained" color="primary" onClick={() => setIsDialogOpen(true)} fullWidth>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleOpenMakeAnOfferDialog(OfferCategory.default)}
+          fullWidth
+        >
           Estou Interessado
         </Button>
 
-        <Button variant="contained" color="warning" fullWidth>
+        <Button
+          variant="contained"
+          color="warning"
+          onClick={() => handleOpenMakeAnOfferDialog(OfferCategory.counterProposal)}
+          fullWidth
+        >
           Fazer Contra Proposta
         </Button>
       </Stack>
