@@ -117,19 +117,21 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
                 ) : (
                   <>
                     <ActionsHeader>
-                      <li>
-                        <Typography>
-                          {userIsTheProposalOwner
-                            ? 'Iniciar a negociação significa que você concorda com os termos atuais da proposta, além de impedir que você siga com outras ofertas.'
-                            : 'Aceitar a oferta significa que você concorda com os termos atuais da proposta e irá aguardar a resposta da empresa para dar início a negociação.'}
-                        </Typography>
-                      </li>
-                      <li>
-                        <Typography>Fazer uma contra proposta serve para alterar pontos da proposta.</Typography>
-                      </li>
-                      <li>
-                        <Typography>Recusar a oferta significa não seguir em negociação com esta empresa.</Typography>
-                      </li>
+                      <ul>
+                        <li>
+                          <Typography>
+                            {userIsTheProposalOwner
+                              ? 'Iniciar a negociação significa que você concorda com os termos atuais da proposta, além de impedir que você siga com outras ofertas.'
+                              : 'Aceitar a oferta significa que você concorda com os termos atuais da proposta e irá aguardar a resposta da empresa para dar início a negociação.'}
+                          </Typography>
+                        </li>
+                        <li>
+                          <Typography>Fazer uma contra proposta serve para alterar pontos da proposta.</Typography>
+                        </li>
+                        <li>
+                          <Typography>Recusar a oferta significa não seguir em negociação com esta empresa.</Typography>
+                        </li>
+                      </ul>
                     </ActionsHeader>
 
                     <Stack mt={1} gap={1}>
