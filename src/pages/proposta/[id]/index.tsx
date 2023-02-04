@@ -4,7 +4,7 @@ import { ParsedUrlQuery } from 'querystring'
 import { Box, Theme, useMediaQuery, useScrollTrigger } from '@mui/material'
 
 import { fakeData } from 'src/data/fake'
-import { checkUserIsICT } from 'src/helpers/users'
+import { checkUserIsCompany, checkUserIsICT } from 'src/helpers/users'
 import { useProposalSession, useTab } from 'src/hooks/proposal'
 
 import { ProposalType } from 'src/models/enums'
@@ -91,7 +91,9 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
               )
                 return <ICTAsideContent {...proposal.company} />
               else if (userIsTheProposalOwner) return <AsideContentOwner {...proposal} />
-              else return <OfferCompanyAsideContent proposal={proposal} />
+              else if (session?.user && checkUserIsCompany(session.user))
+                return <OfferCompanyAsideContent proposal={proposal} />
+              else return <CompanyData {...proposal.company} />
             })()}
           </Section>
         </Box>
