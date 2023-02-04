@@ -11,26 +11,28 @@ import {
   FormLabel,
   Collapse,
   DialogContentText,
+  InputAdornment,
 } from '@mui/material'
 import { ResponsiveType } from 'react-multi-carousel'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, FieldErrors, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { proposalTypeOptions } from 'src/data/proposal'
+import { proposalTypeOptions, trlOptions } from 'src/data/proposal'
 import { useToast } from 'src/hooks/useToast'
-import { formatCurrency } from 'src/helpers/formatters'
-import { makeAnOfferSchema, makeAnOfferValidationSchema } from 'src/validations/proposal'
+import { formatCurrency, unformatCurrency } from 'src/helpers/formatters'
+import { counterProposalOfferSchema, offerSchema, makeOfferValidationSchema } from 'src/validations/proposal'
 
-import { ProposalType } from 'src/models/enums'
+import { OfferCategory, ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
 
-import { DescriptionIcon } from 'src/assets/icons'
-import { CardData, CardsSelect, SlideTransition } from 'src/components/shared'
+import { AttachMoneyIcon, DescriptionIcon } from 'src/assets/icons'
+import { CardData, CardsSelect, MaskedTextField, SlideTransition } from 'src/components/shared'
 
 type Props = {
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
   proposal: Proposal
+  offerCategory: OfferCategory
 }
 
 const responsiveCarousel: ResponsiveType = {
@@ -55,7 +57,7 @@ const responsiveCarousel: ResponsiveType = {
 }
 
 const MakeAnOfferDialog = (props: Props) => {
-  const { isOpen, setIsOpen, proposal } = props
+  const { isOpen, setIsOpen, proposal, offerCategory } = props
   const { showToast } = useToast()
   const {
     control,
@@ -63,11 +65,21 @@ const MakeAnOfferDialog = (props: Props) => {
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
-  } = useForm<makeAnOfferSchema>({
-    resolver: zodResolver(makeAnOfferValidationSchema),
-    defaultValues: {
-      proposalType: proposal.proposalType.length === 1 ? proposal.proposalType[0] : undefined,
-    },
+  } = useForm<offerSchema>({
+    resolver: zodResolver(makeOfferValidationSchema(proposal.proposalType)),
+    defaultValues:
+      offerCategory === OfferCategory.default
+        ? {
+            proposalType: proposal.proposalType.length === 1 ? proposal.proposalType[0] : undefined,
+            category: OfferCategory.default,
+          }
+        : {
+            category: OfferCategory.counterProposal,
+            proposalType: proposal.proposalType.length === 1 ? proposal.proposalType[0] : undefined,
+            trl: proposal.trl,
+            goalTRL: proposal.goalTrl,
+            budget: formatCurrency(proposal.budget, { signDisplay: 'never' }),
+          },
   })
 
   const watchedProposalType = watch('proposalType')
@@ -79,7 +91,7 @@ const MakeAnOfferDialog = (props: Props) => {
     return acc
   }, [] as CardData[])
 
-  const sendOffer = async (data: makeAnOfferSchema) => {
+  const sendOffer: SubmitHandler<offerSchema> = async data => {
     console.log({ data })
     showToast('Oferta enviada com sucesso', 'success')
     setIsOpen(false)
@@ -101,12 +113,24 @@ const MakeAnOfferDialog = (props: Props) => {
           Fazer uma oferta
         </DialogTitle>
         <DialogContentText textAlign="center">
-          Descreva como você pode auxiliar ou solucionar essa proposta.
+          {offerCategory === OfferCategory.default ? (
+            <>Descreva como você pode auxiliar ou solucionar essa proposta.</>
+          ) : (
+            <>
+              Descreva e marque o que você gostaria de alterar na proposta. <br /> Caso concorde com algum, basta manter
+              como está.
+            </>
+          )}
         </DialogContentText>
         <DialogContent>
           <TextField
             variant="outlined"
             label="Mensagem"
+            placeholder={
+              offerCategory === OfferCategory.default
+                ? 'Ex: "Podemos solucionar sua proposta em 3 meses..."'
+                : 'Ex: "Me interessei pela sua proposta, mas gostaria de alterar alguns pontos..."'
+            }
             {...register('message')}
             error={!!errors.message}
             helperText={errors.message?.message}
@@ -114,6 +138,7 @@ const MakeAnOfferDialog = (props: Props) => {
             multiline
             fullWidth
           />
+
           <FormLabel htmlFor="proposal-type">Selecione o tipo da proposta</FormLabel>
           <Controller
             name="proposalType"
@@ -136,18 +161,144 @@ const MakeAnOfferDialog = (props: Props) => {
             )}
           />
 
-          <Collapse in={watchedProposalType === ProposalType.buyOrSell}>
-            <Typography sx={{ mt: 2 }}>
-              <ul>
-                <li>
-                  <Typography>
-                    Você concorda com o orçamento de {formatCurrency(proposal.budget)}. Caso não, realize uma contra
-                    proposta.
-                  </Typography>
-                </li>
-              </ul>
-            </Typography>
+          <Collapse
+            in={watchedProposalType === ProposalType.buyOrSell && offerCategory === OfferCategory.default}
+            sx={{ mt: 2 }}
+          >
+            <ul>
+              <li>
+                <Typography>
+                  Você concorda com o orçamento de {formatCurrency(proposal.budget)}. Caso não, realize uma contra
+                  proposta.
+                </Typography>
+              </li>
+            </ul>
           </Collapse>
+
+          {(() => {
+            if (offerCategory === OfferCategory.counterProposal) {
+              const formErrors: FieldErrors<counterProposalOfferSchema> = errors
+              const watchedTRL = watch('trl')
+              const watchedGoalTRL = watch('goalTRL')
+              const watchedBudget = watch('budget')
+
+              return (
+                <>
+                  <FormLabel htmlFor="trl" sx={{ mt: 2, display: 'inline-block' }}>
+                    Qual nível de maturidade você acredita que a proposta se encaixa?
+                  </FormLabel>
+                  <Controller
+                    name="trl"
+                    control={control}
+                    render={({ field: { onChange, ...rest } }) => (
+                      <CardsSelect
+                        id="trl"
+                        options={trlOptions}
+                        onChange={value => onChange(value)}
+                        helperText={formErrors.trl?.message}
+                        error={!!formErrors.trl}
+                        carousel={{
+                          responsive: responsiveCarousel,
+                          partialVisible: true,
+                        }}
+                        {...rest}
+                      />
+                    )}
+                  />
+
+                  <Collapse in={watchedTRL !== proposal.trl} sx={{ mt: 1 }}>
+                    <ul>
+                      <li>
+                        <Typography color="warning.main">
+                          Você alterou o nível de maturidade para <strong>TRL {watchedTRL}</strong> , o original era{' '}
+                          <strong>TRL {proposal.trl}</strong>.
+                        </Typography>
+                      </li>
+                    </ul>
+                  </Collapse>
+
+                  <FormLabel htmlFor="goal-trl" sx={{ mt: 2, display: 'inline-block' }}>
+                    Qual nível de maturidade você pode auxiliar a empresa a alcançar?
+                  </FormLabel>
+                  <Controller
+                    name="goalTRL"
+                    control={control}
+                    render={({ field: { onChange, ...rest } }) => (
+                      <CardsSelect
+                        id="goal-trl"
+                        options={trlOptions}
+                        onChange={value => onChange(value)}
+                        helperText={formErrors.goalTRL?.message}
+                        error={!!formErrors.goalTRL}
+                        carousel={{
+                          responsive: responsiveCarousel,
+                          partialVisible: true,
+                        }}
+                        {...rest}
+                      />
+                    )}
+                  />
+
+                  <Collapse in={watchedGoalTRL !== proposal.goalTrl} sx={{ mt: 1 }}>
+                    <ul>
+                      <li>
+                        <Typography color="warning.main">
+                          Você alterou o nível de maturidade para <strong>TRL {watchedGoalTRL}</strong> , o original era{' '}
+                          <strong>TRL {proposal.goalTrl}</strong>.
+                        </Typography>
+                      </li>
+                    </ul>
+                  </Collapse>
+
+                  <Collapse
+                    in={[ProposalType.buyOrSell, ProposalType.research].includes(watchedProposalType)}
+                    sx={{ mt: 2 }}
+                  >
+                    <Controller
+                      name="budget"
+                      control={control}
+                      render={({ field: { onChange, ...rest } }) => (
+                        <MaskedTextField
+                          label="Qual o seu orçamento?"
+                          placeholder="Orçamento"
+                          inputMode="numeric"
+                          mask={Number}
+                          radix=","
+                          mapToRadix={['.']}
+                          scale={0}
+                          signed={false}
+                          thousandsSeparator="."
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <AttachMoneyIcon color="primary" />
+                              </InputAdornment>
+                            ),
+                          }}
+                          {...rest}
+                          onAccept={value => onChange(value)}
+                          error={!!formErrors.budget}
+                          helperText={formErrors.budget?.message}
+                          size={'small' as any}
+                          fullWidth
+                        />
+                      )}
+                    />
+                  </Collapse>
+                  <Collapse in={!!watchedBudget && unformatCurrency(watchedBudget) !== proposal.budget} sx={{ mt: 1 }}>
+                    <ul>
+                      <li>
+                        <Typography color="warning.main">
+                          Você alterou o orçamento para <strong>R$ {watchedBudget}</strong>, o original era{' '}
+                          <strong>{formatCurrency(proposal.budget)}</strong>.
+                        </Typography>
+                      </li>
+                    </ul>
+                  </Collapse>
+                </>
+              )
+            }
+          })()}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setIsOpen(false)}>Cancelar</Button>
@@ -160,15 +311,28 @@ const MakeAnOfferDialog = (props: Props) => {
   )
 }
 
-export const useMakeOffer = (proposal: Proposal) => {
+export const useMakeAnOffer = (proposal: Proposal) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [offerCategory, setOfferCategory] = useState<OfferCategory>(OfferCategory.default)
+
+  const handleOpenMakeAnOfferDialog = useCallback((category: OfferCategory) => {
+    setOfferCategory(category)
+    setIsDialogOpen(true)
+  }, [])
 
   return {
     MakeAnOfferDialog: useCallback(
-      () => <MakeAnOfferDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} proposal={proposal} />,
-      [isDialogOpen, proposal]
+      () => (
+        <MakeAnOfferDialog
+          isOpen={isDialogOpen}
+          setIsOpen={setIsDialogOpen}
+          proposal={proposal}
+          offerCategory={offerCategory}
+        />
+      ),
+      [isDialogOpen, offerCategory, proposal]
     ),
     isDialogOpen,
-    setIsDialogOpen,
+    handleOpenMakeAnOfferDialog,
   }
 }
