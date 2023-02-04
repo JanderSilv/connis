@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import { CardActionArea, Typography, Collapse } from '@mui/material'
 import { ResponsiveType } from 'react-multi-carousel'
 import { Card, CardContent, Carousel, selectedCard } from './styles'
@@ -27,7 +28,7 @@ const responsive: ResponsiveType = {
   },
 }
 
-export const CardsSelect = (props: CardsSelectProps) => {
+export const CardsSelect = forwardRef<HTMLDivElement, CardsSelectProps>((props, ref) => {
   const {
     id: cardsSelectId,
     value,
@@ -52,7 +53,7 @@ export const CardsSelect = (props: CardsSelectProps) => {
   }
 
   return (
-    <>
+    <div ref={ref}>
       <Carousel ref={carouselRef} responsive={responsive} {...carousel}>
         {options.map((cardData, index) => {
           const { id, label, title, icon: Icon, description, solo, disabled: isOptionDisabled } = cardData
@@ -99,6 +100,7 @@ export const CardsSelect = (props: CardsSelectProps) => {
           {helperText}
         </Typography>
       </Collapse>
-    </>
+    </div>
   )
-}
+})
+CardsSelect.displayName = 'CardsSelect'
