@@ -20,7 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { proposalTypeOptions, trlOptions } from 'src/data/proposal'
 import { useToast } from 'src/hooks/useToast'
 import { formatCurrency, unformatCurrency } from 'src/helpers/formatters'
-import { counterProposalOfferSchema, offerSchema, makeOfferValidationSchema } from 'src/validations/proposal'
+import { counterProposalOfferSchema, offerSchema, makeOfferValidationSchema } from './validations'
 
 import { OfferCategory, ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
