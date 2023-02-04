@@ -7,6 +7,7 @@ import { Button, Typography, TextField, InputAdornment, IconButton } from '@mui/
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { pages } from 'src/constants'
 import { withPublic } from 'src/helpers/auth/withPublic'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
@@ -93,7 +94,7 @@ const Login: NextPage = () => {
         />
 
         <Link
-          href="/recuperar-senha"
+          href={pages.recoverPassword}
           muiLinkProps={{
             width: '100%',
             variant: 'body2',
@@ -112,7 +113,7 @@ const Login: NextPage = () => {
         <SocialLoginButtons mt={1} />
 
         <ForgotPasswordTypography>
-          Não possui uma conta? <Link href="/cadastro">Cadastre-se aqui</Link>
+          Não possui uma conta? <Link href={pages.companySignUp}>Cadastre-se aqui</Link>
         </ForgotPasswordTypography>
       </Form>
     </Layout>
