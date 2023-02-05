@@ -1,28 +1,22 @@
-import { useState } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
 import { Session } from 'next-auth'
 import Head from 'next/head'
 import { ParsedUrlQuery } from 'querystring'
-import { Box, Button, Divider, Stack, Step, StepButton, StepContent, Stepper, Typography } from '@mui/material'
+import { Box, Button, Divider, Stack, Typography } from '@mui/material'
 
 import { useConfirmDialog } from 'src/contexts/confirm-dialog'
 import { fakeData } from 'src/data/fake'
-import { offerCategories } from 'src/data/offer'
-import { formatDate } from 'src/helpers/formatters'
 import { withAuth } from 'src/helpers/withAuth'
 import { useOfferSession } from 'src/hooks/offer'
 import { useProposalSession } from 'src/hooks/proposal'
 
-import { OfferCategory } from 'src/models/enums'
 import { Offer, Proposal } from 'src/models/types'
 
-import { OfferDataSectionOne, OfferDataSectionTwo } from 'src/components/offer'
-import { ActionsHeader, CompanyData, ProposalSections } from 'src/components/proposal'
+import { OfferHistory } from 'src/components/offer'
+import { ActionsHeader, CompanyData } from 'src/components/proposal'
 import { ScrollTop } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
 
-import { DescriptionIcon } from 'src/assets/icons'
-import { OfferStepIconRoot } from 'src/styles/offer'
 import { ProposalTitle, Section, Wrapper } from 'src/styles/proposal'
 
 type OfferPageProps = {
@@ -37,11 +31,6 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
   const { userIsTheProposalOwner } = useProposalSession(proposal, session)
   const { userIsTheOfferOwner } = useOfferSession(currentOffer, session)
   const { handleOpenConfirmDialog } = useConfirmDialog()
-
-  const [activatedOfferSteps, setActivatedOfferSteps] = useState(() => ({
-    ...offers.reduce((acc, offer) => ({ ...acc, [offer.id]: true }), {} as Record<number, boolean>),
-  }))
-  const [isProposalActive, setIsProposalActive] = useState(true)
 
   const documentTitle = `Oferta ${proposal.id} - ${proposal.title} - Connis`
 
@@ -58,48 +47,7 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
 
       <Wrapper maxWidth="xl">
         <Box component="main" flex={1}>
-          <Stepper orientation="vertical" nonLinear>
-            {[...offers].reverse().map(offer => (
-              <Step key={offer.id} active={activatedOfferSteps[offer.id]} completed={true}>
-                <StepButton
-                  icon={
-                    <OfferStepIcon
-                      active={activatedOfferSteps[offer.id]}
-                      completed={true}
-                      offerCategory={offer.category}
-                    />
-                  }
-                  onClick={() => setActivatedOfferSteps(prev => ({ ...prev, [offer.id]: !prev[offer.id] }))}
-                  sx={{ '& .MuiStepLabel-label:is(.Mui-active, .Mui-completed)': { fontWeight: '400' } }}
-                >
-                  <strong>{session?.user.id === offer.company.id ? 'Você' : offer.company.name}</strong> fez uma{' '}
-                  {offerCategories[offer.category].text} {formatDate.distanceToNow(new Date(offer.createdAt))}
-                </StepButton>
-                <StepContent>
-                  <OfferDataSectionOne {...offer} />
-                  {offer.category === OfferCategory.counterProposal && (
-                    <OfferDataSectionTwo proposal={proposal} currentOffer={offer} offers={offers} />
-                  )}
-                </StepContent>
-              </Step>
-            ))}
-            <Step active={isProposalActive} completed={true}>
-              <StepButton
-                icon={
-                  <OfferStepIconRoot ownerState={{ completed: true, active: isProposalActive }}>
-                    <DescriptionIcon fontSize="small" htmlColor="white" />
-                  </OfferStepIconRoot>
-                }
-                onClick={() => setIsProposalActive(prev => !prev)}
-                sx={{ '& .MuiStepLabel-label': { fontWeight: '400' } }}
-              >
-                Proposta original
-              </StepButton>
-              <StepContent>
-                <ProposalSections proposal={proposal} />
-              </StepContent>
-            </Step>
-          </Stepper>
+          <OfferHistory proposal={proposal} offers={offers} session={session} />
         </Box>
 
         <Box component="aside" flex={0.4} position="relative">
@@ -243,21 +191,3 @@ export const getServerSideProps: GetServerSideProps = withAuth(async context => 
     },
   }
 })
-
-type OfferStepIconProps = {
-  offerCategory: OfferCategory
-  active: boolean
-  completed: boolean
-}
-
-const OfferStepIcon = (props: OfferStepIconProps) => {
-  const { offerCategory, active, completed } = props
-
-  const Icon = offerCategories[offerCategory].icon
-
-  return (
-    <OfferStepIconRoot ownerState={{ completed, active }}>
-      <Icon fontSize="small" htmlColor="white" />
-    </OfferStepIconRoot>
-  )
-}
