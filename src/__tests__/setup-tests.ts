@@ -25,7 +25,7 @@ jest.mock('next-auth/react', () => {
 jest.mock('next-auth', () => ({
   __esModule: true,
   default: jest.fn(),
-  unstable_getServerSession: jest.fn(
+  getServerSession: jest.fn(
     () =>
       new Promise(resolve => {
         resolve({

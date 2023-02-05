@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { Session, unstable_getServerSession } from 'next-auth'
+import { Session, getServerSession } from 'next-auth'
 import { Autocomplete, Button, InputAdornment, TextField, Typography } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -236,7 +236,7 @@ const CompanySocialSignUp: NextPage<Props> = ({ session }) => {
 export default CompanySocialSignUp
 
 export const getServerSideProps: GetServerSideProps = async context => {
-  const session = await unstable_getServerSession(context.req, context.res, authOptions)
+  const session = await getServerSession(context.req, context.res, authOptions)
 
   if (!session || !checkUserIsCompany(session.user) || (checkUserIsCompany(session.user) && !!session.user.cnpj))
     return {
