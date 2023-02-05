@@ -1,25 +1,17 @@
 import { useState } from 'react'
-import { BusinessIcon, DescriptionIcon } from 'src/assets/icons'
+import { SvgIcon } from '@mui/material'
 
-const tabs = [
-  {
-    label: 'Proposta',
-    icon: DescriptionIcon,
-  },
-  {
-    label: 'Empresas Interessadas',
-    icon: BusinessIcon,
-  },
-]
-
-export type TabType = typeof tabs[number]
+export type Tab = {
+  label: string
+  icon: typeof SvgIcon
+}
 
 const a11yTabProps = (index: number) => ({
   id: `tab-${index}`,
   'aria-controls': `tabpanel-${index}`,
 })
 
-export const useTab = () => {
+export const useTab = (tabs: Tab[]) => {
   const [selectedTab, setSelectedTab] = useState(0)
 
   const handleChangeTab = (_: React.SyntheticEvent, newValue: number) => setSelectedTab(newValue)

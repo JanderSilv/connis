@@ -1,9 +1,9 @@
 import { BottomNavigationAction, Slide } from '@mui/material'
-import { TabType } from 'src/hooks/proposal'
+import { Tab } from 'src/hooks/proposal'
 import { BottomNavigation } from './styles'
 
 type MobileNavigationProps = {
-  tabs: TabType[]
+  tabs: Tab[]
   selectedTab: number
   handleChangeTab: (_: React.SyntheticEvent, newValue: number) => void
   scrollTrigger: boolean

@@ -23,6 +23,8 @@ import {
 } from 'src/components/proposal'
 import { ScrollTop } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
+
+import { BusinessIcon, DescriptionIcon } from 'src/assets/icons'
 import { ProposalTitle, Section, Tab, Tabs, Wrapper } from 'src/styles/proposal'
 
 type ProposalPageProps = {
@@ -35,7 +37,16 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
   const isMobile = useMediaQuery<Theme>(theme => theme.breakpoints.down('md'))
   const scrollTrigger = useScrollTrigger()
   const { userIsTheProposalOwner, status, session } = useProposalSession(proposal)
-  const { tabs, selectedTab, handleChangeTab, a11yTabProps } = useTab()
+  const { tabs, selectedTab, handleChangeTab, a11yTabProps } = useTab([
+    {
+      label: 'Proposta',
+      icon: DescriptionIcon,
+    },
+    {
+      label: 'Empresas Interessadas',
+      icon: BusinessIcon,
+    },
+  ])
 
   const documentTitle = `Proposta ${proposal.id} - Connis`
 
