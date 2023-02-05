@@ -1,5 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { renderHook, act } from '@testing-library/react-hooks'
+import { fireEvent, render, screen, renderHook, act } from '@testing-library/react'
 
 import { useTab } from 'src/hooks/proposal'
 import { Tab, Tabs } from 'src/styles/proposal'
