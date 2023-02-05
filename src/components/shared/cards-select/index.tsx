@@ -74,7 +74,7 @@ export const CardsSelect = forwardRef<HTMLDivElement, CardsSelectProps>((props, 
                 disabled={isDisabled}
                 sx={{
                   opacity: multiple
-                    ? !value.includes(id) && isDisabled
+                    ? !value?.includes(id) && isDisabled
                       ? 0.5
                       : 1
                     : value !== id && isDisabled
