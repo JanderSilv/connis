@@ -6,7 +6,7 @@ export const formatCompany = (company: BrasilApiCompany): CompanyUser => {
 
   return {
     id: 0,
-    name: company.nome_fantasia,
+    name: company.nome_fantasia || company.razao_social,
     type: 'company',
     cnpj,
     address: {
