@@ -5,6 +5,7 @@ import Head from 'next/head'
 import { ParsedUrlQuery } from 'querystring'
 import { Box, Button, Divider, Stack, Step, StepButton, StepContent, Stepper, Typography } from '@mui/material'
 
+import { useConfirmDialog } from 'src/contexts/confirm-dialog'
 import { fakeData } from 'src/data/fake'
 import { offerCategories } from 'src/data/offer'
 import { formatDate } from 'src/helpers/formatters'
@@ -35,6 +36,7 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
 
   const { userIsTheProposalOwner } = useProposalSession(proposal, session)
   const { userIsTheOfferOwner } = useOfferSession(currentOffer, session)
+  const { handleOpenConfirmDialog } = useConfirmDialog()
 
   const [activatedOfferSteps, setActivatedOfferSteps] = useState(() => ({
     ...offers.reduce((acc, offer) => ({ ...acc, [offer.id]: true }), {} as Record<number, boolean>),
@@ -136,18 +138,68 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
 
                     <Stack mt={1} gap={1}>
                       {userIsTheProposalOwner ? (
-                        <Button variant="contained" color="success" fullWidth>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={() => {
+                            handleOpenConfirmDialog({
+                              title: 'Iniciar negociação',
+                              message:
+                                'Iniciar a negociação significa que você concorda com os termos atuais da proposta, além de impedir que você siga com outras ofertas.',
+                              confirmButton: {
+                                onClick: () => {
+                                  // TODO: Implements the start negotiation
+                                  console.log('Iniciar negociação')
+                                },
+                              },
+                            })
+                          }}
+                          fullWidth
+                        >
                           Iniciar Negociação
                         </Button>
                       ) : (
-                        <Button variant="contained" color="success" fullWidth>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          onClick={() => {
+                            handleOpenConfirmDialog({
+                              title: 'Aceitar oferta',
+                              message:
+                                'Aceitar a oferta significa que você concorda com os termos atuais da proposta e irá aguardar a resposta da empresa para dar início a negociação.',
+                              confirmButton: {
+                                onClick: () => {
+                                  // TODO: Implements the accept offer
+                                  console.log('Aceitar oferta')
+                                },
+                              },
+                            })
+                          }}
+                          fullWidth
+                        >
                           Aceitar Oferta
                         </Button>
                       )}
                       <Button variant="contained" color="warning" fullWidth>
                         Fazer Contra Proposta
                       </Button>
-                      <Button variant="contained" color="error" fullWidth>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => {
+                          handleOpenConfirmDialog({
+                            title: 'Recusar oferta',
+                            message: 'Recusar a oferta significa não seguir em negociação com esta empresa.',
+                            confirmButton: {
+                              onClick: () => {
+                                // TODO: Implements the reject offer
+                                console.log('Recusar oferta')
+                              },
+                            },
+                          })
+                        }}
+                        fullWidth
+                      >
                         Recusar Oferta
                       </Button>
                     </Stack>
