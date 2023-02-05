@@ -1,15 +1,14 @@
-import { Box, BoxProps, Fab, Fade, FadeProps, styled, useScrollTrigger } from '@mui/material'
+import { Box, BoxProps, Fab, styled, useScrollTrigger } from '@mui/material'
 import { KeyboardArrowUpIcon } from 'src/assets/icons'
 
 type Props = {
   anchorId?: string
   shouldHide?: boolean
   children?: React.ReactNode
-  fadeProps?: FadeProps
 } & BoxProps
 
 export const ScrollTop = (props: Props) => {
-  const { anchorId = 'back-to-top-anchor', children, shouldHide, fadeProps, sx, ...rest } = props
+  const { anchorId = 'back-to-top-anchor', children, shouldHide, sx, ...rest } = props
 
   const trigger = useScrollTrigger({
     disableHysteresis: true,
