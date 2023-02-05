@@ -6,6 +6,7 @@ import { SnackbarProvider } from 'notistack'
 import { setDefaultOptions } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
+import { ConfirmDialogProvider } from 'src/contexts/confirm-dialog'
 import createEmotionCache from 'src/helpers/createEmotionCache'
 import { theme } from 'src/styles/theme'
 
@@ -23,7 +24,9 @@ function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }: 
         <CssBaseline />
         <SessionProvider session={pageProps.session}>
           <SnackbarProvider maxSnack={3} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
-            <Component {...pageProps} />
+            <ConfirmDialogProvider>
+              <Component {...pageProps} />
+            </ConfirmDialogProvider>
           </SnackbarProvider>
         </SessionProvider>
       </ThemeProvider>
