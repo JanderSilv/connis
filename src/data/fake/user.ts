@@ -169,7 +169,7 @@ const myOffers: Offer[][] = [
 
 const recentOffers = [myOffers[0].at(-1), { ...myOffers[1].at(-1), id: 3 }] as Offer[]
 
-export const fakeData = {
+export const userFakeData = {
   ict,
   userCompany,
   company,
