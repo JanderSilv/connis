@@ -6,6 +6,7 @@ import { Message } from './message'
 
 import { MoodIcon, SendIcon } from 'src/assets/icons'
 import { Container } from './styles'
+import { useChatScroll } from './hooks/useChatScroll'
 
 type ChatProps = {
   messages: ChatMessage[]
@@ -13,9 +14,12 @@ type ChatProps = {
 
 export const Chat = (props: ChatProps) => {
   const { messages } = props
+
+  const { chatContainerRef } = useChatScroll()
+
   return (
     <Box>
-      <Container>
+      <Container ref={chatContainerRef}>
         {messages.map((message, index) => (
           <Message
             key={message.id}
