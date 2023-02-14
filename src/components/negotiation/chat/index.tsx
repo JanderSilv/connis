@@ -2,11 +2,13 @@ import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
 
 import { ChatMessage } from 'src/models/types'
 
+import { useChatScroll } from './hooks/useChatScroll'
+
+import { EmojiPicker } from './emoji-picker'
 import { Message } from './message'
 
-import { MoodIcon, SendIcon } from 'src/assets/icons'
+import { SendIcon } from 'src/assets/icons'
 import { Container } from './styles'
-import { useChatScroll } from './hooks/useChatScroll'
 
 type ChatProps = {
   messages: ChatMessage[]
@@ -35,9 +37,7 @@ export const Chat = (props: ChatProps) => {
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <IconButton>
-                <MoodIcon />
-              </IconButton>
+              <EmojiPicker onEmojiClick={emoji => console.log({ emoji })} />
             </InputAdornment>
           ),
           endAdornment: (
