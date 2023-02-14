@@ -4,7 +4,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { signOut, useSession } from 'next-auth/react'
-import { AppBar, AppBarProps, Badge, Box, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
+import { AppBar, AppBarProps, Badge, Box, BoxProps, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
 
 import { NotificationPopover } from './notification'
 import { pages } from 'src/constants'
@@ -13,11 +13,16 @@ import { UserAvatar } from 'src/components/shared'
 import { NotificationsIcon, NotificationsOutlinedIcon } from 'src/assets/icons'
 import { Wrapper } from './styles'
 
-type LayoutProps = AppBarProps
+type LayoutProps = {
+  children: React.ReactNode
+  wrapperProps?: BoxProps
+  appBarProps?: AppBarProps
+}
 
 const notificationPopoverId = 'notification-popover'
 
-export const Layout = ({ children, ...rest }: LayoutProps) => {
+export const Layout = (props: LayoutProps) => {
+  const { children, wrapperProps, appBarProps } = props
   const { push } = useRouter()
   const { data: session, status } = useSession()
 
@@ -51,12 +56,12 @@ export const Layout = ({ children, ...rest }: LayoutProps) => {
   }, [])
 
   return (
-    <Wrapper>
+    <Wrapper {...wrapperProps}>
       <Head>
         <title>Connis</title>
       </Head>
 
-      <AppBar id="back-to-top-anchor" color="transparent" elevation={0} position="static" {...rest}>
+      <AppBar id="back-to-top-anchor" color="transparent" elevation={0} position="static" {...appBarProps}>
         <Toolbar>
           <Box flexGrow={1}>
             <Link href="/">
