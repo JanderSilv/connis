@@ -27,6 +27,7 @@ export type ICTAddress = {
 export type ICT = {
   type: 'ict'
   name: string
+  slug: string
   cnpj: string
   email: string
   phone: string

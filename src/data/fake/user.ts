@@ -58,6 +58,7 @@ const company: User = {
 const ict: User = {
   id: 2,
   name: 'Senai Cimatec',
+  slug: 'senai-cimatec',
   type: 'ict',
   cnpj: '03795071001350',
   image: 'https://picsum.photos/200/200',
