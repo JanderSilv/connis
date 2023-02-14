@@ -5,7 +5,9 @@ export type ContainerProps = {
   withoutArrow?: boolean
 }
 
-export const Container = styled(Box)<ContainerProps>(props => {
+export const Container = styled(Box, {
+  shouldForwardProp: prop => prop !== 'isTheUser' && prop !== 'withoutArrow',
+})<ContainerProps>(props => {
   const { withoutArrow = false, theme, isTheUser } = props
 
   const { palette } = theme
