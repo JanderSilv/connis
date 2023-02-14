@@ -55,6 +55,7 @@ export const ConfirmDialogProvider = (props: ConfirmDialogProviderProps) => {
         </DialogContentText>
         <DialogActions>
           <Button
+            color="error"
             {...dialogContent?.cancelButton}
             onClick={event => {
               setIsConfirmDialogOpen(false)
