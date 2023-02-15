@@ -2,7 +2,7 @@ import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
 
 import { ChatMessage } from 'src/models/types'
 
-import { useChatScroll } from './hooks/useChatScroll'
+import { useChat } from './hooks/useChat'
 
 import { EmojiPicker } from './emoji-picker'
 import { Message } from './message'

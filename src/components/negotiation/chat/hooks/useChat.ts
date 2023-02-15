@@ -1,6 +1,8 @@
-import { RefObject, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
-export const useChatScroll = () => {
+export const useChat = () => {
+  const [messageText, setMessageText] = useState('')
+
   const chatContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -12,6 +14,8 @@ export const useChatScroll = () => {
   }, [])
 
   return {
+    messageText,
+    setMessageText,
     chatContainerRef,
   }
 }
