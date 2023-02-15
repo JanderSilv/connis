@@ -1,9 +1,14 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react'
 
 export const useChat = () => {
   const [messageText, setMessageText] = useState('')
 
   const chatContainerRef = useRef<HTMLDivElement>(null)
+  const sendButtonRef = useRef<HTMLButtonElement>(null)
+
+  const handleEnterKey = useCallback((event: KeyboardEvent) => {
+    if (event.key === 'Enter') sendButtonRef.current?.click()
+  }, [])
 
   const moveScrollToBottom = useCallback(() => {
     if (chatContainerRef.current)
@@ -18,6 +23,8 @@ export const useChat = () => {
     messageText,
     setMessageText,
     chatContainerRef,
+    sendButtonRef,
     moveScrollToBottom,
+    handleEnterKey,
   }
 }
