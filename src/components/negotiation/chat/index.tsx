@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
 
-import { ChatMessage } from 'src/models/types'
+import { ChatMessage, User } from 'src/models/types'
 
 import { useChat } from './hooks/useChat'
 
@@ -12,12 +13,15 @@ import { Container } from './styles'
 
 type ChatProps = {
   messages: ChatMessage[]
+  user: User
 }
 
 export const Chat = (props: ChatProps) => {
-  const { messages } = props
+  const { messages: initialMessages, user } = props
 
-  const { chatContainerRef } = useChatScroll()
+  const { messageText, setMessageText, chatContainerRef } = useChat()
+
+  const [messages, setMessages] = useState(initialMessages)
 
   return (
     <Box>
@@ -34,15 +38,24 @@ export const Chat = (props: ChatProps) => {
       <TextField
         variant="filled"
         placeholder="Mensagem"
+        value={messageText}
+        onChange={event => setMessageText(event.target.value)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              <EmojiPicker onEmojiClick={emoji => console.log({ emoji })} />
+              <EmojiPicker onEmojiClick={emoji => setMessageText(`${messageText}${emoji.emoji}`)} />
             </InputAdornment>
           ),
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton>
+              <IconButton
+                aria-label="Enviar mensagem"
+                onClick={() => {
+                  setMessages([...messages, { id: 1, createdAt: new Date().toISOString(), user, content: messageText }])
+                  setMessageText('')
+                }}
+                disabled={!messageText}
+              >
                 <SendIcon />
               </IconButton>
             </InputAdornment>
