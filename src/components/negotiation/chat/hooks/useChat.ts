@@ -1,21 +1,23 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const useChat = () => {
   const [messageText, setMessageText] = useState('')
 
   const chatContainerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const moveScrollToBottom = () => {
-      if (chatContainerRef.current) chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
-    }
-
-    moveScrollToBottom()
+  const moveScrollToBottom = useCallback(() => {
+    if (chatContainerRef.current)
+      setTimeout(() => chatContainerRef.current?.scrollTo(0, chatContainerRef.current.scrollHeight), 0)
   }, [])
+
+  useEffect(() => {
+    moveScrollToBottom()
+  }, [moveScrollToBottom])
 
   return {
     messageText,
     setMessageText,
     chatContainerRef,
+    moveScrollToBottom,
   }
 }
