@@ -91,7 +91,7 @@ const NegotiationPage: NextPage<NegotiationPageProps> = props => {
               <Typography variant="h3" component="h2" padding={4} pb={0}>
                 Chat
               </Typography>
-              <Chat messages={messages} />
+              <Chat messages={messages} user={session.user} />
             </Section>
           </Box>
 
