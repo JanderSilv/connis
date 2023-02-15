@@ -19,7 +19,7 @@ type ChatProps = {
 export const Chat = (props: ChatProps) => {
   const { messages: initialMessages, user } = props
 
-  const { messageText, setMessageText, chatContainerRef } = useChat()
+  const { messageText, setMessageText, chatContainerRef, moveScrollToBottom, handleEnterKey, sendButtonRef } = useChat()
 
   const [messages, setMessages] = useState(initialMessages)
 
@@ -40,6 +40,7 @@ export const Chat = (props: ChatProps) => {
         placeholder="Mensagem"
         value={messageText}
         onChange={event => setMessageText(event.target.value)}
+        inputProps={{ onKeyPress: handleEnterKey }}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -50,9 +51,11 @@ export const Chat = (props: ChatProps) => {
             <InputAdornment position="end">
               <IconButton
                 aria-label="Enviar mensagem"
+                ref={sendButtonRef}
                 onClick={() => {
                   setMessages([...messages, { id: 1, createdAt: new Date().toISOString(), user, content: messageText }])
                   setMessageText('')
+                  moveScrollToBottom()
                 }}
                 disabled={!messageText}
               >
