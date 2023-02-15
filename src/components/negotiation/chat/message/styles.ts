@@ -46,6 +46,8 @@ export const Container = styled(Box, {
   }
 
   return {
+    width: 'fit-content',
+    marginLeft: isTheUser ? 'auto' : 0,
     padding: theme.spacing(1.5),
     borderRadius: theme.spacing(2),
     backgroundColor: bgColor,

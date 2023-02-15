@@ -1,7 +1,10 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Stack, Typography } from '@mui/material'
 import { useSession } from 'next-auth/react'
+
 import { formatDate } from 'src/helpers/formatters'
+import { checkHasOnlyOneEmoji } from '../helpers'
 import { ChatMessage } from 'src/models/types'
+
 import { Container } from './styles'
 
 type MessageProps = {
@@ -18,37 +21,34 @@ export const Message = (props: MessageProps) => {
   const isTheNextMessageUserTheSame = nextMessageUserId === user.id
 
   return (
-    <Box
-      sx={{
-        marginBottom: 0.5,
-      }}
-    >
-      <Box
-        width="fit-content"
-        sx={{
-          marginLeft: isTheUser ? 'auto' : undefined,
-        }}
-      >
-        <Container isTheUser={isTheUser} withoutArrow={isThePreviousMessageUserTheSame}>
-          <Typography variant="body2" color={isTheUser ? 'primary.contrastText' : undefined}>
-            {content}
-          </Typography>
-        </Container>
-        {!isTheNextMessageUserTheSame && (
-          <Typography
-            component="time"
-            variant="caption"
-            sx={{
-              width: '100%',
-              color: 'text.secondary',
-              display: 'inline-block',
-              textAlign: 'right',
-            }}
-          >
-            {formatDate.distanceToNow(new Date(props.createdAt))}
-          </Typography>
-        )}
-      </Box>
+    <Box mb={0.5}>
+      <Stack alignItems={isTheUser ? 'flex-end' : 'flex-start'}>
+        <Box maxWidth="65%">
+          <Container isTheUser={isTheUser} withoutArrow={isThePreviousMessageUserTheSame}>
+            <Typography
+              variant="body2"
+              color={isTheUser ? 'primary.contrastText' : undefined}
+              fontSize={checkHasOnlyOneEmoji(content) ? 32 : undefined}
+            >
+              {content}
+            </Typography>
+          </Container>
+          {!isTheNextMessageUserTheSame && (
+            <Typography
+              component="time"
+              variant="caption"
+              sx={{
+                width: '100%',
+                color: 'text.secondary',
+                display: 'inline-block',
+                textAlign: isTheUser ? 'right' : 'left',
+              }}
+            >
+              {formatDate.distanceToNow(new Date(props.createdAt))}
+            </Typography>
+          )}
+        </Box>
+      </Stack>
     </Box>
   )
 }
