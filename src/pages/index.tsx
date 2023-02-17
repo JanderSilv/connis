@@ -23,24 +23,6 @@ const Home: NextPage<Props> = props => {
     <Layout>
       <Title>Seja bem vindo ao Connis.</Title>
       <Wrapper>
-        <Box component="aside">
-          <AdCard
-            image={{
-              src: '/assets/images/cimatec-startups.jpg',
-              alt: 'Banner do programa Cimatec Startups',
-            }}
-            href="https://www.senaicimatec.com.br/infraestrutura"
-            openInNewTab
-          >
-            Conheça o ICT Cimatec e desenvolva seu projeto ou ideia conosco.
-          </AdCard>
-        </Box>
-
-        <Box width="100%" flex={1}>
-          <RecentProposals proposals={myProposals} />
-          <RecentOffers offers={myOffers} mt={4} />
-        </Box>
-
         <AsideB>
           <Link href="/cadastro-proposta" passHref>
             <ProposalButton>
@@ -66,6 +48,24 @@ const Home: NextPage<Props> = props => {
             </ProposalButton>
           </Link>
         </AsideB>
+
+        <Box width="100%" flex={1}>
+          <RecentProposals proposals={myProposals} />
+          <RecentOffers offers={myOffers} mt={4} />
+        </Box>
+
+        <Box component="aside">
+          <AdCard
+            image={{
+              src: '/assets/images/cimatec-startups.jpg',
+              alt: 'Banner do programa Cimatec Startups',
+            }}
+            href="https://www.senaicimatec.com.br/infraestrutura"
+            openInNewTab
+          >
+            Conheça o ICT Cimatec e desenvolva seu projeto ou ideia conosco.
+          </AdCard>
+        </Box>
       </Wrapper>
     </Layout>
   )
