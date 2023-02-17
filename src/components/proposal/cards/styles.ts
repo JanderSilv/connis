@@ -46,8 +46,14 @@ Description.defaultProps = {
   variant: 'body2',
 }
 
-export const BadgeContainer = styled(Box)(({ theme }) => ({
+type BadgeContainerProps = {
+  layout?: 'row' | 'card'
+}
+export const BadgeContainer = styled(Box, {
+  shouldForwardProp: prop => prop !== 'layout',
+})<BadgeContainerProps>(({ theme, layout = 'row' }) => ({
   width: '100%',
+  height: layout === 'card' ? 120 : undefined,
   padding: theme.spacing(2),
   color: theme.palette.primary.contrastText,
   textAlign: 'center',
@@ -57,10 +63,13 @@ export const BadgeContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center',
   columnGap: theme.spacing(1),
+  position: 'relative',
 
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: 140,
-    minWidth: 140,
-    flexDirection: 'column',
-  },
+  ...(layout === 'row' && {
+    [theme.breakpoints.up('sm')]: {
+      maxWidth: 140,
+      minWidth: 140,
+      flexDirection: 'column',
+    },
+  }),
 }))
