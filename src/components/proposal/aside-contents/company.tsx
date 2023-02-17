@@ -1,50 +1,57 @@
-import { Avatar, Box, Button, Stack, styled, Typography } from '@mui/material'
-import { makeCompanyData } from 'src/helpers/proposal'
-import { Company } from 'src/models/types'
-import { KeyData } from 'src/styles/proposal'
+import { Button, Divider, Stack, Typography } from '@mui/material'
 
-type Props = Company
+import { useMakeAnOffer } from 'src/hooks/proposal'
+import { OfferCategory } from 'src/models/enums'
+import { Proposal } from 'src/models/types'
 
-export const AsideContentCompany = (company: Props) => {
-  const { logo, name } = company
+import { ActionsHeader } from './actions-header'
+import { CompanyData } from './common'
+
+type Props = {
+  proposal: Proposal
+}
+
+export const OfferCompanyAsideContent = ({ proposal }: Props) => {
+  const { MakeAnOfferDialog, handleOpenMakeAnOfferDialog } = useMakeAnOffer(proposal)
+
   return (
     <>
-      <CompanyHeader>
-        <Avatar src={logo}>{name[0].toUpperCase()}</Avatar>
-        <Typography component="h2" variant="h3">
-          {name}
-        </Typography>
-      </CompanyHeader>
+      <CompanyData {...proposal.company} />
 
-      {makeCompanyData(company).map(({ label, value, displayBlock }) => (
-        <KeyData key={label}>
-          <Typography component="strong" display={displayBlock ? 'block' : undefined}>
-            {label}:
-          </Typography>{' '}
-          {value}
-        </KeyData>
-      ))}
+      <Divider sx={{ mt: 2, mb: 1 }} />
 
-      <Stack mt={3} gap={1}>
-        <Button variant="contained" color="primary" fullWidth>
+      <ActionsHeader>
+        <ul>
+          <li>
+            <Typography>{`"Estou Interessado" indica que você concorda com as condições da proposta e deseja fazer uma oferta de negociação.`}</Typography>
+          </li>
+          <li>
+            <Typography>{`"Fazer contra proposta" indica que você se interessou pela proposta mas gostaria de alterar algumas condições.`}</Typography>
+          </li>
+        </ul>
+      </ActionsHeader>
+
+      <Stack mt={1} gap={1}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handleOpenMakeAnOfferDialog(OfferCategory.default)}
+          fullWidth
+        >
           Estou Interessado
         </Button>
 
-        <Button variant="contained" color="warning" fullWidth>
-          Fazer contra proposta
+        <Button
+          variant="contained"
+          color="warning"
+          onClick={() => handleOpenMakeAnOfferDialog(OfferCategory.counterProposal)}
+          fullWidth
+        >
+          Fazer Contra Proposta
         </Button>
       </Stack>
+
+      <MakeAnOfferDialog />
     </>
   )
-}
-
-export const CompanyHeader = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(3),
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: theme.spacing(2),
-}))
-CompanyHeader.defaultProps = {
-  component: 'header',
 }

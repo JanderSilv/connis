@@ -33,3 +33,5 @@ export enum ProposalStatus {
 }
 
 export * from './company'
+export * from './negotiation'
+export * from './offer'

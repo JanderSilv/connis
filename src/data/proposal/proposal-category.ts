@@ -1,4 +1,4 @@
-import { CardData } from 'src/components/proposal-register/cards-select'
+import { CardData } from 'src/components/shared'
 import { ProposalCategory } from 'src/models/enums'
 import { PlusOneIcon, QuestionMarkIcon, RecyclingIcon, RocketIcon } from 'src/assets/icons'
 

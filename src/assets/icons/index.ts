@@ -1,42 +1,48 @@
-export {
-  AddShoppingCartRounded as AddShoppingCartIcon,
-  AssignmentOutlined as AssignmentOutlinedIcon,
-  AttachMoneyRounded as AttachMoneyIcon,
-  BiotechRounded as BiotechIcon,
-  BusinessOutlined as BusinessOutlinedIcon,
-  CenterFocusStrongRounded as CenterFocusStrongIcon,
-  DoubleArrowRounded as DoubleArrowIcon,
-  EmailOutlined as EmailOutlinedIcon,
-  ExpandLessRounded as ExpandLessIcon,
-  ExpandMoreRounded as ExpandMoreIcon,
-  FormatListBulletedRounded as FormatListBulletedIcon,
-  GrainRounded as GrainIcon,
-  InsightsRounded as InsightsIcon,
-  KeyboardArrowUpRounded as KeyboardArrowUpIcon,
-  LibraryBooksRounded as LibraryBooksIcon,
-  LocalShippingRounded as LocalShippingIcon,
-  LockRounded as LockIcon,
-  LockOutlined as LockOutlinedIcon,
-  MoreVertRounded as MoreVertIcon,
-  NoteAddRounded as NoteAddIcon,
-  NotificationsOutlined as NotificationsOutlinedIcon,
-  NotificationsRounded as NotificationsIcon,
-  PersonRounded as PersonIcon,
-  PersonOutline as PersonOutlineIcon,
-  PhoneOutlined as PhoneOutlinedIcon,
-  PlaylistAddRounded as PlaylistAddIcon,
-  PlusOneRounded as PlusOneIcon,
-  QuestionMarkRounded as QuestionMarkIcon,
-  RocketRounded as RocketIcon,
-  ScienceRounded as ScienceIcon,
-  SearchRounded as SearchIcon,
-  SyncRounded as SyncIcon,
-  TipsAndUpdatesRounded as TipsAndUpdatesIcon,
-  VisibilityRounded as VisibilityIcon,
-  VisibilityOffRounded as VisibilityOffIcon,
-  VolunteerActivismRounded as VolunteerActivismIcon,
-  WorkspacesRounded as WorkspacesIcon,
-} from '@mui/icons-material'
-export * from './recycling'
-export * from './microsoft'
+export { default as AddShoppingCartIcon } from '@mui/icons-material/AddShoppingCartRounded'
+export { default as AssignmentOutlinedIcon } from '@mui/icons-material/AssignmentOutlined'
+export { default as AttachMoneyIcon } from '@mui/icons-material/AttachMoneyRounded'
+export { default as BiotechIcon } from '@mui/icons-material/BiotechRounded'
+export { default as BusinessOutlinedIcon } from '@mui/icons-material/BusinessOutlined'
+export { default as BusinessIcon } from '@mui/icons-material/BusinessRounded'
+export { default as CenterFocusStrongIcon } from '@mui/icons-material/CenterFocusStrongRounded'
+export { default as ChatIcon } from '@mui/icons-material/ChatRounded'
+export { default as DescriptionIcon } from '@mui/icons-material/DescriptionRounded'
+export { default as DoubleArrowIcon } from '@mui/icons-material/DoubleArrowRounded'
+export { default as EditIcon } from '@mui/icons-material/EditRounded'
+export { default as EmailOutlinedIcon } from '@mui/icons-material/EmailOutlined'
+export { default as ExpandLessIcon } from '@mui/icons-material/ExpandLessRounded'
+export { default as ExpandMoreIcon } from '@mui/icons-material/ExpandMoreRounded'
+export { default as FormatListBulletedIcon } from '@mui/icons-material/FormatListBulletedRounded'
+export { default as GrainIcon } from '@mui/icons-material/GrainRounded'
+export { default as InfoIcon } from '@mui/icons-material/InfoRounded'
+export { default as InsightsIcon } from '@mui/icons-material/InsightsRounded'
+export { default as KeyboardArrowUpIcon } from '@mui/icons-material/KeyboardArrowUpRounded'
+export { default as LibraryBooksIcon } from '@mui/icons-material/LibraryBooksRounded'
+export { default as LocalShippingIcon } from '@mui/icons-material/LocalShippingRounded'
+export { default as LockOutlinedIcon } from '@mui/icons-material/LockOutlined'
+export { default as LockIcon } from '@mui/icons-material/LockRounded'
+export { default as MoodIcon } from '@mui/icons-material/MoodRounded'
+export { default as MoreVertIcon } from '@mui/icons-material/MoreVertRounded'
+export { default as NoteAddIcon } from '@mui/icons-material/NoteAddRounded'
+export { default as NotificationsOutlinedIcon } from '@mui/icons-material/NotificationsOutlined'
+export { default as NotificationsIcon } from '@mui/icons-material/NotificationsRounded'
+export { default as PersonOutlineIcon } from '@mui/icons-material/PersonOutline'
+export { default as PersonIcon } from '@mui/icons-material/PersonRounded'
+export { default as PhoneOutlinedIcon } from '@mui/icons-material/PhoneOutlined'
+export { default as PlaylistAddIcon } from '@mui/icons-material/PlaylistAddRounded'
+export { default as PlusOneIcon } from '@mui/icons-material/PlusOneRounded'
+export { default as QuestionMarkIcon } from '@mui/icons-material/QuestionMarkRounded'
+export { default as RocketIcon } from '@mui/icons-material/RocketRounded'
+export { default as ScienceIcon } from '@mui/icons-material/ScienceRounded'
+export { default as SearchIcon } from '@mui/icons-material/SearchRounded'
+export { default as SendIcon } from '@mui/icons-material/SendRounded'
+export { default as SyncIcon } from '@mui/icons-material/SyncRounded'
+export { default as TaskIcon } from '@mui/icons-material/TaskRounded'
+export { default as TipsAndUpdatesIcon } from '@mui/icons-material/TipsAndUpdatesRounded'
+export { default as VisibilityOffIcon } from '@mui/icons-material/VisibilityOffRounded'
+export { default as VisibilityIcon } from '@mui/icons-material/VisibilityRounded'
+export { default as VolunteerActivismIcon } from '@mui/icons-material/VolunteerActivismRounded'
+export { default as WorkspacesIcon } from '@mui/icons-material/WorkspacesRounded'
 export * from './google'
+export * from './microsoft'
+export * from './recycling'

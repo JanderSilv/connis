@@ -2,7 +2,21 @@ import { ProposalCategory, ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
 import * as yup from 'yup'
 
-export type ProposalSchema = Omit<Proposal, 'id' | 'budget' | 'createdAt' | 'status'> & {
+type ExcludedProposalKeys =
+  | 'id'
+  | 'createdAt'
+  | 'updatedAt'
+  | 'offers'
+  | 'views'
+  | 'budget'
+  | 'status'
+  | 'viewed'
+  | 'currentOfferId'
+  | 'company'
+  | 'unseenActivities'
+  | 'offerCompany'
+
+export type ProposalSchema = Omit<Proposal, ExcludedProposalKeys> & {
   budget?: string
 }
 

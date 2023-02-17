@@ -1,5 +1,6 @@
 import { Chip, Stack, Typography } from '@mui/material'
 import { proposalCategories } from 'src/data/proposal'
+import { formatDate } from 'src/helpers/formatters'
 import { Proposal } from 'src/models/types'
 import { DataContainer, Section, Title } from 'src/styles/proposal'
 
@@ -12,7 +13,7 @@ export const ProposalDataSectionOne = (props: Props) => {
   return (
     <Section>
       <Typography component="time" variant="body2" color="text.secondary">
-        Publicado em {createdAt}
+        Publicado em {formatDate.longDate(new Date(createdAt))}
       </Typography>
 
       <DataContainer>
@@ -24,7 +25,7 @@ export const ProposalDataSectionOne = (props: Props) => {
       </DataContainer>
 
       <DataContainer>
-        <Title>Descrição da Projeto</Title>
+        <Title>Descrição do Projeto</Title>
         <Typography>{projectDescription}</Typography>
       </DataContainer>
 

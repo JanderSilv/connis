@@ -1,7 +1,7 @@
 import { Button, Stack } from '@mui/material'
 import { ProposalStatus } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
-import { ProposalStatusChip } from '../proposal-chip-status'
+import { ProposalStatusChip } from '../chip-status'
 
 type Props = Proposal
 

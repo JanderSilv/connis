@@ -1,9 +1,14 @@
 import { useState } from 'react'
-import { NextPage } from 'next'
+import { GetServerSideProps, NextPage } from 'next'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
+import { signIn } from 'next-auth/react'
 import { Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+import { pages } from 'src/constants'
+import { withPublic } from 'src/helpers/auth/withPublic'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
 import { Layout } from 'src/layouts/auth'
@@ -20,11 +25,17 @@ const Login: NextPage = () => {
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchemaValidation),
   })
+  const { query } = useRouter()
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false)
 
   const handleLogin = (data: LoginSchema) => {
     console.log(data)
+    signIn('credentials', {
+      email: data.email,
+      password: data.password,
+      callbackUrl: (query.callbackUrl as string) || undefined,
+    })
   }
 
   return (
@@ -57,7 +68,7 @@ const Login: NextPage = () => {
         <TextField
           variant="outlined"
           label="Senha"
-          type="password"
+          type={shouldShowPassword ? 'text' : 'password'}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -83,7 +94,7 @@ const Login: NextPage = () => {
         />
 
         <Link
-          href="/recuperar-senha"
+          href={pages.recoverPassword}
           muiLinkProps={{
             width: '100%',
             variant: 'body2',
@@ -102,7 +113,7 @@ const Login: NextPage = () => {
         <SocialLoginButtons mt={1} />
 
         <ForgotPasswordTypography>
-          Não possui uma conta? <Link href="/cadastro">Cadastre-se aqui</Link>
+          Não possui uma conta? <Link href={pages.companySignUp}>Cadastre-se aqui</Link>
         </ForgotPasswordTypography>
       </Form>
     </Layout>
@@ -110,3 +121,9 @@ const Login: NextPage = () => {
 }
 
 export default Login
+
+export const getServerSideProps: GetServerSideProps = withPublic(async () => {
+  return {
+    props: {},
+  }
+})

@@ -1,5 +1,5 @@
 import { ProposalType } from 'src/models/enums'
-import { CardData } from 'src/components/proposal-register/cards-select'
+import { CardData } from 'src/components/shared'
 import { AttachMoneyIcon, BiotechIcon, SyncIcon, VolunteerActivismIcon } from 'src/assets/icons'
 
 export const proposalTypes = {
@@ -36,3 +36,12 @@ export const proposalTypeOptions: CardData[] = [
   proposalTypes[ProposalType.exchange],
   proposalTypes[ProposalType.research],
 ]
+
+const proposalTypesTexts = {
+  [ProposalType.buyOrSell]: 'valores',
+  [ProposalType.exchange]: 'troca de bens',
+  [ProposalType.donate]: 'doação',
+  [ProposalType.research]: 'pesquisa e desenvolvimento',
+}
+
+export { proposalTypesTexts }

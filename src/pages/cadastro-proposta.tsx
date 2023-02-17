@@ -1,6 +1,6 @@
 import { KeyboardEvent, useRef, useState } from 'react'
 import Head from 'next/head'
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import {
   Autocomplete,
   Collapse,
@@ -30,14 +30,14 @@ import {
   periodicityOptions,
   proposalAdditionalQuestions,
 } from 'src/data/proposal'
+import { withAuth } from 'src/helpers/withAuth'
 import { ProposalCategory, ProposalType } from 'src/models/enums'
 import { proposalRegisterSchema, ProposalSchema } from 'src/validations/proposal-register'
 
 import { Layout } from 'src/layouts/app'
 import { AnimatedStep, WizardFooter } from 'src/components/proposal-register'
-import { CardsSelect } from 'src/components/proposal-register/cards-select'
 import { Container } from 'src/components/container'
-import { MaskedTextField } from 'src/components/shared'
+import { CardsSelect, MaskedTextField } from 'src/components/shared'
 import { AttachMoneyIcon, PlaylistAddIcon } from 'src/assets/icons'
 import { ProductionContainer, Wrapper } from 'src/styles/proposal-register'
 
@@ -60,6 +60,7 @@ const ProposalRegister: NextPage = () => {
       },
     },
   })
+
   const {
     control,
     handleSubmit,
@@ -468,3 +469,9 @@ const ProposalRegister: NextPage = () => {
 }
 
 export default ProposalRegister
+
+export const getServerSideProps: GetServerSideProps = withAuth(async () => {
+  return {
+    props: {},
+  }
+})
