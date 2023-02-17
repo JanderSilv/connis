@@ -5,6 +5,7 @@ import { proposalTypeOptions } from 'src/data/proposal'
 import { formatDate } from 'src/helpers/formatters'
 import { Offer } from 'src/models/types'
 
+import { UserAvatar } from 'src/components/shared'
 import { OfferStatusChip } from '../../chip-status'
 import { BadgeContainer, ContentContainer, Description, Header, ListItemButton } from '../styles'
 
@@ -26,7 +27,7 @@ export const OfferCard = (props: OfferCardProps) => {
             <OfferStatusChip status={status} sx={{ mb: 1, display: { sm: 'none' } }} />
             <Header mb={1}>
               <Stack direction="row" alignItems="center" gap={2}>
-                <Avatar src={company.image} alt={company.image || 'Avatar do usuário'} sx={{ width: 25, height: 25 }} />
+                <UserAvatar name={company.name} src={company.image} size={25} />
                 <Typography component="h3" variant="h5">
                   {company.name}
                 </Typography>
