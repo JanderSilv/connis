@@ -7,6 +7,8 @@ export type User = {
   name: string
   email: string
   image?: string
+  createdAt: string
+  updatedAt?: string
 } & (Company | ICT | Analyst)
 
 export type CompanyUser = User & Company
