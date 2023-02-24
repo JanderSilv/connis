@@ -1,39 +1,51 @@
-import { useState } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
-import { Box, Button, Collapse, FormControlLabel, FormGroup, InputAdornment, Stack, TextField } from '@mui/material'
+import { useState } from 'react'
+import {
+  Box,
+  Button,
+  Collapse,
+  Container,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 
-import { ProposalCategory, ProposalStatus, ProposalType } from 'src/models/enums'
+import { ProposalCategory, ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
-import { proposalCategoryOptions, proposalTypeOptions, trlOptions } from 'src/data/proposal'
 
+import { fakeData } from 'src/data/fake'
+import { proposalCategoryOptions, proposalTypeOptions, trlOptions } from 'src/data/proposal'
+import { formatCurrency } from 'src/helpers/formatters'
+
+import { ProposalCard } from 'src/components/proposal'
 import { Layout } from 'src/layouts/app'
-import { Checkbox, FormControl, FormLabel, Slider, Wrapper } from 'src/styles/proposals'
+
 import { ExpandLessIcon, ExpandMoreIcon, SearchIcon } from 'src/assets/icons'
+import { Checkbox, FormControl, FormLabel, Slider, Wrapper } from 'src/styles/proposals'
 
 type Props = {
   proposals: Proposal[]
 }
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    maximumFractionDigits: 0,
-  }).format(value)
-}
-
 const Proposals: NextPage<Props> = ({ proposals }) => {
   const [shouldShowTRLs, setShouldShowTRLs] = useState(false)
-
-  const [value, setValue] = useState<number[]>([1000, 10_000])
+  const [value, setValue] = useState([1000, 10_000])
 
   const handleChange = (_: Event, newValue: number | number[]) => setValue(newValue as number[])
 
   return (
-    <Layout>
+    <Layout documentTitle="Catálogo de Propostas">
+      <Typography variant="h1" color="primary" textAlign="center" mt={2}>
+        Catálogo de Propostas
+      </Typography>
+
       <Wrapper>
-        <Box component="aside">
-          <Stack position="sticky" top={32} gap={2}>
+        <Box component="aside" width="100%" flex={1}>
+          <Stack minWidth={250} maxWidth={{ md: 300 }} position="sticky" top={32} gap={2}>
             <TextField
               variant="outlined"
               label="Pesquise um termo"
@@ -71,9 +83,9 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
             <FormControl>
               <FormLabel id="budget-slider">Orçamento</FormLabel>
               <Slider
-                aria-label="Orçamento"
                 aria-labelledby="budget-slider"
-                getAriaValueText={formatCurrency}
+                getAriaLabel={index => (index === 0 ? 'Orçamento mínimo' : 'Orçamento máximo')}
+                getAriaValueText={value => formatCurrency(value)}
                 value={value}
                 onChange={handleChange}
                 min={1000}
@@ -115,11 +127,15 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
           </Stack>
         </Box>
 
-        <Box component="main">
-          {proposals.map(proposal => (
-            <></>
-          ))}
-        </Box>
+        <Container component="main" maxWidth="xl">
+          <Grid container spacing={2}>
+            {[...proposals, ...proposals].map(proposal => (
+              <Grid key={proposal.id} item sm={6} lg={4} xl={3}>
+                <ProposalCard key={proposal.id} proposal={proposal} layout="card" />
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
       </Wrapper>
     </Layout>
   )
@@ -128,42 +144,12 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
 export default Proposals
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const proposals = [
-    {
-      id: 1,
-      title: 'Título da proposta',
-      description: 'Descrição da proposta',
-      date: '10/01/2022',
-      views: 10,
-      status: ProposalStatus.opened,
-      category: ProposalCategory.waste,
-      recentActivities: 1,
-    },
-    {
-      id: 2,
-      title: 'Título da proposta 2',
-      description: 'Descrição da proposta',
-      date: '10/01/2022',
-      views: 5,
-      status: ProposalStatus.canceled,
-      category: ProposalCategory.disruptiveInnovation,
-      recentActivities: 0,
-    },
-    {
-      id: 3,
-      title: 'Título da proposta 3',
-      description: 'Descrição da proposta',
-      date: '10/01/2022',
-      views: 1000,
-      status: ProposalStatus.finished,
-      category: ProposalCategory.incrementalInnovation,
-      recentActivities: 0,
-    },
-  ]
+  // TODO: fetch proposals from API
+  const { myProposals } = fakeData
 
   return {
     props: {
-      proposals,
+      proposals: myProposals,
     },
   }
 }

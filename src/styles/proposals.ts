@@ -16,19 +16,16 @@ export const Wrapper = styled(Box)(({ theme }) => ({
 
   display: 'flex',
   flexDirection: 'column',
-  flexGrow: 1,
   alignItems: 'center',
   justifyContent: 'center',
-  gap: theme.spacing(4, 8),
+  gap: theme.spacing(4, 5),
 
   [theme.breakpoints.up('md')]: {
-    flexWrap: 'wrap',
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   [theme.breakpoints.up('lg')]: {
     padding: theme.spacing(3),
-    flexWrap: 'nowrap',
     justifyContent: 'space-between',
   },
 }))
