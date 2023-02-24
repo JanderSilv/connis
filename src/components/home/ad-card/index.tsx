@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image, { ImageProps } from 'next/image'
-import { Box, Card, CardContent, CardMedia, SxProps, Typography } from '@mui/material'
+import { Box, Card, CardActionArea, CardContent, CardMedia, SxProps, Typography } from '@mui/material'
 
 type AdCardProps = {
   image: ImageProps
@@ -15,7 +15,7 @@ export const AdCard = (props: AdCardProps) => {
   const content = (
     <>
       <CardMedia>
-        <Box width="100%" height="100%" minHeight={220} position="relative">
+        <Box width="100%" height="100%" minWidth={130} minHeight={{ xs: 100, lg: 220 }} position="relative">
           <Image layout="fill" objectFit="cover" alt={image.alt} draggable="false" {...image} />
         </Box>
       </CardMedia>
@@ -29,20 +29,25 @@ export const AdCard = (props: AdCardProps) => {
 
   if (!!href)
     return (
-      <Link href={href} passHref>
-        <Card
-          component="a"
-          {...(openInNewTab
-            ? {
-                target: '_blank',
-                rel: 'noopener noreferrer',
-              }
-            : {})}
-          sx={{ maxWidth: 300, display: 'block', textDecoration: 'none', ...sx }}
-        >
-          {content}
-        </Card>
-      </Link>
+      <Card sx={{ maxWidth: { xs: 330, lg: 300 }, ...sx }}>
+        <Link href={href} passHref>
+          <CardActionArea
+            component="a"
+            {...(openInNewTab && {
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            })}
+            sx={{
+              display: { xs: 'flex', lg: 'block' },
+              alignItems: 'stretch',
+              flexDirection: 'row-reverse',
+              textDecoration: 'none',
+            }}
+          >
+            {content}
+          </CardActionArea>
+        </Link>
+      </Card>
     )
 
   return <Card sx={{ maxWidth: 300, ...sx }}>{content}</Card>
