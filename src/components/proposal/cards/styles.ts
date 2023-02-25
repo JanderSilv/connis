@@ -1,4 +1,4 @@
-import { Box, ListItemButton as MuiListItemButton, styled, Typography } from '@mui/material'
+import { Box, Card as MuiCard, ListItemButton as MuiListItemButton, styled, Typography } from '@mui/material'
 
 export const ListItemButton = styled(MuiListItemButton)(({ theme }) => ({
   minHeight: 110,
@@ -11,6 +11,10 @@ export const ListItemButton = styled(MuiListItemButton)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     flexDirection: 'row',
   },
+}))
+
+export const Card = styled(MuiCard)(() => ({
+  width: '100%',
 }))
 
 export const Header = styled(Box)(({ theme }) => ({
