@@ -254,7 +254,7 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
 
         <Container component="main" maxWidth="xl">
           <Grid container spacing={2}>
-            {[...proposals, ...proposals].map(proposal => (
+            {proposals.map(proposal => (
               <Grid key={proposal.id} item sm={6} lg={4} xl={3}>
                 <ProposalCard key={proposal.id} proposal={proposal} layout="card" />
               </Grid>
