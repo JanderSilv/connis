@@ -27,3 +27,5 @@ export const offerStatus = {
     label: 'Visualizado',
   },
 }
+
+export const offerStatusOptions = Object.values(offerStatus)
