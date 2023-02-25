@@ -71,12 +71,3 @@ export const Checkbox = styled(MuiCheckbox)(() => ({}))
 Checkbox.defaultProps = {
   size: 'small',
 }
-
-export const Slider = styled(MuiSlider)(() => ({
-  "& > .MuiSlider-markLabel[data-index='0']": {
-    transform: 'none',
-  },
-  "& > .MuiSlider-markLabel[data-index='1']": {
-    transform: 'translateX(-100%)',
-  },
-}))

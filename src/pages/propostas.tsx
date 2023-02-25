@@ -1,5 +1,7 @@
+import { useEffect, useRef, useState, ComponentProps } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
-import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Box,
   Button,
@@ -7,6 +9,7 @@ import {
   Container,
   FormControlLabel,
   FormGroup,
+  FormHelperText,
   Grid,
   InputAdornment,
   Stack,
@@ -19,23 +22,71 @@ import { Proposal } from 'src/models/types'
 
 import { fakeData } from 'src/data/fake'
 import { proposalCategoryOptions, proposalTypeOptions, trlOptions } from 'src/data/proposal'
-import { formatCurrency } from 'src/helpers/formatters'
+import { proposalsFiltersSchema, ProposalsFilters } from 'src/validations/proposals'
 
 import { ProposalCard } from 'src/components/proposal'
+import { MaskedTextField } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
 
 import { ExpandLessIcon, ExpandMoreIcon, SearchIcon } from 'src/assets/icons'
-import { Checkbox, FormControl, FormLabel, Slider, Wrapper } from 'src/styles/proposals'
+import { Checkbox, FormControl, FormLabel, Wrapper } from 'src/styles/proposals'
 
 type Props = {
   proposals: Proposal[]
 }
 
-const Proposals: NextPage<Props> = ({ proposals }) => {
-  const [shouldShowTRLs, setShouldShowTRLs] = useState(false)
-  const [value, setValue] = useState([1000, 10_000])
+const budgetFieldProps: ComponentProps<typeof MaskedTextField> = {
+  mask: Number,
+  inputMode: 'numeric',
+  radix: ',',
+  mapToRadix: ['.'],
+  thousandsSeparator: '.',
+  scale: 0,
+  InputProps: {
+    startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+  },
+  size: 'small' as any,
+  variant: 'outlined',
+  fullWidth: true,
+  signed: false,
+  unmask: true as any,
+}
 
-  const handleChange = (_: Event, newValue: number | number[]) => setValue(newValue as number[])
+const Proposals: NextPage<Props> = ({ proposals }) => {
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+    register,
+    watch,
+  } = useForm<ProposalsFilters>({
+    resolver: zodResolver(proposalsFiltersSchema),
+    defaultValues: {
+      categories: [],
+      types: [],
+      trls: [],
+      minBudget: 1000,
+    },
+  })
+
+  const [shouldShowTRLs, setShouldShowTRLs] = useState(false)
+
+  const submitTimerRef = useRef<NodeJS.Timeout>()
+
+  useEffect(() => {
+    const handleFiltersSubmit = (data: ProposalsFilters) => {
+      // TODO: implement filters submit
+      console.log({ data })
+    }
+
+    const subscription = watch(() => {
+      const submitTimer = submitTimerRef.current
+      if (submitTimer) clearTimeout(submitTimer)
+
+      submitTimerRef.current = setTimeout(() => handleSubmit(handleFiltersSubmit)(), 1000)
+    })
+    return () => subscription.unsubscribe()
+  }, [handleSubmit, watch])
 
   return (
     <Layout documentTitle="Catálogo de Propostas">
@@ -45,7 +96,7 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
 
       <Wrapper>
         <Box component="aside" width="100%" flex={1}>
-          <Stack minWidth={250} maxWidth={{ md: 300 }} position="sticky" top={32} gap={2}>
+          <Stack component="form" minWidth={250} maxWidth={{ md: 300 }} position="sticky" top={32} gap={2}>
             <TextField
               variant="outlined"
               label="Pesquise um termo"
@@ -56,6 +107,7 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
                   </InputAdornment>
                 ),
               }}
+              {...register('search')}
               size="small"
               fullWidth
             />
@@ -65,7 +117,29 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
               <FormGroup>
                 {proposalCategoryOptions.map(category => {
                   if (category.id === ProposalCategory.others) return null
-                  return <FormControlLabel key={category.id} label={category.title} control={<Checkbox />} />
+                  return (
+                    <FormControlLabel
+                      key={category.id}
+                      label={category.title}
+                      control={
+                        <Controller
+                          name="categories"
+                          control={control}
+                          render={({ field: { value, onChange, ...rest } }) => (
+                            <Checkbox
+                              checked={value.includes(category.id)}
+                              onChange={e =>
+                                onChange(
+                                  e.target.checked ? [...value, category.id] : value.filter(id => id !== category.id)
+                                )
+                              }
+                              {...rest}
+                            />
+                          )}
+                        />
+                      }
+                    />
+                  )
                 })}
               </FormGroup>
             </FormControl>
@@ -75,43 +149,94 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
               <FormGroup>
                 {proposalTypeOptions.map(type => {
                   if (type.id === ProposalType.research) return null
-                  return <FormControlLabel key={type.id} label={type.title} control={<Checkbox />} />
+                  return (
+                    <FormControlLabel
+                      key={type.id}
+                      label={type.title}
+                      control={
+                        <Controller
+                          name="types"
+                          control={control}
+                          render={({ field: { value, onChange, ...rest } }) => (
+                            <Checkbox
+                              checked={value.includes(type.id)}
+                              onChange={e =>
+                                onChange(e.target.checked ? [...value, type.id] : value.filter(id => id !== type.id))
+                              }
+                              {...rest}
+                            />
+                          )}
+                        />
+                      }
+                    />
+                  )
                 })}
               </FormGroup>
             </FormControl>
 
-            <FormControl>
-              <FormLabel id="budget-slider">Orçamento</FormLabel>
-              <Slider
-                aria-labelledby="budget-slider"
-                getAriaLabel={index => (index === 0 ? 'Orçamento mínimo' : 'Orçamento máximo')}
-                getAriaValueText={value => formatCurrency(value)}
-                value={value}
-                onChange={handleChange}
-                min={1000}
-                max={100_000}
-                step={1000}
-                marks={[
-                  {
-                    value: 1000,
-                    label: formatCurrency(value[0]),
-                  },
-                  {
-                    value: 100_000,
-                    label: formatCurrency(value[1]),
-                  },
-                ]}
-                size="small"
-                disableSwap
-              />
-            </FormControl>
+            <Collapse in={watch('types').includes(ProposalType.buyOrSell)}>
+              <Box>
+                <FormLabel>Orçamento</FormLabel>
+                <Stack mt={1.5} direction="row" spacing={1}>
+                  <Controller
+                    name="minBudget"
+                    control={control}
+                    render={({ field: { value, onChange, ...rest } }) => (
+                      <MaskedTextField
+                        label="Valor mínimo"
+                        value={value.toString()}
+                        onAccept={newValue => onChange(Number(newValue))}
+                        error={!!errors.maxBudget}
+                        {...budgetFieldProps}
+                        {...rest}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="maxBudget"
+                    control={control}
+                    render={({ field: { value, onChange, ...rest } }) => (
+                      <MaskedTextField
+                        label="Valor máximo"
+                        value={value?.toString()}
+                        onAccept={newValue => onChange(Number(newValue))}
+                        error={!!errors.maxBudget}
+                        {...budgetFieldProps}
+                        {...rest}
+                      />
+                    )}
+                  />
+                </Stack>
+                <FormHelperText error={!!errors.minBudget || !!errors.maxBudget}>
+                  {errors.minBudget?.message || errors.maxBudget?.message}
+                </FormHelperText>
+              </Box>
+            </Collapse>
 
             <FormControl>
               <FormLabel>TRL</FormLabel>
-              <Collapse in={shouldShowTRLs} collapsedSize={190}>
-                <FormGroup>
+              <Collapse in={shouldShowTRLs} collapsedSize={45}>
+                <FormGroup row>
                   {trlOptions.map(trl => (
-                    <FormControlLabel key={trl.id} label={trl.label} control={<Checkbox />} />
+                    <FormControlLabel
+                      key={trl.id}
+                      label={trl.label}
+                      control={
+                        <Controller
+                          name="trls"
+                          control={control}
+                          render={({ field: { value, onChange, ...rest } }) => (
+                            <Checkbox
+                              checked={value.includes(trl.id)}
+                              onChange={e =>
+                                onChange(e.target.checked ? [...value, trl.id] : value.filter(id => id !== trl.id))
+                              }
+                              {...rest}
+                            />
+                          )}
+                        />
+                      }
+                    />
                   ))}
                 </FormGroup>
               </Collapse>
@@ -121,7 +246,7 @@ const Proposals: NextPage<Props> = ({ proposals }) => {
                 onClick={() => setShouldShowTRLs(prevState => !prevState)}
                 sx={{ maxWidth: 'fit-content', textTransform: 'initial' }}
               >
-                {!shouldShowTRLs ? 'Ver mais' : 'Ver menos'}
+                {!shouldShowTRLs ? 'Ver todos' : 'Ver menos'}
               </Button>
             </FormControl>
           </Stack>
