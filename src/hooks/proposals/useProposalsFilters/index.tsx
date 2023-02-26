@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, ComponentProps, useCallback, Dispatch, SetStateAction } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, UseFormReturn } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Box,
@@ -25,6 +25,7 @@ import { ExpandLessIcon, ExpandMoreIcon, SearchIcon } from 'src/assets/icons'
 import { Checkbox, FormControl, FormLabel } from 'src/styles/proposals'
 
 type ProposalFiltersProps = {
+  form: UseFormReturn<ProposalsFilters>
   setProposals: Dispatch<SetStateAction<Proposal[]>>
 }
 
@@ -45,26 +46,19 @@ const budgetFieldProps: ComponentProps<typeof MaskedTextField> = {
   unmask: true as any,
 }
 
-const ProposalsFiltersComponent = ({ setProposals }: ProposalFiltersProps) => {
-  const {
-    control,
-    formState: { errors },
-    handleSubmit,
-    register,
-    watch,
-  } = useForm<ProposalsFilters>({
-    resolver: zodResolver(proposalsFiltersSchema),
-    defaultValues: {
-      categories: [],
-      types: [],
-      trls: [],
-      minBudget: 1000,
-    },
-  })
-
+const ProposalsFiltersComponent = ({ form, setProposals }: ProposalFiltersProps) => {
   const [shouldShowTRLs, setShouldShowTRLs] = useState(false)
 
   const submitTimerRef = useRef<NodeJS.Timeout>()
+
+  const {
+    register,
+    handleSubmit,
+    control,
+    watch,
+    formState: { errors },
+    reset,
+  } = form
 
   useEffect(() => {
     const handleFiltersSubmit = (data: ProposalsFilters) => {
@@ -234,6 +228,10 @@ const ProposalsFiltersComponent = ({ setProposals }: ProposalFiltersProps) => {
           {!shouldShowTRLs ? 'Ver todos' : 'Ver menos'}
         </Button>
       </FormControl>
+
+      <Button variant="outlined" color="primary" onClick={() => reset()} size="small">
+        Limpar filtros
+      </Button>
     </Stack>
   )
 }
@@ -241,8 +239,18 @@ const ProposalsFiltersComponent = ({ setProposals }: ProposalFiltersProps) => {
 export const useProposalsFilters = (initialProposals: Proposal[]) => {
   const [proposals, setProposals] = useState<Proposal[]>(initialProposals)
 
+  const form = useForm<ProposalsFilters>({
+    resolver: zodResolver(proposalsFiltersSchema),
+    defaultValues: {
+      categories: [],
+      types: [],
+      trls: [],
+      minBudget: 1000,
+    },
+  })
+
   return {
     filteredProposals: proposals,
-    ProposalsFilters: useCallback(() => <ProposalsFiltersComponent setProposals={setProposals} />, []),
+    ProposalsFilters: useCallback(() => <ProposalsFiltersComponent form={form} setProposals={setProposals} />, [form]),
   }
 }
