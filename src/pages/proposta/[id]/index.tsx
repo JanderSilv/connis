@@ -19,9 +19,8 @@ import {
   OfferCard,
   OfferCompanyAsideContent,
   ProposalSections,
-  TabPanel,
 } from 'src/components/proposal'
-import { ScrollTop } from 'src/components/shared'
+import { ScrollTop, TabPanel } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
 
 import { BusinessIcon, DescriptionIcon } from 'src/assets/icons'
@@ -67,11 +66,11 @@ const ProposalPage: NextPage<ProposalPageProps> = props => {
       )}
 
       <Wrapper maxWidth="xl">
-        <TabPanel value={selectedTab} index={0} flex={1}>
+        <TabPanel value={selectedTab} index={0} flex={1} withGrowAnimation>
           <ProposalSections proposal={proposal} />
         </TabPanel>
         {userIsTheProposalOwner && (
-          <TabPanel value={selectedTab} index={1} flex={1}>
+          <TabPanel value={selectedTab} index={1} flex={1} withGrowAnimation>
             <Box component="main" maxWidth={750} ml="auto">
               {offers.map(offerHistory => {
                 const lastOffer = offerHistory.at(-1)

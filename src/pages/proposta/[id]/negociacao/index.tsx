@@ -25,8 +25,8 @@ import { ChatMessage, ICTOffer, Offer, Proposal } from 'src/models/types'
 
 import { Chat, ICTOfferSection } from 'src/components/negotiation'
 import { OfferHistory } from 'src/components/offer'
-import { ActionsHeader, CompanyData, MobileNavigation, TabPanel } from 'src/components/proposal'
-import { ScrollTop } from 'src/components/shared'
+import { ActionsHeader, CompanyData, MobileNavigation } from 'src/components/proposal'
+import { ScrollTop, TabPanel } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
 
 import { ChatIcon, DescriptionIcon } from 'src/assets/icons'
@@ -78,7 +78,7 @@ const NegotiationPage: NextPage<NegotiationPageProps> = props => {
           <Tab key={label} label={label} {...a11yTabProps(index)} />
         ))}
       </Tabs>
-      <TabPanel value={selectedTab} index={0}>
+      <TabPanel value={selectedTab} index={0} withGrowAnimation>
         <Wrapper maxWidth="xl">
           <Box component="main" flex={1}>
             {!!ictOffer && (
@@ -170,7 +170,8 @@ const NegotiationPage: NextPage<NegotiationPageProps> = props => {
           </Box>
         </Wrapper>
       </TabPanel>
-      <TabPanel value={selectedTab} index={1} flex={1}>
+
+      <TabPanel value={selectedTab} index={1} flex={1} withGrowAnimation>
         <Wrapper maxWidth="xl">
           <OfferHistory proposal={proposal} offers={offers} session={session} />
         </Wrapper>
