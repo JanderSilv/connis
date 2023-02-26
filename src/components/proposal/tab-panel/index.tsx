@@ -1,18 +1,35 @@
-import { Box, BoxProps, Grow } from '@mui/material'
+import { Box, BoxProps, Grow, GrowProps } from '@mui/material'
+
+type HasGrowAnimation = {
+  withGrowAnimation?: true
+  growAnimationProps?: GrowProps
+}
+type HasNoGrowAnimation = {
+  withGrowAnimation?: false
+  growAnimationProps?: never
+}
 
 type TabPanelProps = {
   index: number
   value: number
-} & BoxProps
+} & BoxProps &
+  (HasGrowAnimation | HasNoGrowAnimation)
 
 export const TabPanel = (props: TabPanelProps) => {
-  const { children, value, index, ...rest } = props
+  const { children, value, index, withGrowAnimation, ...rest } = props
 
-  return (
-    <Grow in={value === index} unmountOnExit>
-      <Box role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`} aria-labelledby={`tab-${index}`} {...rest}>
-        {children}
-      </Box>
-    </Grow>
+  const tabPanel = (
+    <Box role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`} aria-labelledby={`tab-${index}`} {...rest}>
+      {children}
+    </Box>
   )
+
+  if (withGrowAnimation)
+    return (
+      <Grow in={value === index} unmountOnExit {...props.growAnimationProps}>
+        {tabPanel}
+      </Grow>
+    )
+
+  return tabPanel
 }
