@@ -14,6 +14,7 @@ import { NotificationsIcon, NotificationsOutlinedIcon } from 'src/assets/icons'
 import { Wrapper } from './styles'
 
 type LayoutProps = {
+  documentTitle?: string
   children: React.ReactNode
   wrapperProps?: BoxProps
   appBarProps?: AppBarProps
@@ -22,7 +23,7 @@ type LayoutProps = {
 const notificationPopoverId = 'notification-popover'
 
 export const Layout = (props: LayoutProps) => {
-  const { children, wrapperProps, appBarProps } = props
+  const { documentTitle, children, wrapperProps, appBarProps } = props
   const { push } = useRouter()
   const { data: session, status } = useSession()
 
@@ -58,7 +59,7 @@ export const Layout = (props: LayoutProps) => {
   return (
     <Wrapper {...wrapperProps}>
       <Head>
-        <title>Connis</title>
+        <title>{!!documentTitle ? `${documentTitle} - Connis` : 'Connis'}</title>
       </Head>
 
       <AppBar id="back-to-top-anchor" color="transparent" elevation={0} position="static" {...appBarProps}>

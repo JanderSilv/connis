@@ -7,7 +7,7 @@ import { authOptions } from 'src/pages/api/auth/[...nextauth]'
 import { checkUserIsCompany } from './users'
 
 interface ServerContext extends GetServerSidePropsContext {
-  session?: Session
+  session: Session
 }
 
 export type ServerProps<P extends { [key: string]: any } = { [key: string]: any }> = (

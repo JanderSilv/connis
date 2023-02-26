@@ -40,7 +40,7 @@ export const RecentProposals = (props: RecentProposalsProps) => {
       {hasProposals ? (
         <List {...listProps} aria-label="Propostas Recentes">
           {proposals.map(proposal => (
-            <ProposalCard key={proposal.id} {...proposal} />
+            <ProposalCard key={proposal.id} proposal={proposal} />
           ))}
         </List>
       ) : (

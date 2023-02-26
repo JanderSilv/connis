@@ -1,14 +1,34 @@
-import { Box, BoxProps, Fab, styled, useScrollTrigger } from '@mui/material'
+import { Box, BoxProps, Fab, styled, Theme, useMediaQuery, useScrollTrigger } from '@mui/material'
 import { KeyboardArrowUpIcon } from 'src/assets/icons'
+
+type HasMobileNavigation = {
+  hasMobileNavigation: true
+  scrollTrigger: boolean
+}
+
+type HasNotMobileNavigation = {
+  hasMobileNavigation?: false
+  scrollTrigger?: never
+}
 
 type Props = {
   anchorId?: string
   shouldHide?: boolean
   children?: React.ReactNode
-} & BoxProps
+} & BoxProps &
+  (HasMobileNavigation | HasNotMobileNavigation)
 
 export const ScrollTop = (props: Props) => {
-  const { anchorId = 'back-to-top-anchor', children, shouldHide, sx, ...rest } = props
+  const {
+    anchorId = 'back-to-top-anchor',
+    children,
+    shouldHide,
+    sx,
+    scrollTrigger,
+    hasMobileNavigation,
+    ...rest
+  } = props
+  const isMobile = useMediaQuery<Theme>(theme => theme.breakpoints.down('md'))
 
   const trigger = useScrollTrigger({
     disableHysteresis: true,
@@ -23,7 +43,19 @@ export const ScrollTop = (props: Props) => {
   }
 
   return (
-    <Wrapper {...rest} onClick={handleClick} sx={{ ...sx, opacity: trigger ? 1 : 0 }}>
+    <Wrapper
+      {...rest}
+      onClick={handleClick}
+      sx={{
+        ...sx,
+        opacity: trigger ? 1 : 0,
+        ...(isMobile &&
+          hasMobileNavigation && {
+            bottom: 70,
+            transform: scrollTrigger ? 'translateY(50px)' : 'translateY(0)',
+          }),
+      }}
+    >
       {!!children ? (
         children
       ) : (

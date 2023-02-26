@@ -41,7 +41,7 @@ export const RecentOffers = (props: RecentOffersProps) => {
       {hasOffers ? (
         <List {...listProps} aria-label="Ofertas Recentes">
           {offers.map(offer => (
-            <OfferCard key={offer.id} {...offer} unseenActivities={offer.viewed ? 1 : 0} />
+            <OfferCard key={offer.id} offer={offer} unseenActivities={offer.viewed ? 1 : 0} />
           ))}
         </List>
       ) : (
