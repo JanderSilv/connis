@@ -7,7 +7,7 @@ import { signOut, useSession } from 'next-auth/react'
 import { AppBar, AppBarProps, Badge, Box, BoxProps, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
 
 import { NotificationPopover } from './notification'
-import { pages } from 'src/constants'
+import { getProfileURL } from './helpers'
 
 import { UserAvatar } from 'src/components/shared'
 import { NotificationsIcon, NotificationsOutlinedIcon } from 'src/assets/icons'
@@ -112,7 +112,7 @@ export const Layout = (props: LayoutProps) => {
                     'aria-labelledby': menuData.buttonId,
                   }}
                 >
-                  <MenuItem onClick={() => push(pages.profile)}>Perfil</MenuItem>
+                  <MenuItem onClick={() => push(getProfileURL(session?.user))}>Perfil</MenuItem>
                   <MenuItem onClick={() => signOut()}>Sair</MenuItem>
                 </Menu>
               </Box>
