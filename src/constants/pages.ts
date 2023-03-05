@@ -3,7 +3,9 @@ export const pages = {
   companySocialSignUp: '/cadastro-social-empresa',
   home: '/',
   login: '/login',
-  profile: '/perfil',
+  companyProfile: '/empresas',
+  ictProfile: '/icts',
+  analystProfile: '/analistas',
   recoverPassword: '/recuperar-senha',
   proposal: '/proposta',
 } as const

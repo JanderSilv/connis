@@ -17,6 +17,7 @@ export type Company = {
   type: 'company'
   cnpj: string
   phone: string
+  slug: string
   address: CompanyAddress
   cnae: CNAE | null
   socialCapital: number
