@@ -1,19 +1,23 @@
 import { KeyboardEvent, useRef, useState } from 'react'
-import Head from 'next/head'
 import type { GetServerSideProps, NextPage } from 'next'
 import {
   Autocomplete,
+  Box,
+  Chip,
   Collapse,
   FormControl,
   FormControlLabel,
   FormHelperText,
   FormLabel,
+  IconButton,
   InputAdornment,
   ListSubheader,
   MenuItem,
   Radio,
   RadioGroup,
+  Stack,
   TextField,
+  Tooltip,
   Typography,
 } from '@mui/material'
 import { AnimatePresence } from 'framer-motion'
@@ -22,6 +26,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 
+import { useConfirmDialog } from 'src/contexts/confirm-dialog'
 import {
   proposalCategoryOptions,
   proposalTypeOptions,
@@ -31,21 +36,34 @@ import {
   proposalAdditionalQuestions,
 } from 'src/data/proposal'
 import { withAuth } from 'src/helpers/withAuth'
+import { useProposalRegister } from 'src/hooks/proposal-register'
 import { ProposalCategory, ProposalType } from 'src/models/enums'
+import { User } from 'src/models/types'
 import { proposalRegisterSchema, ProposalSchema } from 'src/validations/proposal-register'
 
 import { Layout } from 'src/layouts/app'
 import { AnimatedStep, WizardFooter } from 'src/components/proposal-register'
 import { Container } from 'src/components/container'
 import { CardsSelect, MaskedTextField } from 'src/components/shared'
-import { AttachMoneyIcon, PlaylistAddIcon } from 'src/assets/icons'
-import { ProductionContainer, Wrapper } from 'src/styles/proposal-register'
+
+import {
+  AttachMoneyIcon,
+  CachedIcon,
+  PlaylistAddIcon,
+  ThumbDownOutlinedIcon,
+  ThumbUpOutlinedIcon,
+} from 'src/assets/icons'
+import { ContainedIconButton, ProductionContainer, Wrapper } from 'src/styles/proposal-register'
 
 const checkProposalCategoryHasQuestions = (proposalCategory: ProposalCategory) => {
   if (proposalCategory === ProposalCategory.waste) return true
 }
 
-const ProposalRegister: NextPage = () => {
+type ProposalRegisterProps = {
+  user: User
+}
+
+const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
   const formMethods = useForm<ProposalSchema>({
     resolver: yupResolver(proposalRegisterSchema),
     defaultValues: {
@@ -60,6 +78,7 @@ const ProposalRegister: NextPage = () => {
       },
     },
   })
+  const { handleOpenConfirmDialog } = useConfirmDialog()
 
   const {
     control,
@@ -67,6 +86,8 @@ const ProposalRegister: NextPage = () => {
     register,
     formState: { errors },
     watch,
+    getValues,
+    setValue,
   } = formMethods
 
   const watchedProposalCategory = watch('proposalCategory')
@@ -76,6 +97,12 @@ const ProposalRegister: NextPage = () => {
 
   const previousStep = useRef(0)
   const nextButtonRef = useRef<HTMLButtonElement>(null)
+
+  const { suggestions, feedbacks, getAllSuggestions, handleSuggestionFeedback, getCustomCheck } = useProposalRegister(
+    previousStep.current + 1,
+    user.id,
+    getValues
+  )
 
   const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter') nextButtonRef.current?.click()
@@ -96,16 +123,12 @@ const ProposalRegister: NextPage = () => {
 
   return (
     <FormProvider {...formMethods}>
-      <Head>
-        <title>Cadastro de Proposta</title>
-      </Head>
-
-      <Layout>
+      <Layout documentTitle="Cadastro de Proposta">
         <Wrapper>
           <Container component="form" onSubmit={handleSubmit(onSubmit)}>
             <Wizard
               wrapper={<AnimatePresence initial={false} mode="wait" />}
-              footer={<WizardFooter nextButtonRef={nextButtonRef} />}
+              footer={<WizardFooter nextButtonRef={nextButtonRef} handleCustomCheck={getCustomCheck()} />}
             >
               <AnimatedStep previousStep={previousStep}>
                 <Typography variant="h2" mb={4} textAlign="center">
@@ -218,7 +241,7 @@ const ProposalRegister: NextPage = () => {
               </AnimatedStep>
 
               <AnimatedStep previousStep={previousStep}>
-                <Typography variant="h2" mb={0.5} textAlign="center">
+                <Typography variant="h2" mb={1} textAlign="center">
                   Descrição do projeto
                 </Typography>
                 <Typography mb={4} textAlign="center">
@@ -228,7 +251,11 @@ const ProposalRegister: NextPage = () => {
                   placeholder="Descreva o projeto"
                   variant="standard"
                   {...register('projectDescription')}
-                  helperText={errors.projectDescription?.message}
+                  inputProps={{ maxLength: maxLengths.projectDescription }}
+                  helperText={
+                    errors.projectDescription?.message ||
+                    `${watch('projectDescription')?.length || 0}/${maxLengths.projectDescription}`
+                  }
                   error={!!errors.projectDescription}
                   multiline
                   fullWidth
@@ -236,8 +263,12 @@ const ProposalRegister: NextPage = () => {
               </AnimatedStep>
 
               <AnimatedStep previousStep={previousStep}>
-                <Typography variant="h2" mb={4} textAlign="center">
+                <Typography variant="h2" mb={1} textAlign="center">
                   Descrição da proposta
+                </Typography>
+                <Typography mb={4} textAlign="center">
+                  A objetivo da descrição da proposta é explicar o problema que deseja-se resolver. Forneça o máximo de
+                  detalhes possível, porém de forma objetiva.
                 </Typography>
 
                 <TextField
@@ -245,17 +276,84 @@ const ProposalRegister: NextPage = () => {
                   variant="standard"
                   placeholder="Descreva o problema"
                   {...register('proposalDescription')}
-                  helperText={errors.proposalDescription?.message}
+                  inputProps={{ maxLength: maxLengths.proposalDescription }}
+                  helperText={
+                    errors.proposalDescription?.message ||
+                    `${watch('proposalDescription')?.length || 0}/${maxLengths.proposalDescription}`
+                  }
                   error={!!errors.proposalDescription}
                   multiline
                   fullWidth
                 />
 
-                <FormLabel htmlFor="keywords" sx={{ mt: 4 }}>
+                <Collapse in={!!suggestions?.proposal?.length}>
+                  <Box mt={4} pt={4} px={4} pb={2} borderRadius={5} bgcolor="#faf0ea">
+                    <Typography variant="h3" mb={1}>
+                      Sugestões de melhorias para descrição da sua proposta geradas por uma Inteligência Artificial
+                    </Typography>
+                    <Typography mb={2}>
+                      Caso façam sentido, utilize-as para melhorar a descrição da sua proposta. Pressione
+                      &apos;Próximo&apos; para prosseguir.
+                    </Typography>
+
+                    <ul aria-label="Lista de sugestões de melhorias para descrição da sua proposta">
+                      {suggestions?.proposal?.map((item, index) => (
+                        <li key={index}>
+                          <Typography>{item}</Typography>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Stack direction="row" alignItems="center" justifyContent="flex-end" mt={3}>
+                      <Tooltip title="Gerar novas sugestões">
+                        <ContainedIconButton
+                          onClick={() => {
+                            handleOpenConfirmDialog({
+                              title: 'Gerar novas sugestões',
+                              // TODO: Implements the request IA limit
+                              message:
+                                'Gerar sugestões com a IA tem um custo para nós, por isso limitamos a 3 usos por dia. Este será o uso 2/3.',
+                              confirmButton: {
+                                onClick: getAllSuggestions,
+                              },
+                            })
+                          }}
+                          size="small"
+                        >
+                          <CachedIcon fontSize="small" />
+                        </ContainedIconButton>
+                      </Tooltip>
+                      <Tooltip title="Sugestões foram úteis">
+                        <IconButton
+                          color={feedbacks?.proposal === 'good' ? 'success' : undefined}
+                          onClick={() => handleSuggestionFeedback('proposal', 'good')}
+                          size="small"
+                          sx={{ ml: 2 }}
+                        >
+                          <ThumbUpOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+
+                      <Tooltip title="Sugestões não foram úteis">
+                        <IconButton
+                          color={feedbacks?.proposal === 'bad' ? 'error' : undefined}
+                          onClick={() => handleSuggestionFeedback('proposal', 'bad')}
+                          size="small"
+                        >
+                          <ThumbDownOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </Box>
+                </Collapse>
+              </AnimatedStep>
+
+              <AnimatedStep previousStep={previousStep}>
+                <Typography variant="h2" mb={0.5} textAlign="center">
+                  Palavras Chaves
+                </Typography>
+                <Typography mb={4} textAlign="center">
                   Palavras chaves nos ajudarão a identificar soluções ou conexões para sua proposta.
-                </FormLabel>
-                <Typography component="span" variant="caption" mt={0.3}>
-                  Exemplo: Têxtil; Papel; Reciclagem.
                 </Typography>
 
                 <Controller
@@ -282,11 +380,11 @@ const ProposalRegister: NextPage = () => {
                       onChange={(_, optionsValue) => onChange(optionsValue)}
                       inputValue={keywordsInputValue}
                       onInputChange={(_, inputValue) => {
-                        if (inputValue.length > 1 && [',', ';', ' '].includes(inputValue[inputValue.length - 1])) {
+                        if (inputValue.length > 1 && [',', ';'].includes(inputValue[inputValue.length - 1])) {
                           onChange([...value, inputValue.slice(0, -1)])
                           return setKeywordsInputValue('')
                         }
-                        if (inputValue.match(/^[a-zA-Z0-9\u00C0-\u00FF\-]+$/i) || inputValue === '') {
+                        if (inputValue.match(/^[a-zA-Z0-9\u00C0-\u00FF\-\s]+$/i) || inputValue === '') {
                           setKeywordsInputValue(inputValue)
                         }
                       }}
@@ -296,6 +394,58 @@ const ProposalRegister: NextPage = () => {
                     />
                   )}
                 />
+
+                <Collapse in={!!suggestions?.keywords?.length}>
+                  <Box mt={4} pt={4} px={4} pb={2} borderRadius={5} bgcolor="#faf0ea">
+                    <Typography variant="h3" mb={1}>
+                      Sugestões de Palavras Chaves geradas por uma Inteligência Artificial
+                    </Typography>
+                    <Typography mb={2}>Clique para selecionar.</Typography>
+
+                    <Stack
+                      component="ul"
+                      aria-label="Lista de sugestões de palavras chaves."
+                      m={0}
+                      p={0}
+                      direction="row"
+                      flexWrap="wrap"
+                      gap={1}
+                      sx={{ listStyle: 'none' }}
+                    >
+                      {suggestions?.keywords?.map(keyword => (
+                        <li key={keyword}>
+                          <Chip
+                            label={keyword}
+                            onClick={() => setValue('keywords', [...getValues('keywords'), keyword])}
+                          />
+                        </li>
+                      ))}
+                    </Stack>
+
+                    <Stack direction="row" alignItems="center" justifyContent="flex-end" mt={3}>
+                      <Tooltip title="Sugestões foram úteis">
+                        <IconButton
+                          color={feedbacks?.keywords === 'good' ? 'success' : undefined}
+                          onClick={() => handleSuggestionFeedback('keywords', 'good')}
+                          size="small"
+                          sx={{ ml: 2 }}
+                        >
+                          <ThumbUpOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+
+                      <Tooltip title="Sugestões não foram úteis">
+                        <IconButton
+                          color={feedbacks?.keywords === 'bad' ? 'error' : undefined}
+                          onClick={() => handleSuggestionFeedback('keywords', 'bad')}
+                          size="small"
+                        >
+                          <ThumbDownOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </Box>
+                </Collapse>
               </AnimatedStep>
 
               <AnimatedStep previousStep={previousStep}>
@@ -340,6 +490,43 @@ const ProposalRegister: NextPage = () => {
                     />
                   )}
                 />
+
+                <Collapse in={!!suggestions?.trl}>
+                  <Box mt={4} pt={4} px={4} pb={2} borderRadius={5} bgcolor="#faf0ea">
+                    <Typography variant="h3" mb={1}>
+                      Sugestão da métrica TRL gerada por uma Inteligência Artificial
+                    </Typography>
+                    <Typography color="text.secondary">
+                      A IA pode utilizar uma métrica levemente diferente da apresentada nos cartões, analise e selecione
+                      a que melhor se encaixa.
+                    </Typography>
+
+                    <Typography mt={2}>{suggestions.trl}</Typography>
+
+                    <Stack direction="row" alignItems="center" justifyContent="flex-end" mt={3}>
+                      <Tooltip title="Sugestão foi útil">
+                        <IconButton
+                          color={feedbacks?.trl === 'good' ? 'success' : undefined}
+                          onClick={() => handleSuggestionFeedback('trl', 'good')}
+                          size="small"
+                          sx={{ ml: 2 }}
+                        >
+                          <ThumbUpOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+
+                      <Tooltip title="Sugestão não foi útil">
+                        <IconButton
+                          color={feedbacks?.trl === 'bad' ? 'error' : undefined}
+                          onClick={() => handleSuggestionFeedback('trl', 'bad')}
+                          size="small"
+                        >
+                          <ThumbDownOutlinedIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </Stack>
+                  </Box>
+                </Collapse>
               </AnimatedStep>
 
               {checkProposalCategoryHasQuestions(watchedProposalCategory) && (
@@ -470,8 +657,13 @@ const ProposalRegister: NextPage = () => {
 
 export default ProposalRegister
 
-export const getServerSideProps: GetServerSideProps = withAuth(async () => {
-  return {
-    props: {},
-  }
-})
+export const getServerSideProps: GetServerSideProps = withAuth(async context => ({
+  props: {
+    user: context.session.user,
+  },
+}))
+
+const maxLengths = {
+  projectDescription: 1000,
+  proposalDescription: 2000,
+}
