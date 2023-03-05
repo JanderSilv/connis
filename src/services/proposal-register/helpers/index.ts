@@ -1,0 +1,32 @@
+import { ChatCompletionRequestMessage, CreateModerationResponseResultsInner } from 'openai'
+import { api } from '../api'
+import { suggestions } from '../data'
+import { SuggestionsKeys } from '../models'
+
+export const getModeratedProposal = async (input: string) => {
+  try {
+    const { data } = await api.post<CreateModerationResponseResultsInner>('/moderate', { input })
+
+    return data
+  } catch (error) {
+    console.error({ error })
+  }
+}
+
+type SendMessagesBody = {
+  messages: ChatCompletionRequestMessage[]
+  userId: number
+}
+
+export const sendMessages = async (body: SendMessagesBody) => {
+  try {
+    const response = await api.post<string | undefined>('/chat-completion', body)
+    return response
+  } catch (error) {
+    console.error({ error })
+    throw error
+  }
+}
+
+export const getSuggestionPrompt = (suggestion: SuggestionsKeys, input: string) =>
+  `${suggestions[suggestion]}\n${input}`
