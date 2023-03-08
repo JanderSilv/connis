@@ -40,12 +40,7 @@ async function chatCompletionHandler(request: NextApiRequest, response: NextApiR
 
     const result = schema.safeParse(request.body)
 
-    if (!result.success) {
-      console.log({ issues: result.error.issues })
-      return response.status(400).json({
-        error: result.error.issues[0],
-      })
-    }
+    if (!result.success) return response.status(400).json(result.error.issues[0])
 
     try {
       const completion = await openAIApi.createChatCompletion({
@@ -58,9 +53,7 @@ async function chatCompletionHandler(request: NextApiRequest, response: NextApiR
     } catch (error) {
       console.error({ error })
       response.status(500).json({
-        error: {
-          message: 'Ocorreu um erro durante a sua requisição',
-        },
+        message: 'Ocorreu um erro durante a sua requisição',
       })
     }
   }
