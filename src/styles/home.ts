@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Box, Button, ButtonProps, styled, Typography } from '@mui/material'
 
 export const Title = styled(Typography)(({ theme }) => ({
@@ -93,5 +94,5 @@ export const ProposalButton = styled(Button)<ProposalButtonProps>(({ theme }) =>
   gap: theme.spacing(1),
 }))
 ProposalButton.defaultProps = {
-  component: 'a',
+  component: Link,
 }

@@ -22,29 +22,25 @@ const Home: NextPage<HomeProps> = props => {
         <Title>Seja bem vindo ao Connis.</Title>
         <Wrapper>
           <AsideB>
-            <Link href="/cadastro-proposta" passHref>
-              <ProposalButton>
-                <NoteAddIcon color="primary" fontSize="large" />
-                <Typography component="span" variant="h2" color="primary">
-                  Cadastrar Proposta
-                </Typography>
-                <Typography component="span" color="text.secondary">
-                  Descreva a dor do seu projeto para que outras empresas possam ajudar.
-                </Typography>
-              </ProposalButton>
-            </Link>
+            <ProposalButton href="/cadastro-proposta">
+              <NoteAddIcon color="primary" fontSize="large" />
+              <Typography component="span" variant="h2" color="primary">
+                Cadastrar Proposta
+              </Typography>
+              <Typography component="span" color="text.secondary">
+                Descreva a dor do seu projeto para que outras empresas possam ajudar.
+              </Typography>
+            </ProposalButton>
 
-            <Link href="/propostas" passHref>
-              <ProposalButton>
-                <LibraryBooksIcon color="primary" fontSize="large" />
-                <Typography component="span" variant="h2" color="primary">
-                  Catálogo de Propostas
-                </Typography>
-                <Typography component="span" color="text.secondary">
-                  Visualize propostas de outras empresas.
-                </Typography>
-              </ProposalButton>
-            </Link>
+            <ProposalButton href="/propostas">
+              <LibraryBooksIcon color="primary" fontSize="large" />
+              <Typography component="span" variant="h2" color="primary">
+                Catálogo de Propostas
+              </Typography>
+              <Typography component="span" color="text.secondary">
+                Visualize propostas de outras empresas.
+              </Typography>
+            </ProposalButton>
           </AsideB>
 
           <Box width="100%" flex={1}>

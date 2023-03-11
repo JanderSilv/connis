@@ -1,21 +1,16 @@
 import { ReactNode } from 'react'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
-import { Link as MuiLink, LinkProps as MuiLinkProps, styled } from '@mui/material'
+import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
 
 type LinkProps = NextLinkProps & {
   muiLinkProps?: MuiLinkProps
   children?: ReactNode
 }
 
-const StyledLink = styled(MuiLink)({
-  textDecoration: 'none',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
-})
-
 export const Link = ({ muiLinkProps, children, ...rest }: LinkProps) => (
-  <NextLink {...rest} passHref>
-    <StyledLink {...muiLinkProps}>{children}</StyledLink>
+  <NextLink {...rest} passHref legacyBehavior>
+    <MuiLink underline="hover" {...muiLinkProps}>
+      {children}
+    </MuiLink>
   </NextLink>
 )
