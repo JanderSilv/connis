@@ -1,5 +1,12 @@
 import { createTheme } from '@mui/material/styles'
 import { blue } from '@mui/material/colors'
+import { Rubik } from 'next/font/google'
+
+export const rubik = Rubik({
+  weight: ['300', '400', '500', '700'],
+  subsets: ['latin'],
+  fallback: ['Helvetica', 'Arial', 'sans-serif'],
+})
 
 export const theme = createTheme({
   palette: {
@@ -14,7 +21,7 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Rubik',
+    fontFamily: rubik.style.fontFamily,
     h1: {
       fontSize: '2rem',
       fontWeight: 'bold',
