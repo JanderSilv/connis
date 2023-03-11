@@ -16,7 +16,7 @@ export const AdCard = (props: AdCardProps) => {
     <>
       <CardMedia>
         <Box width="100%" height="100%" minWidth={130} minHeight={{ xs: 100, lg: 220 }} position="relative">
-          <Image layout="fill" objectFit="cover" alt={image.alt} draggable="false" {...image} />
+          <Image {...image} alt={image.alt} sizes="100vw" draggable="false" fill />
         </Box>
       </CardMedia>
       <CardContent sx={{ backgroundColor: 'primary.main' }}>

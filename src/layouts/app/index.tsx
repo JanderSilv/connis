@@ -66,9 +66,7 @@ export const Layout = (props: LayoutProps) => {
         <Toolbar>
           <Box flexGrow={1}>
             <Link href="/">
-              <a>
-                <Image src="/assets/logo/logo.svg" width="117" height="40" alt="Logo do Connis" draggable="false" />
-              </a>
+              <Image src="/assets/logo/logo.svg" width="117" height="40" alt="Logo do Connis" draggable="false" />
             </Link>
           </Box>
 
