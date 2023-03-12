@@ -12,7 +12,7 @@ import { withPublic } from 'src/helpers/auth/withPublic'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
 import { Layout } from 'src/layouts/auth'
-import { Link } from 'src/components/link'
+import { Link } from 'src/components/shared'
 import { SocialLoginButtons } from 'src/components/social-login-buttons'
 import { LockIcon, PersonIcon, VisibilityIcon, VisibilityOffIcon } from 'src/assets/icons'
 import { ForgotPasswordTypography, Form } from 'src/styles/login'

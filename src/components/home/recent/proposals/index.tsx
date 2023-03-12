@@ -1,6 +1,6 @@
 import { BoxProps, List, ListProps, Typography } from '@mui/material'
 import { Proposal } from 'src/models/types'
-import { Link } from 'src/components/link'
+import { Link } from 'src/components/shared'
 import { ProposalCard } from 'src/components/proposal'
 import { EmptyTypography, Header, Wrapper } from '../styles'
 
