@@ -90,6 +90,7 @@ const ict: User = {
   },
   email: 'company@email.com.br',
   phone: '71999999999',
+  website: 'https://www.senaicimatec.com.br/',
   analysts: [],
 }
 
