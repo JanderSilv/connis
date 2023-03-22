@@ -8,10 +8,11 @@ import { fakeData } from 'src/data/fake'
 import { withSession } from 'src/helpers/auth'
 import { formatCNPJ } from 'src/helpers/formatters/cnpj'
 
+import { Link } from 'src/components/shared'
 import { AnalystsTableSection, DataSection, DeleteProfileSection, LabsSection } from 'src/components/profile'
 import { Layout } from 'src/layouts/app'
 
-import { BusinessIcon, EmailIcon, PlaceIcon } from 'src/assets/icons'
+import { BusinessIcon, EmailIcon, LanguageIcon, PlaceIcon } from 'src/assets/icons'
 
 type ICTProfilePageProps = {
   profileUser: ICTUser
@@ -36,6 +37,9 @@ const ICTProfilePage: NextPage<ICTProfilePageProps> = props => {
           user={profileUser}
           data={[
             ...(isTheProfileOwner ? [{ icon: EmailIcon, value: profileUser.email }] : []),
+            ...(!!profileUser.website
+              ? [{ icon: LanguageIcon, value: <Link href={profileUser.website}>{profileUser.website}</Link> }]
+              : []),
             { icon: BusinessIcon, value: formatCNPJ(profileUser.cnpj) },
             { icon: PlaceIcon, value: `${profileUser.address.city} - ${profileUser.address.uf}` },
           ]}
