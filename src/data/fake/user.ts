@@ -8,11 +8,23 @@ import {
   TRL,
 } from 'src/models/enums'
 import { Offer, Proposal, User } from 'src/models/types'
+import { ictFakeData } from './ict'
+
+const analyst: User = {
+  id: 5,
+  name: 'Analista',
+  type: 'analyst',
+  createdAt: new Date(2022, 10).toLocaleString(),
+  email: 'analista@email.com.br',
+  image: 'https://picsum.photos/200/200',
+}
 
 const userCompany: User = {
   id: 1,
   name: 'Empresa do usuário',
   type: 'company',
+  createdAt: new Date(2022, 10).toLocaleString(),
+  slug: 'empresa-do-usuario',
   cnae: {
     id: '123456',
     label: '6201-5/62:: Desenvolvimento de Programas de Computador Sob Encomenda',
@@ -29,13 +41,15 @@ const userCompany: User = {
   phone: '71999999999',
   size: CompanySize.micro,
   socialCapital: 1_000_000,
-  analysts: [],
+  analysts: [analyst, { ...analyst, id: 2 }],
 }
 
 const company: User = {
   id: 2,
   name: 'Empresa Ofertante',
   type: 'company',
+  createdAt: new Date(2022, 10).toLocaleString(),
+  slug: 'empresa-ofertante',
   cnae: {
     id: '123456',
     label: '6201-5/62:: Desenvolvimento de Programas de Computador Sob Encomenda',
@@ -52,17 +66,18 @@ const company: User = {
   phone: '71999999999',
   size: CompanySize.micro,
   socialCapital: 1_000_000,
-  analysts: [],
+  analysts: [analyst, { ...analyst, id: 2 }],
 }
 
 const ict: User = {
   id: 2,
   name: 'Senai Cimatec',
+  createdAt: new Date(2022, 10).toLocaleString(),
   slug: 'senai-cimatec',
   type: 'ict',
   cnpj: '03795071001350',
   image: 'https://picsum.photos/200/200',
-  labs: [],
+  labs: ictFakeData.labs,
   projects: [],
   address: {
     id: 1,
@@ -171,6 +186,7 @@ const myOffers: Offer[][] = [
 const recentOffers = [myOffers[0].at(-1), { ...myOffers[1].at(-1), id: 3 }] as Offer[]
 
 export const userFakeData = {
+  analyst,
   ict,
   userCompany,
   company,
