@@ -1,3 +1,4 @@
+import { Image } from './common'
 import { AnalystUser } from './user'
 
 export type ICTProject = {
@@ -31,6 +32,7 @@ export type ICT = {
   cnpj: string
   email: string
   phone: string
+  website?: string
   projects: ICTProject[]
   labs: ICTLab[]
   analysts: AnalystUser[]
