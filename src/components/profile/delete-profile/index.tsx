@@ -10,17 +10,17 @@ import { Section } from 'src/styles/common'
 
 type DeleteProfileSectionProps = {
   user: User
+  dialogDescription?: React.ReactNode
 }
 
 export const DeleteProfileSection = (props: DeleteProfileSectionProps) => {
-  const { user } = props
+  const { user, dialogDescription } = props
 
   const { DeleteDialog, isDeleteDialogOpen, handleOpenDeleteDialog } = useDeleteDialog({
     title: 'Deletar conta',
     description: (
       <>
-        Connis irá <strong>deletar</strong> todas as suas propostas, ofertas, negociações e todos os recursos que
-        pertencem a sua conta.
+        {dialogDescription}
         <Alert variant="filled" severity="error" sx={{ mt: 1 }}>
           Essa ação é irreversível, tenha certeza.
         </Alert>
@@ -28,12 +28,12 @@ export const DeleteProfileSection = (props: DeleteProfileSectionProps) => {
     ),
     confirmText: (() => {
       if (checkUserIsCompany(user) || checkUserIsICT(user)) return user.slug
-      else return 'deletar esta conta'
+      else return 'deletar-conta'
     })(),
   })
 
   return (
-    <Section mt={3} border="2px solid" borderColor="error.light">
+    <Section my={3} p={{ xs: 2 }} border="2px solid" borderColor="error.light">
       <Typography component="h2" variant="h3">
         Deletar conta
       </Typography>
