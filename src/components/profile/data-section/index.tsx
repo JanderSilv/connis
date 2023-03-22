@@ -4,7 +4,7 @@ import { User } from 'src/models/types'
 import { formatDate } from 'src/helpers/formatters'
 
 import { UserAvatar } from 'src/components/shared'
-import { IconData } from './icon-data'
+import { IconData, IconDataProps } from './icon-data'
 
 import { CakeIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
@@ -13,7 +13,7 @@ type DataSectionProps = {
   user: User
   data?: {
     icon: typeof SvgIcon
-    value?: string
+    value?: React.ReactNode
   }[]
 }
 
@@ -69,8 +69,8 @@ export const DataSection = (props: DataSectionProps) => {
             </Typography>
           </Stack>
         </Box>
-        {data?.map(({ icon, value }) => (
-          <IconData key={value} icon={icon}>
+        {data?.map(({ icon, value }, index) => (
+          <IconData key={index} icon={icon}>
             {value}
           </IconData>
         ))}
