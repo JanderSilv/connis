@@ -4,14 +4,14 @@ export type ICTProject = {
   id: number
   title: string
   description: string
-  image?: string
+  image?: Image
 }
 
 export type ICTLab = {
   id: number
   title: string
   description: string
-  images?: string[]
+  images?: Image[]
 }
 
 export type ICTAddress = {
