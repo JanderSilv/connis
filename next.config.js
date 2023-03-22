@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ['lh3.googleusercontent.com', 'picsum.photos'],
+    // TODO: removes test domains
+    domains: ['lh3.googleusercontent.com', 'picsum.photos', 'embrapii.org.br', 'www.senaicimatec.com.br'],
   },
 }
 
