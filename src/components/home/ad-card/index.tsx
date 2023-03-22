@@ -16,7 +16,7 @@ export const AdCard = (props: AdCardProps) => {
     <>
       <CardMedia>
         <Box width="100%" height="100%" minWidth={130} minHeight={{ xs: 100, lg: 220 }} position="relative">
-          <Image layout="fill" objectFit="cover" alt={image.alt} draggable="false" {...image} />
+          <Image {...image} alt={image.alt} sizes="100vw" draggable="false" fill />
         </Box>
       </CardMedia>
       <CardContent sx={{ backgroundColor: 'primary.main' }}>
@@ -30,23 +30,22 @@ export const AdCard = (props: AdCardProps) => {
   if (!!href)
     return (
       <Card sx={{ maxWidth: { xs: 330, lg: 300 }, ...sx }}>
-        <Link href={href} passHref>
-          <CardActionArea
-            component="a"
-            {...(openInNewTab && {
-              target: '_blank',
-              rel: 'noopener noreferrer',
-            })}
-            sx={{
-              display: { xs: 'flex', lg: 'block' },
-              alignItems: 'stretch',
-              flexDirection: 'row-reverse',
-              textDecoration: 'none',
-            }}
-          >
-            {content}
-          </CardActionArea>
-        </Link>
+        <CardActionArea
+          component={Link}
+          href={href}
+          {...(openInNewTab && {
+            target: '_blank',
+            rel: 'noopener noreferrer',
+          })}
+          sx={{
+            display: { xs: 'flex', lg: 'block' },
+            alignItems: 'stretch',
+            flexDirection: 'row-reverse',
+            textDecoration: 'none',
+          }}
+        >
+          {content}
+        </CardActionArea>
       </Card>
     )
 

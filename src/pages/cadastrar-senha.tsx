@@ -112,11 +112,9 @@ const RegisterPassword: NextPage = () => {
 
             <Typography mb={2}>Sua senha foi salva, você já pode fazer o login.</Typography>
 
-            <Link href="/login" passHref>
-              <Button component="a" variant="outlined" fullWidth>
-                Voltar para o login
-              </Button>
-            </Link>
+            <Button component={Link} href="/login" variant="outlined" fullWidth>
+              Voltar para o login
+            </Button>
           </>
         )}
       </Form>

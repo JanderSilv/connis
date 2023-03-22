@@ -16,11 +16,15 @@ export const DefaultAsideContent = (company: Props) => {
       <CompanyData {...company} />
 
       <Stack mt={3} gap={1}>
-        <Link href={`${pages.login}?callbackUrl=${asPath}`} passHref>
-          <Button component="a" variant="contained" color="primary" fullWidth>
-            Estou Interessado
-          </Button>
-        </Link>
+        <Button
+          component={Link}
+          href={`${pages.login}?callbackUrl=${asPath}`}
+          variant="contained"
+          color="primary"
+          fullWidth
+        >
+          Estou Interessado
+        </Button>
       </Stack>
     </>
   )

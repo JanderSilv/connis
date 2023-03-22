@@ -41,11 +41,9 @@ export const ICTOfferSection = (props: ICTOfferProps) => {
       </Stack>
 
       <Stack direction="row" spacing={2} mt={4} justifyContent="space-between">
-        <Link href={`/ict/${ict.slug}`} passHref>
-          <Button component="a" variant="outlined" size="small">
-            Ver perfil da ICT
-          </Button>
-        </Link>
+        <Button component={Link} href={`/ict/${ict.slug}`} variant="outlined" size="small">
+          Ver perfil da ICT
+        </Button>
 
         <Stack direction="row" spacing={1}>
           <Button

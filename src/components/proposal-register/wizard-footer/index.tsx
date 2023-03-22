@@ -7,6 +7,7 @@ import { Wrapper } from './styles'
 
 type WizardStepsProps = {
   nextButtonRef: MutableRefObject<HTMLButtonElement | null>
+  handleCustomCheck?: () => Promise<boolean>
 }
 
 type ProposalKey = keyof Proposal
@@ -15,11 +16,13 @@ const steps: (ProposalKey | ProposalKey[])[] = [
   'title',
   ['proposalCategory', 'proposalCategoryOther', 'proposalType', 'budget'],
   'projectDescription',
-  ['proposalDescription', 'keywords'],
+  'proposalDescription',
+  'keywords',
   ['trl', 'goalTrl'],
 ]
 
-export const WizardFooter = ({ nextButtonRef }: WizardStepsProps) => {
+export const WizardFooter = (props: WizardStepsProps) => {
+  const { nextButtonRef, handleCustomCheck } = props
   const { nextStep, previousStep, isFirstStep, isLastStep, activeStep, stepCount } = useWizard()
   const { trigger, clearErrors } = useFormContext<Proposal>()
 
@@ -34,7 +37,8 @@ export const WizardFooter = ({ nextButtonRef }: WizardStepsProps) => {
       if (Array.isArray(item)) item.forEach(async key => await trigger(key))
       return await trigger(item)
     })()
-    if (canGoNext) nextStep()
+    if (!canGoNext || (handleCustomCheck && !(await handleCustomCheck()))) return
+    nextStep()
   }
 
   return (

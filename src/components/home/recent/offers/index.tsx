@@ -1,5 +1,5 @@
 import { BoxProps, List, ListProps, Typography } from '@mui/material'
-import { Link } from 'src/components/link'
+import { Link } from 'src/components/shared'
 import { OfferCard } from 'src/components/proposal'
 
 import { Offer } from 'src/models/types'

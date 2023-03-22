@@ -68,11 +68,9 @@ const RecoverPassword: NextPage = () => {
               spam.
             </Typography>
 
-            <Link href="/login" passHref>
-              <Button component="a" variant="outlined" fullWidth>
-                Voltar para o login
-              </Button>
-            </Link>
+            <Button component={Link} href="/login" variant="outlined" fullWidth>
+              Voltar para o login
+            </Button>
           </>
         )}
       </Form>

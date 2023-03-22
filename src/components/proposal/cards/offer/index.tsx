@@ -60,29 +60,25 @@ export const OfferCard = (props: OfferCardProps) => {
   if (!isRowLayout)
     return (
       <Card sx={{ width: '100%' }}>
-        <Link href={`/proposta/${proposal?.id}`} passHref>
-          <CardActionArea component="a">
-            <BadgeContainer layout="card">
-              {badgeContent}
-              <OfferStatusChip status={status} sx={{ position: 'absolute', top: 10, right: 10 }} />
-            </BadgeContainer>
-            <CardContent>{content}</CardContent>
-          </CardActionArea>
-        </Link>
+        <CardActionArea component={Link} href={`/proposta/${proposal?.id}`}>
+          <BadgeContainer layout="card">
+            {badgeContent}
+            <OfferStatusChip status={status} sx={{ position: 'absolute', top: 10, right: 10 }} />
+          </BadgeContainer>
+          <CardContent>{content}</CardContent>
+        </CardActionArea>
       </Card>
     )
 
   return (
     <ListItem disableGutters>
-      <Link href={href || `/proposta/${proposal?.id}`} passHref>
-        <ListItemButton LinkComponent="a">
-          <ContentContainer>{content}</ContentContainer>
+      <ListItemButton component={Link} href={href || `/proposta/${proposal?.id}`}>
+        <ContentContainer>{content}</ContentContainer>
 
-          <Badge badgeContent={unseenActivities} max={9} color="error">
-            <BadgeContainer>{badgeContent}</BadgeContainer>
-          </Badge>
-        </ListItemButton>
-      </Link>
+        <Badge badgeContent={unseenActivities} max={9} color="error">
+          <BadgeContainer>{badgeContent}</BadgeContainer>
+        </Badge>
+      </ListItemButton>
     </ListItem>
   )
 }

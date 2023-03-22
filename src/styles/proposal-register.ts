@@ -1,4 +1,4 @@
-import { Box, styled } from '@mui/material'
+import { Box, IconButton, styled } from '@mui/material'
 
 export const Wrapper = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -34,5 +34,13 @@ export const ProductionContainer = styled(Box)(({ theme }) => ({
 
   '& > *': {
     flex: 1,
+  },
+}))
+
+export const ContainedIconButton = styled(IconButton)(({ theme }) => ({
+  backgroundColor: theme.palette.grey[100],
+  borderRadius: '5px',
+  '&:hover': {
+    backgroundColor: theme.palette.grey[200],
   },
 }))

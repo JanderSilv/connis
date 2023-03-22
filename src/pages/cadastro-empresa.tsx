@@ -12,8 +12,7 @@ import { companySignUpValidationSchema, CompanySignUpSchema } from 'src/validati
 
 import { Layout } from 'src/layouts/auth'
 import { Title } from 'src/components/company-sign-up'
-import { Link } from 'src/components/link'
-import { MaskedTextField } from 'src/components/shared'
+import { Link, MaskedTextField } from 'src/components/shared'
 import { SocialLoginButtons } from 'src/components/social-login-buttons'
 import {
   AssignmentOutlinedIcon,
