@@ -1,10 +1,11 @@
+import { useSession } from 'next-auth/react'
 import { Box, Stack, SvgIcon, Typography } from '@mui/material'
 
 import { User } from 'src/models/types'
 import { formatDate } from 'src/helpers/formatters'
 
 import { UserAvatar } from 'src/components/shared'
-import { IconData, IconDataProps } from './icon-data'
+import { IconData } from './icon-data'
 
 import { CakeIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
@@ -19,7 +20,9 @@ type DataSectionProps = {
 
 export const DataSection = (props: DataSectionProps) => {
   const { user, data } = props
-  const { name, image, createdAt } = user
+  const { id, name, image, createdAt } = user
+
+  const { data: session } = useSession()
 
   return (
     <Section sx={{ '&&': { p: 0 }, overflow: 'hidden' }}>
@@ -36,6 +39,7 @@ export const DataSection = (props: DataSectionProps) => {
             name={name}
             src={image}
             size={150}
+            canEdit={session?.user?.id === id}
             componentsProps={{
               avatar: { sx: { border: '5px solid white' } },
             }}
