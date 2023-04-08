@@ -23,7 +23,7 @@ import { useSession } from 'next-auth/react'
 
 type UserAvatarProps = {
   name: string
-  src?: string
+  src?: string | null
   size?: number
   componentsProps?: {
     avatar?: AvatarProps
@@ -43,7 +43,7 @@ export const UserAvatar = (props: UserAvatarProps) => {
       {...componentsProps?.avatar}
       sx={{ width: size, height: size, bgcolor: 'primary.main', ...componentsProps?.avatar?.sx }}
     >
-      {src && <Image src={src} width={size} height={size} alt={alt} {...componentsProps?.image} />}
+      {!!src ? <Image src={src} width={size} height={size} alt={alt} {...componentsProps?.image} /> : name[0]}
     </Avatar>
   )
 
@@ -58,9 +58,11 @@ export const UserAvatar = (props: UserAvatarProps) => {
 
 type ChangeUserAvatarProps = {
   userName: string
-  avatar?: string
+  avatar?: string | null
   children: React.ReactNode
 }
+
+const AVATAR_SIZE = 260
 
 const ChangeUserAvatar = (props: ChangeUserAvatarProps) => {
   const { avatar, children, userName } = props
@@ -88,13 +90,16 @@ const ChangeUserAvatar = (props: ChangeUserAvatarProps) => {
           {!!avatar ? (
             <Image
               src={avatar}
-              width={260}
-              height={260}
+              width={AVATAR_SIZE}
+              height={AVATAR_SIZE}
               alt={`Avatar de ${userName}`}
               style={{ borderRadius: '50%', objectFit: 'contain' }}
             />
           ) : (
-            <Avatar alt={userName} />
+            <Avatar
+              alt={userName}
+              sx={{ width: AVATAR_SIZE, height: AVATAR_SIZE, marginInline: 'auto', bgcolor: 'primary.main' }}
+            />
           )}
         </DialogContent>
 
@@ -122,9 +127,11 @@ const ChangeUserAvatar = (props: ChangeUserAvatarProps) => {
             />
             Nova Foto
           </Button>
-          <Button color="inherit" startIcon={<DeleteIcon />}>
-            Deletar Foto
-          </Button>
+          {!!avatar && (
+            <Button color="inherit" startIcon={<DeleteIcon />}>
+              Deletar Foto
+            </Button>
+          )}
         </DialogActions>
 
         <EditAvatarDialog image={avatarFile} onClose={closeDialog} cleanAvatarFile={cleanAvatarFile} />
@@ -164,8 +171,8 @@ const EditAvatarDialog = (props: EditAvatarDialogProps) => {
         <AvatarEditor
           ref={avatarEditorRef}
           image={image}
-          width={260}
-          height={260}
+          width={AVATAR_SIZE}
+          height={AVATAR_SIZE}
           borderRadius={200}
           scale={scale}
           rotate={rotate + adjustment}
