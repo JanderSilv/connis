@@ -1,16 +1,13 @@
-import { CompanyUser } from 'src/models/types'
+import { CompanySocialSignUpSchema } from 'src/validations/company-sign-up'
 import { BrasilApiCompany } from './types'
 
-export const formatCompany = (company: BrasilApiCompany): CompanyUser => {
+export const mapCompanyFromBrasilApi = (company: BrasilApiCompany): CompanySocialSignUpSchema => {
   const { uf, cnpj } = company
 
   return {
-    id: 0,
     name: company.nome_fantasia || company.razao_social,
-    type: 'company',
     cnpj,
     address: {
-      id: 0,
       uf,
       city: company.municipio,
       cep: company.cep,
@@ -23,6 +20,5 @@ export const formatCompany = (company: BrasilApiCompany): CompanyUser => {
     phone: company.ddd_telefone_1 || company.ddd_telefone_2,
     size: company.codigo_porte,
     socialCapital: company.capital_social,
-    analysts: [],
   }
 }
