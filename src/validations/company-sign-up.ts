@@ -1,6 +1,8 @@
 import { isValidCNPJ } from '@brazilian-utils/brazilian-utils'
-import { regex } from 'src/constants'
 import * as zod from 'zod'
+
+import { regex } from 'src/constants'
+import { CompanySize } from 'src/models/enums'
 
 const messages = {
   cnae: 'Código de atividade da empresa é obrigatório',
@@ -23,6 +25,13 @@ export const companySocialSignUpValidationSchema = zod
       .min(3, 'Nome da empresa deve ter no mínimo 3 caracteres'),
     email: zod.string().min(1, 'Email é obrigatório').email('Email inválido'),
     phone: zod.string().min(1, 'Telefone é obrigatório'),
+    address: zod.object({
+      city: zod.string().min(1, 'Cidade é obrigatório'),
+      cep: zod.string().min(1, 'CEP é obrigatório'),
+      uf: zod.string().min(1, 'UF é obrigatório'),
+    }),
+    size: zod.nativeEnum(CompanySize),
+    socialCapital: zod.number().min(1, 'Capital social é obrigatório'),
     cnae: zod
       .object(
         {
@@ -33,7 +42,6 @@ export const companySocialSignUpValidationSchema = zod
           required_error: messages.cnae,
         }
       )
-      .nullable()
       .transform((value, ctx) => {
         if (value == null)
           ctx.addIssue({

@@ -37,7 +37,10 @@ const CompanySignUp: NextPage = () => {
   } = useForm<CompanySignUpSchema>({
     resolver: zodResolver(companySignUpValidationSchema),
     defaultValues: {
-      cnae: null,
+      cnae: {
+        id: '',
+        label: '',
+      },
     },
   })
   const { fetchedCompany, CNPJDialog } = useCNPJDialog(reset)

@@ -44,7 +44,10 @@ const CompanySocialSignUp: NextPage<Props> = ({ session }) => {
   } = useForm<CompanySocialSignUpSchema>({
     resolver: zodResolver(companySocialSignUpValidationSchema),
     defaultValues: {
-      cnae: null,
+      cnae: {
+        id: '',
+        label: '',
+      },
       email: session?.user?.email || '',
       image: session?.user?.image,
     },
