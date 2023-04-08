@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Session, getServerSession } from 'next-auth'
-import { Autocomplete, Button, InputAdornment, TextField, Typography } from '@mui/material'
+import { Autocomplete, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -21,6 +21,7 @@ import { Title } from 'src/components/company-sign-up'
 import {
   AssignmentOutlinedIcon,
   BusinessOutlinedIcon,
+  EditIcon,
   EmailOutlinedIcon,
   PersonOutlineIcon,
   PhoneOutlinedIcon,
@@ -52,7 +53,7 @@ const CompanySocialSignUp: NextPage<Props> = ({ session }) => {
       image: session?.user?.image,
     },
   })
-  const { fetchedCompany, CNPJDialog } = useCNPJDialog(reset, session)
+  const { fetchedCompany, setFetchedCompany, CNPJDialog } = useCNPJDialog(reset, session)
 
   const onSubmit = async (formData: CompanySocialSignUpSchema) => {
     try {
@@ -137,6 +138,13 @@ const CompanySocialSignUp: NextPage<Props> = ({ session }) => {
                     startAdornment: (
                       <InputAdornment position="start">
                         <BusinessOutlinedIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton aria-label="Trocar CNPJ" onClick={() => setFetchedCompany(null)} size="small">
+                          <EditIcon color="primary" fontSize="small" />
+                        </IconButton>
                       </InputAdornment>
                     ),
                   }}
