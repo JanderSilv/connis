@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { pages } from 'src/constants'
 import { useToast } from 'src/hooks/useToast'
-import { CompanyUser } from 'src/models/types'
 import {
   CompanySignUpSchema,
   CompanySocialSignUpSchema,
@@ -21,7 +20,7 @@ import { MaskedTextField, SlideTransition } from 'src/components/shared'
 import { BusinessIcon } from 'src/assets/icons'
 import { Form } from 'src/styles/company-sign-up'
 
-type NullishCompany = CompanyUser | null
+type NullishCompany = (CompanySignUpSchema | CompanySocialSignUpSchema) | null
 type CompanyUseFormReset = UseFormReset<CompanySignUpSchema> | UseFormReset<CompanySocialSignUpSchema>
 
 type Props = {
@@ -97,7 +96,7 @@ const CNPJDialog = ({ session, fetchedCompany, setFetchedCompany, reset }: Props
 }
 
 export const useCNPJDialog = (reset: CompanyUseFormReset, session?: Session) => {
-  const [fetchedCompany, setFetchedCompany] = useState<CompanyUser | null>(null)
+  const [fetchedCompany, setFetchedCompany] = useState<NullishCompany>(null)
 
   return {
     CNPJDialog: useCallback(
@@ -112,5 +111,6 @@ export const useCNPJDialog = (reset: CompanyUseFormReset, session?: Session) => 
       [session, fetchedCompany, reset]
     ),
     fetchedCompany,
+    setFetchedCompany,
   }
 }
