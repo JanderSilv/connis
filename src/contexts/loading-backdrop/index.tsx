@@ -34,7 +34,7 @@ export const LoadingBackdropProvider = ({ children }: LoadingBackdropProviderPro
     >
       {children}
 
-      <Backdrop open={loading} sx={{ color: 'white' }}>
+      <Backdrop open={loading} sx={{ color: 'white', zIndex: 'tooltip' }}>
         <Stack alignItems="center" gap={2}>
           <CircularProgress color="inherit" />
           {content?.description && (
