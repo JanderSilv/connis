@@ -4,49 +4,58 @@ import fs from 'fs'
 export type CNAE = {
   id: string
   descricao: string
-  grupo: {
+  observacoes: string[]
+  atividades: string[]
+  classe: {
     id: string
     descricao: string
-    divisao: {
+    grupo: {
       id: string
       descricao: string
-      secao: {
+      divisao: {
         id: string
         descricao: string
+        secao: {
+          id: string
+          descricao: string
+        }
       }
     }
+    observacoes: string[]
   }
-  observacoes: string[]
 }
 
 const createCNAEsJSONFile = async () => {
   const getCNAEs = async () => {
-    const { data: cnaes } = await axios.get<CNAE[]>('https://servicodados.ibge.gov.br/api/v2/cnae/classes')
+    console.log('Fetching CNAEs...')
+    console.time('CNAEs fetched in')
+    const { data: cnaes } = await axios.get<CNAE[]>('https://servicodados.ibge.gov.br/api/v2/cnae/subclasses')
+    console.timeEnd('CNAEs fetched in')
     return cnaes
   }
 
-  const formatCNAEId = (cnaeId: string, divisionId: string) => {
-    const formattedId = `${cnaeId.slice(0, 4)}-${cnaeId.slice(4)}`
-    const formattedDivisionId = divisionId.toLowerCase()
-
-    return `${formattedId}/${formattedDivisionId}`
-  }
+  const formatCNAEId = (cnaeId: string) => cnaeId.replace(/(\d{4})(\d{1})(\d{2})/, '$1-$2/$3')
 
   const capitalizeFirstLetters = (word: string) =>
     word
+      .trim()
+      .replace(/\s+/g, ' ')
       .split(' ')
       .map(w => {
+        if (w === ' ') return ''
         const lowerWord = w.toLowerCase()
-        if (['e', 'da', 'de', 'do', 'das', 'dos', 'à'].includes(lowerWord)) return lowerWord
-        return lowerWord[0].toUpperCase() + lowerWord.slice(1).toLowerCase()
+        if (['e', 'da', 'de', 'do', 'das', 'dos', 'à', 'com'].includes(lowerWord)) return lowerWord
+        return lowerWord[0].toUpperCase() + lowerWord.slice(1)
       })
       .join(' ')
 
   const filterProperties = (cnaes: CNAE[]) => {
-    return cnaes.map(cnae => {
-      const { id, descricao, grupo } = cnae
-      return { id, label: `${formatCNAEId(id, grupo.divisao.id)}: ${capitalizeFirstLetters(descricao)}` }
-    })
+    console.log('Filtering CNAEs...')
+    const filteredCNAEs = cnaes.map(({ id, descricao }) => ({
+      id,
+      label: `${formatCNAEId(id)}: ${capitalizeFirstLetters(descricao)}`,
+    }))
+    return [...new Set(filteredCNAEs)]
   }
 
   const filteredCNAEs = filterProperties(await getCNAEs())
