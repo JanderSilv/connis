@@ -9,6 +9,9 @@
     "lint": "next lint",
     "test": "jest --watch"
   },
+  "prisma": {
+    "seed": "ts-node-dev --compiler-options {\"module\":\"CommonJS\"} prisma/seeds/index.ts"
+  },
   "dependencies": {
     "@brazilian-utils/brazilian-utils": "^1.0.0-rc.12",
     "@emotion/react": "^11.10.0",
