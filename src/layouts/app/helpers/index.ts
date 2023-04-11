@@ -1,8 +1,8 @@
 import { pages } from 'src/constants'
 import { checkUserIsCompany, checkUserIsICT } from 'src/helpers/users'
-import { User } from 'src/models/types'
+import { BaseUser } from 'src/models/types'
 
-export const getProfileURL = (user?: User) => {
+export const getProfileURL = (user?: BaseUser) => {
   if (!user) return ''
   if (checkUserIsCompany(user)) return `${pages.companyProfile}/${user.slug}`
   if (checkUserIsICT(user)) return `${pages.ictProfile}/${user.slug}`

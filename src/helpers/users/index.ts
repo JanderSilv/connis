@@ -1,4 +1,5 @@
-import { CompanyUser, ICTUser, User } from 'src/models/types'
+import { UserType } from 'src/models/enums'
+import { BaseUser, CompanyUser, ICTUser } from 'src/models/types'
 
-export const checkUserIsCompany = (user: User): user is CompanyUser => user.type === 'company'
-export const checkUserIsICT = (user: User): user is ICTUser => user.type === 'ict'
+export const checkUserIsCompany = (user: BaseUser): user is CompanyUser => user.type === UserType.company
+export const checkUserIsICT = (user: BaseUser): user is ICTUser => user.type === UserType.ict
