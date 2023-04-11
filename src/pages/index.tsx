@@ -2,6 +2,7 @@ import { GetServerSideProps, NextPage } from 'next'
 import Link from 'next/link'
 import { Box, Typography } from '@mui/material'
 
+import { UserType } from 'src/models/enums'
 import { HomeProps } from 'src/models/types/home'
 
 import { fakeData } from 'src/data/fake'
@@ -14,7 +15,7 @@ import { LibraryBooksIcon, NoteAddIcon } from 'src/assets/icons'
 import { AsideB, ProposalButton, Title, Wrapper } from 'src/styles/home'
 
 const Home: NextPage<HomeProps> = props => {
-  if (props.userType === 'company') {
+  if (props.userType === UserType.company) {
     const { myOffers, myProposals } = props
 
     return (
@@ -77,14 +78,14 @@ export const getServerSideProps: GetServerSideProps = withAuth(async context => 
 
   return {
     props:
-      context.session.user.type === 'company'
+      context.session.user.type === UserType.company
         ? {
-            userType: 'company',
+            userType: UserType.company,
             myProposals,
             myOffers: recentOffers,
           }
         : {
-            userType: 'ict',
+            userType: UserType.ict,
             negotiations: myProposals,
             requests: myProposals,
             opportunities: myProposals,

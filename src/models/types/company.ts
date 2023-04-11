@@ -1,4 +1,4 @@
-import { CompanySize } from '../enums/company'
+import { UserType, CompanySize } from '../enums'
 import { AnalystUser } from './user'
 
 type CNAE = {
@@ -14,7 +14,7 @@ type CompanyAddress = {
 }
 
 export type Company = {
-  type: 'company'
+  type: UserType.company
   cnpj: string
   phone: string
   slug: string
