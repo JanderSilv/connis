@@ -1,5 +1,4 @@
 import {
-  Button,
   IconButton,
   Stack,
   Table,
@@ -19,8 +18,9 @@ import { useConfirmDialog } from 'src/contexts/confirm-dialog'
 import { usePagination } from 'src/hooks/usePagination'
 
 import { UserAvatar } from 'src/components/shared'
+import { InviteAnalystDialog } from './invite-dialog'
 
-import { DeleteIcon, KeyIcon, PersonAddIcon } from 'src/assets/icons'
+import { DeleteIcon, KeyIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
 
 type AnalystsTableProps = {
@@ -40,9 +40,7 @@ export const AnalystsTableSection = (props: AnalystsTableProps) => {
           Analistas
         </Typography>
 
-        <Button startIcon={<PersonAddIcon color="primary" />} size="small">
-          Adicionar analista
-        </Button>
+        <InviteAnalystDialog />
       </Stack>
 
       {!!analysts.length ? (
