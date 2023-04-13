@@ -1,5 +1,5 @@
 import { KeyboardEvent, useRef, useState } from 'react'
-import type { GetServerSideProps, NextPage } from 'next'
+import type { /* GetServerSideProps, */ NextPage } from 'next'
 import {
   Autocomplete,
   Box,
@@ -26,7 +26,10 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 
-import { useConfirmDialog } from 'src/contexts/confirm-dialog'
+import { ProposalCategory, ProposalType } from 'src/models/enums'
+import { User } from 'src/models/types'
+
+import { useConfirmDialog, useLoadingBackdrop } from 'src/contexts'
 import {
   proposalCategoryOptions,
   proposalTypeOptions,
@@ -35,10 +38,9 @@ import {
   periodicityOptions,
   proposalAdditionalQuestions,
 } from 'src/data/proposal'
-import { withAuth } from 'src/helpers/withAuth'
+// import { withAuth } from 'src/helpers/withAuth'
 import { useProposalRegister } from 'src/hooks/proposal-register'
-import { ProposalCategory, ProposalType } from 'src/models/enums'
-import { User } from 'src/models/types'
+import { toast } from 'src/helpers'
 import { proposalRegisterSchema, ProposalSchema } from 'src/validations/proposal-register'
 
 import { Layout } from 'src/layouts/app'
@@ -79,6 +81,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
     },
   })
   const { handleOpenConfirmDialog } = useConfirmDialog()
+  const { toggleLoading } = useLoadingBackdrop()
 
   const {
     control,
@@ -100,7 +103,6 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
 
   const { suggestions, feedbacks, getAllSuggestions, handleSuggestionFeedback, getCustomCheck } = useProposalRegister(
     previousStep.current + 1,
-    user.id,
     getValues
   )
 
@@ -113,12 +115,22 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
       ...data,
       budget: Number(data.budget?.replaceAll('.', '')),
     }
-    axios.post('https://api.jsonbin.io/v3/b', proposal, {
-      headers: {
-        'X-Master-Key': '$2b$10$AZS8O9vbnQ22oOD6kb3cDucYvYwySweKMgOCr5voMV51D/zKISEt6',
-        'X-Bin-Name': data.title,
-      },
-    })
+    try {
+      toggleLoading()
+      // TODO: Remove this when the API is ready
+      axios.post('https://api.jsonbin.io/v3/b', proposal, {
+        headers: {
+          'X-Master-Key': '$2b$10$AZS8O9vbnQ22oOD6kb3cDucYvYwySweKMgOCr5voMV51D/zKISEt6',
+          'X-Bin-Name': data.title,
+        },
+      })
+      toast.show('Proposta cadastrada com sucesso!', 'success')
+    } catch (error) {
+      toast.show('Não foi possível cadastrar a proposta. Tente novamente mais tarde.', 'error')
+      console.error(error)
+    } finally {
+      toggleLoading()
+    }
   }
 
   return (
@@ -186,10 +198,16 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                     fullWidth
                   />
                 </Collapse>
+              </AnimatedStep>
 
-                <FormLabel htmlFor="proposal-type" sx={{ mt: 3 }}>
-                  Qual será o tipo da proposta?
-                </FormLabel>
+              <AnimatedStep previousStep={previousStep}>
+                <Typography variant="h2" mb={1} textAlign="center">
+                  Tipo da Proposta
+                </Typography>
+                <Typography mb={4} textAlign="center">
+                  Define como você está aberto a negociar com as empresas, você pode escolher mais de uma opção.
+                </Typography>
+
                 <Controller
                   name="proposalType"
                   control={control}
@@ -657,11 +675,11 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
 
 export default ProposalRegister
 
-export const getServerSideProps: GetServerSideProps = withAuth(async context => ({
-  props: {
-    user: context.session.user,
-  },
-}))
+// export const getServerSideProps: GetServerSideProps = withAuth(async context => ({
+//   props: {
+//     user: context.session.user,
+//   },
+// }))
 
 const maxLengths = {
   projectDescription: 1000,

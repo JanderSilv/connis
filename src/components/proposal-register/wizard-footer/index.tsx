@@ -14,7 +14,8 @@ type ProposalKey = keyof Proposal
 
 const steps: (ProposalKey | ProposalKey[])[] = [
   'title',
-  ['proposalCategory', 'proposalCategoryOther', 'proposalType', 'budget'],
+  ['proposalCategory', 'proposalCategoryOther'],
+  ['proposalType', 'budget'],
   'projectDescription',
   'proposalDescription',
   'keywords',
@@ -24,7 +25,11 @@ const steps: (ProposalKey | ProposalKey[])[] = [
 export const WizardFooter = (props: WizardStepsProps) => {
   const { nextButtonRef, handleCustomCheck } = props
   const { nextStep, previousStep, isFirstStep, isLastStep, activeStep, stepCount } = useWizard()
-  const { trigger, clearErrors } = useFormContext<Proposal>()
+  const {
+    trigger,
+    clearErrors,
+    formState: { isSubmitSuccessful },
+  } = useFormContext<Proposal>()
 
   useEffect(() => {
     setTimeout(() => clearErrors(), 0)
@@ -48,9 +53,16 @@ export const WizardFooter = (props: WizardStepsProps) => {
       </Box>
       <Box>
         <Fade in={!isFirstStep}>
-          <Button onClick={previousStep}>Voltar</Button>
+          <Button onClick={previousStep} disabled={isSubmitSuccessful}>
+            Voltar
+          </Button>
         </Fade>
-        <Button type={!isLastStep ? 'button' : 'submit'} ref={nextButtonRef} onClick={handleNext}>
+        <Button
+          type={!isLastStep ? 'button' : 'submit'}
+          ref={nextButtonRef}
+          onClick={handleNext}
+          disabled={isSubmitSuccessful}
+        >
           {!isLastStep ? 'Próximo' : 'Cadastrar'}
         </Button>
       </Box>
