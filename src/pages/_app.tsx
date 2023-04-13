@@ -7,6 +7,7 @@ import { SnackbarProvider } from 'notistack'
 import { setDefaultOptions } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
+import { initMouseflow } from 'src/config'
 import { AppProviders } from 'src/contexts/providers'
 import createEmotionCache from 'src/helpers/createEmotionCache'
 import { theme } from 'src/styles/theme'
@@ -16,6 +17,8 @@ const clientSideEmotionCache = createEmotionCache()
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache
 }
+
+initMouseflow()
 
 function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }: MyAppProps) {
   useEffect(() => {
