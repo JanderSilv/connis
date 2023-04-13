@@ -1,5 +1,4 @@
 import { NextPage } from 'next'
-import Head from 'next/head'
 import { Container } from '@mui/material'
 
 import { CompanyUser } from 'src/models/types'
@@ -22,15 +21,10 @@ const CompanyProfilePage: NextPage<CompanyProfilePageProps> = props => {
   const { user, profileUser } = props
   const { name, analysts } = profileUser
 
-  const documentTitle = `${name} - Connis`
   const isTheProfileOwner = user?.id === profileUser.id
 
   return (
-    <Layout>
-      <Head>
-        <title>{documentTitle}</title>
-      </Head>
-
+    <Layout documentTitle={name}>
       <Container maxWidth="md" sx={{ pt: 2, pb: 8 }}>
         <DataSection
           user={profileUser}
