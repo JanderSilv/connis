@@ -3,7 +3,7 @@ import { Company } from './company'
 import { ICT } from './ict'
 
 export type User = {
-  id: number
+  id: string
   name: string
   email: string
   image?: string

@@ -1,5 +1,5 @@
 export type Image = {
-  id: number
+  id: string
   src: string
   alt?: string
 }

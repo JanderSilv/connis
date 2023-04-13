@@ -53,7 +53,10 @@ export const Chat = (props: ChatProps) => {
                 aria-label="Enviar mensagem"
                 ref={sendButtonRef}
                 onClick={() => {
-                  setMessages([...messages, { id: 1, createdAt: new Date().toISOString(), user, content: messageText }])
+                  setMessages([
+                    ...messages,
+                    { id: '1', createdAt: new Date().toISOString(), user, content: messageText },
+                  ])
                   setMessageText('')
                   moveScrollToBottom()
                 }}

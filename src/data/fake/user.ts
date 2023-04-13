@@ -11,16 +11,17 @@ import { Offer, Proposal, User } from 'src/models/types'
 import { ictFakeData } from './ict'
 
 const analyst: User = {
-  id: 5,
+  id: '5',
   name: 'Analista',
   type: 'analyst',
   createdAt: new Date(2022, 10).toLocaleString(),
   email: 'analista@email.com.br',
   image: 'https://picsum.photos/200/200',
+  username: 'analista',
 }
 
 const userCompany: User = {
-  id: 1,
+  id: '1',
   name: 'Empresa do usuário',
   type: 'company',
   createdAt: new Date(2022, 10).toLocaleString(),
@@ -32,7 +33,7 @@ const userCompany: User = {
   image: 'https://picsum.photos/200/200',
   cnpj: '12345678901234',
   address: {
-    id: 1,
+    id: '1',
     city: 'Salvador',
     uf: 'BA',
     cep: '41820790',
@@ -41,11 +42,14 @@ const userCompany: User = {
   phone: '71999999999',
   size: CompanySize.micro,
   socialCapital: 1_000_000,
-  analysts: [analyst, { ...analyst, id: 2 }],
+  analysts: [
+    { ...analyst, name: 'Henrique Reis', username: 'henriqueReis' },
+    { ...analyst, id: '2', name: 'Paulo Moraes', username: 'pauloMoraes' },
+  ],
 }
 
 const company: User = {
-  id: 2,
+  id: '2',
   name: 'Empresa Ofertante',
   type: 'company',
   createdAt: new Date(2022, 10).toLocaleString(),
@@ -57,7 +61,7 @@ const company: User = {
   image: 'https://picsum.photos/200/200',
   cnpj: '12345678901234',
   address: {
-    id: 1,
+    id: '1',
     city: 'Salvador',
     uf: 'BA',
     cep: '41820790',
@@ -66,11 +70,11 @@ const company: User = {
   phone: '71999999999',
   size: CompanySize.micro,
   socialCapital: 1_000_000,
-  analysts: [analyst, { ...analyst, id: 2 }],
+  analysts: [{ ...analyst, name: 'Henrique Reis', username: 'henriqueReis' }],
 }
 
 const ict: User = {
-  id: 2,
+  id: '2',
   name: 'Senai Cimatec',
   createdAt: new Date(2022, 10).toLocaleString(),
   slug: 'senai-cimatec',
@@ -80,7 +84,7 @@ const ict: User = {
   labs: ictFakeData.labs,
   projects: [],
   address: {
-    id: 1,
+    id: '1',
     city: 'Salvador',
     uf: 'BA',
     cep: '41820790',
@@ -91,17 +95,20 @@ const ict: User = {
   email: 'company@email.com.br',
   phone: '71999999999',
   website: 'https://www.senaicimatec.com.br/',
-  analysts: [],
+  analysts: [
+    { ...analyst, name: 'Henrique Reis', username: 'henriqueReis' },
+    { ...analyst, id: '2', name: 'Paulo Moraes', username: 'pauloMoraes' },
+  ],
 }
 
 const offer: Offer = {
-  id: 1,
+  id: '1',
   createdAt: new Date(2022, 10).toLocaleString(),
   updatedAt: new Date().toLocaleString(),
-  company: { ...company, id: 3 },
+  company: { ...company, id: '3' },
   message: 'Podemos agregar ao seu projeto',
   type: ProposalType.buyOrSell,
-  proposalId: 1,
+  proposalId: '1',
   viewed: false,
   status: OfferStatus.sended,
   category: OfferCategory.default,
@@ -111,10 +118,10 @@ const offer: Offer = {
 }
 
 const proposal: Proposal = {
-  id: 1,
+  id: '1',
   createdAt: new Date(2022, 10).toLocaleString(),
-  company: { ...userCompany, id: 2 },
-  offerCompany: { ...company, id: 1 },
+  company: { ...userCompany, id: '2' },
+  offerCompany: { ...company, id: '1' },
   keywords: ['Setor', 'Têxtil', 'Resíduos'],
   categoryQuestions: {
     waste: {
@@ -149,7 +156,7 @@ const myProposals: Proposal[] = [
   { ...proposal, status: ProposalStatus.opened },
   {
     ...proposal,
-    id: 2,
+    id: '2',
     status: ProposalStatus.canceled,
     proposalCategory: ProposalCategory.disruptiveInnovation,
     views: 10_000,
@@ -161,7 +168,7 @@ const myOffers: Offer[][] = [
     { ...offer, proposal, company },
     {
       ...offer,
-      id: 2,
+      id: '2',
       status: OfferStatus.saw,
       viewed: true,
       type: ProposalType.buyOrSell,
@@ -175,7 +182,7 @@ const myOffers: Offer[][] = [
     { ...offer, proposal },
     {
       ...offer,
-      id: 3,
+      id: '3',
       status: OfferStatus.sended,
       viewed: true,
       type: ProposalType.buyOrSell,
@@ -184,7 +191,7 @@ const myOffers: Offer[][] = [
   ],
 ]
 
-const recentOffers = [myOffers[0].at(-1), { ...myOffers[1].at(-1), id: 3 }] as Offer[]
+const recentOffers = [myOffers[0].at(-1), { ...myOffers[1].at(-1), id: '3' }] as Offer[]
 
 export const userFakeData = {
   analyst,

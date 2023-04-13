@@ -12,7 +12,7 @@ export type ProposalWasteQuestions = {
 }
 
 export type Proposal = {
-  id: number
+  id: string
   title: string
   company: CompanyUser
   createdAt: string

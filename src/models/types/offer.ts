@@ -3,8 +3,8 @@ import { Proposal } from './proposal'
 import { CompanyUser, ICTUser } from './user'
 
 export type Offer = {
-  id: number
-  proposalId: number
+  id: string
+  proposalId: string
   createdAt: string
   updatedAt?: string
   company: CompanyUser | ICTUser

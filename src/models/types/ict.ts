@@ -2,21 +2,21 @@ import { Image } from './common'
 import { AnalystUser } from './user'
 
 export type ICTProject = {
-  id: number
+  id: string
   title: string
   description: string
   image?: Image
 }
 
 export type ICTLab = {
-  id: number
+  id: string
   title: string
   description: string
   images?: Image[]
 }
 
 export type ICTAddress = {
-  id: number
+  id: string
   city: string
   uf: string
   cep: string

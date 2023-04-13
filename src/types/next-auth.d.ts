@@ -6,6 +6,6 @@ declare module 'next-auth' {
     user: AppUser
   }
   interface User {
-    id: number
+    id: AppUser['id']
   }
 }

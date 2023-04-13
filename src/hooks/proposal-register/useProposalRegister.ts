@@ -1,6 +1,8 @@
 import { useCallback, useState } from 'react'
 import { UseFormGetValues } from 'react-hook-form'
 
+import { User } from 'src/models/types'
+
 import { useLoadingBackdrop } from 'src/contexts/loading-backdrop'
 import { formatString } from 'src/helpers/formatters'
 import { toast } from 'src/helpers/toast'
@@ -20,7 +22,7 @@ type Suggestions = {
 
 export const useProposalRegister = (
   currentStep: number,
-  userId: number,
+  userId: User['id'],
   getValues: UseFormGetValues<ProposalSchema>
 ) => {
   const [suggestions, setSuggestions] = useState<Suggestions>({

@@ -7,7 +7,7 @@ type CNAE = {
 }
 
 type CompanyAddress = {
-  id: number
+  id: string
   city: string
   cep: string
   uf: string

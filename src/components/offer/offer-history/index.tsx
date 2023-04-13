@@ -22,7 +22,7 @@ type OfferHistoryProps = {
 
 export const OfferHistory = ({ proposal, offers, session }: OfferHistoryProps) => {
   const [activatedOfferSteps, setActivatedOfferSteps] = useState(() => ({
-    ...offers.reduce((acc, offer) => ({ ...acc, [offer.id]: true }), {} as Record<number, boolean>),
+    ...offers.reduce((acc, offer) => ({ ...acc, [offer.id]: true }), {} as Record<string, boolean>),
   }))
   const [isProposalActive, setIsProposalActive] = useState(true)
 
