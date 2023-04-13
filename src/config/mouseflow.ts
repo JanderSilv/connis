@@ -1,6 +1,5 @@
-window['_mfq'] = window['_mfq'] || []
-
 export const initMouseflow = () => {
+  window['_mfq'] = window['_mfq'] || []
   const mf = document.createElement('script')
   mf.type = 'text/javascript'
   mf.defer = true

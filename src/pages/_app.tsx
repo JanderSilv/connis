@@ -18,11 +18,10 @@ interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache
 }
 
-initMouseflow()
-
 function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }: MyAppProps) {
   useEffect(() => {
     setDefaultOptions({ locale: ptBR })
+    initMouseflow()
   }, [])
 
   return (
