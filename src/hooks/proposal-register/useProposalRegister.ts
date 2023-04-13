@@ -1,8 +1,6 @@
 import { useCallback, useState } from 'react'
 import { UseFormGetValues } from 'react-hook-form'
 
-import { User } from 'src/models/types'
-
 import { useLoadingBackdrop } from 'src/contexts/loading-backdrop'
 import { formatString } from 'src/helpers/formatters'
 import { toast } from 'src/helpers/toast'
@@ -20,11 +18,9 @@ type Suggestions = {
   [K in SuggestionsKeys]?: K extends 'trl' ? string : string[]
 }
 
-export const useProposalRegister = (
-  currentStep: number,
-  userId: User['id'],
-  getValues: UseFormGetValues<ProposalSchema>
-) => {
+const USER_ID = Math.floor(100_000 + Math.random() * 900_000)
+
+export const useProposalRegister = (currentStep: number, getValues: UseFormGetValues<ProposalSchema>) => {
   const [suggestions, setSuggestions] = useState<Suggestions>({
     proposal: [],
     trl: '',
@@ -56,7 +52,7 @@ export const useProposalRegister = (
         description: 'Aguarde alguns instantes. Uma IA está analisando sua proposta para sugerir melhorias.',
       })
       for await (const suggestion of proposalRegisterService.getAllSuggestionsGenerator({
-        userId,
+        userId: USER_ID,
         description: getValues('proposalDescription'),
         projectDescription: getValues('projectDescription'),
       })) {
@@ -74,7 +70,7 @@ export const useProposalRegister = (
       toggleLoading()
       throw error
     }
-  }, [getValues, toggleLoading, userId])
+  }, [getValues, toggleLoading])
 
   const getCustomCheck = useCallback(() => {
     switch (currentStep) {

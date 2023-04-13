@@ -1,6 +1,5 @@
 import { ChatCompletionRequestMessage, CreateModerationResponseResultsInner } from 'openai'
 
-import { User } from 'src/models/types'
 import { SuggestionsKeys } from '../models'
 
 import { api } from '../api'
@@ -18,7 +17,7 @@ export const getModeratedProposal = async (input: string) => {
 
 type SendMessagesBody = {
   messages: ChatCompletionRequestMessage[]
-  userId: User['id']
+  userId: number
 }
 
 export const sendMessages = async (body: SendMessagesBody) => {
