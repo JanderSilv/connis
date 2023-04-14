@@ -65,11 +65,10 @@ const messages: ChatMessage[] = [
 const ictOffer: ICTOffer = {
   id: '1',
   proposalId: '1',
-  title: 'Proposta de desenvolvimento de sistema de gestão de estoque',
   description:
     'Temos uma solução pronta para sua empresa e uma equipe de desenvolvimento para atender suas necessidades.',
   createdAt: new Date(2023, 0).toLocaleString(),
-  ict,
+  user: ict,
   suggestedFundingAgencies: ['SEBRAE', 'EMBRAPII'],
   status: ICTOfferStatus.sended,
 }

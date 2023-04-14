@@ -105,8 +105,8 @@ const offer: Offer = {
   id: '1',
   createdAt: new Date(2022, 10).toLocaleString(),
   updatedAt: new Date().toLocaleString(),
-  company: { ...company, id: '3' },
-  message: 'Podemos agregar ao seu projeto',
+  user: { ...company, id: '3' },
+  description: 'Podemos agregar ao seu projeto',
   type: ProposalType.buyOrSell,
   proposalId: '1',
   viewed: false,
@@ -120,7 +120,7 @@ const offer: Offer = {
 const proposal: Proposal = {
   id: '1',
   createdAt: new Date(2022, 10).toLocaleString(),
-  company: { ...userCompany, id: '2' },
+  company: { ...userCompany, id: '3' },
   offerCompany: { ...company, id: '1' },
   keywords: ['Setor', 'Têxtil', 'Resíduos'],
   categoryQuestions: {
@@ -165,7 +165,7 @@ const myProposals: Proposal[] = [
 
 const myOffers: Offer[][] = [
   [
-    { ...offer, proposal, company },
+    { ...offer, proposal, user: company },
     {
       ...offer,
       id: '2',
