@@ -1,5 +1,6 @@
 export * from './avatar'
 export * from './cards-select'
+export * from './dialog-close-button'
 export * from './conditional'
 export * from './link'
 export * from './masked-text-field'
