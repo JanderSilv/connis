@@ -22,6 +22,7 @@ import { InviteAnalystDialog } from './invite-dialog'
 
 import { DeleteIcon, KeyIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
+import { useAnalystPermissionsDialog } from './usePermissionDialog'
 
 type AnalystsTableProps = {
   analysts: AnalystUser[]
@@ -31,6 +32,8 @@ export const AnalystsTableSection = (props: AnalystsTableProps) => {
   const { analysts } = props
 
   const { handleOpenConfirmDialog } = useConfirmDialog()
+  const { AnalystPermissionsDialog, handleOpenAnalystPermissionsDialog, handleCloseAnalystPermissionsDialog } =
+    useAnalystPermissionsDialog()
   const { page, rowsPerPage, handleChangePage, handleChangeRowsPerPage } = usePagination()
 
   return (
@@ -66,7 +69,12 @@ export const AnalystsTableSection = (props: AnalystsTableProps) => {
                     <TableCell align="right">
                       <Stack direction="row" justifyContent="flex-end">
                         <Tooltip title="Gerenciar permissões" arrow>
-                          <IconButton aria-label="Gerenciar permissões" size="small" sx={{ mr: 1 }}>
+                          <IconButton
+                            aria-label="Gerenciar permissões"
+                            size="small"
+                            onClick={() => handleOpenAnalystPermissionsDialog(analyst)}
+                            sx={{ mr: 1 }}
+                          >
                             <KeyIcon color="primary" />
                           </IconButton>
                         </Tooltip>
@@ -115,6 +123,8 @@ export const AnalystsTableSection = (props: AnalystsTableProps) => {
           Nenhum analista cadastrado. Clique no botão &quot;Adicionar analista&quot; para adicionar um novo.
         </Typography>
       )}
+
+      <AnalystPermissionsDialog />
     </Section>
   )
 }
