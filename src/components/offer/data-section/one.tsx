@@ -9,7 +9,7 @@ import { DataContainer, Section, Title } from 'src/styles/proposal'
 import { makeMessageTitle } from './helpers'
 
 export const OfferDataSectionOne = (offer: Offer) => {
-  const { message } = offer
+  const { description } = offer
 
   const { userIsTheOfferOwner, status } = useOfferSession(offer)
 
@@ -19,7 +19,7 @@ export const OfferDataSectionOne = (offer: Offer) => {
 
       <DataContainer>
         <Title>{makeMessageTitle(status, userIsTheOfferOwner)}</Title>
-        <Typography>{message}</Typography>
+        <Typography>{description}</Typography>
       </DataContainer>
     </Section>
   )

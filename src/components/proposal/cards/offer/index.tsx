@@ -18,7 +18,7 @@ export type OfferCardProps = {
 
 export const OfferCard = (props: OfferCardProps) => {
   const { offer, href, unseenActivities, layout = 'row' } = props
-  const { createdAt, updatedAt, message, company, status, type, proposal } = offer
+  const { createdAt, updatedAt, description, user, status, type, proposal } = offer
 
   const { icon: Icon, title: proposalTitle } = proposalTypeOptions[type]
 
@@ -38,16 +38,16 @@ export const OfferCard = (props: OfferCardProps) => {
       {isRowLayout && <OfferStatusChip status={status} sx={{ mb: 1, display: { sm: 'none' } }} />}
       <Header mb={1}>
         <Stack direction="row" alignItems="center" gap={2}>
-          <UserAvatar name={company.name} src={company.image} size={25} />
+          <UserAvatar name={user.name} src={user.image} size={25} />
           <Typography component="h3" variant="h5">
-            {company.name}
+            {user.name}
           </Typography>
         </Stack>
         {isRowLayout && <OfferStatusChip status={status} sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
       </Header>
       <Typography variant="h3">{proposal?.title}</Typography>
 
-      <Description>{message}</Description>
+      <Description>{description}</Description>
 
       <Box mt={1} display="flex" alignItems="center" gap={1}>
         <Typography component="time" variant="caption">

@@ -37,7 +37,7 @@ export const OfferHistory = ({ proposal, offers, session }: OfferHistoryProps) =
             onClick={() => setActivatedOfferSteps(prev => ({ ...prev, [offer.id]: !prev[offer.id] }))}
             sx={{ '& .MuiStepLabel-label:is(.Mui-active, .Mui-completed)': { fontWeight: '400' } }}
           >
-            <strong>{session?.user.id === offer.company.id ? 'Você' : offer.company.name}</strong> fez uma{' '}
+            <strong>{session?.user.id === offer.user.id ? 'Você' : offer.user.name}</strong> fez uma{' '}
             {offerCategories[offer.category].text} {formatDate.distanceToNow(new Date(offer.createdAt))}
           </StepButton>
           <StepContent>

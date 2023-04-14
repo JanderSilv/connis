@@ -7,8 +7,8 @@ export type Offer = {
   proposalId: string
   createdAt: string
   updatedAt?: string
-  company: CompanyUser | ICTUser
-  message: string
+  user: CompanyUser | ICTUser
+  description: string
   category: OfferCategory
   status: OfferStatus
   type: ProposalType
