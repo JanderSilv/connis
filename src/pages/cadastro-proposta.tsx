@@ -101,10 +101,8 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
   const previousStep = useRef(0)
   const nextButtonRef = useRef<HTMLButtonElement>(null)
 
-  const { suggestions, feedbacks, getAllSuggestions, handleSuggestionFeedback, getCustomCheck } = useProposalRegister(
-    previousStep.current + 1,
-    getValues
-  )
+  const { suggestions, feedbacks, getAllSuggestions, handleSuggestionFeedback, getCanGoNextStepCustomCheck } =
+    useProposalRegister(previousStep.current + 1, getValues)
 
   const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter') nextButtonRef.current?.click()
@@ -140,7 +138,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
           <Container component="form" onSubmit={handleSubmit(onSubmit)}>
             <Wizard
               wrapper={<AnimatePresence initial={false} mode="wait" />}
-              footer={<WizardFooter nextButtonRef={nextButtonRef} handleCustomCheck={getCustomCheck()} />}
+              footer={<WizardFooter nextButtonRef={nextButtonRef} checkCanGoNextCustom={getCanGoNextStepCustomCheck} />}
             >
               <AnimatedStep previousStep={previousStep}>
                 <Typography variant="h2" mb={4} textAlign="center">

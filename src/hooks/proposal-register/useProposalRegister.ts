@@ -66,25 +66,28 @@ export const useProposalRegister = (currentStep: number, getValues: UseFormGetVa
       }
     } catch (error) {
       console.error('useProposalRegister', { error })
-      toast.show('Ocorreu um erro ao tentar obter as sugestões. Prossiga o cadastro normalmente.', 'info')
+      toast.show('Ocorreu um erro ao obter as sugestões. Prossiga o cadastro normalmente.', 'info')
       toggleLoading()
       throw error
     }
   }, [getValues, toggleLoading])
 
-  const getCustomCheck = useCallback(() => {
-    switch (currentStep) {
-      case 5:
-        return async () => {
-          if (!!suggestions?.proposal?.length) return true
-          try {
-            await getAllSuggestions()
-            return true
-          } catch (error) {
-            return true
-          }
+  const getCanGoNextStepCustomCheck = useCallback(async () => {
+    const customChecks = {
+      5: async () => {
+        if (!!suggestions?.proposal?.length) return true
+        try {
+          await getAllSuggestions()
+          return false
+        } catch (error) {
+          return true
         }
+      },
     }
+
+    const customCheck = customChecks[currentStep as keyof typeof customChecks]
+    if (!customCheck) return true
+    return customChecks[currentStep as keyof typeof customChecks]()
   }, [currentStep, getAllSuggestions, suggestions?.proposal?.length])
 
   const handleSuggestionFeedback = useCallback((suggestion: SuggestionsKeys, feedback: Feedback) => {
@@ -101,7 +104,7 @@ export const useProposalRegister = (currentStep: number, getValues: UseFormGetVa
   return {
     suggestions,
     feedbacks,
-    getCustomCheck,
+    getCanGoNextStepCustomCheck,
     getAllSuggestions,
     handleSuggestionFeedback,
   }
