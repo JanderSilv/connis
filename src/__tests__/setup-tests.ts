@@ -2,6 +2,9 @@
 // Any mocks included here, in `@/__tests__/test-utils`, apply to all tests.
 import '@testing-library/jest-dom'
 import { fakeData } from 'src/data/fake'
+import { TextEncoder } from 'util'
+
+global.TextEncoder = TextEncoder
 
 // Due to Jest transformer issues, we mock next-auth's useSession hook directly:
 export const mockSession = {
