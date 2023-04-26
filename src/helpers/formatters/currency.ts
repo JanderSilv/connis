@@ -7,4 +7,7 @@ export const formatCurrency = (value?: number, options?: Intl.NumberFormatOption
   }).format(value)
 }
 
-export const unformatCurrency = (value?: string) => (!!value ? Number(value.replace(/[^0-9]/g, '')) : 0)
+export const unformatCurrency = (value?: string) => {
+  if (!value) return 0
+  return Number(value.replace(/[^0-9,]/g, '').replace(',', '.'))
+}
