@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from 'next'
+import { ParsedUrlQuery } from 'querystring'
 import { Container } from '@mui/material'
 
 import { AnalystUser } from 'src/models/types'
@@ -36,9 +37,18 @@ const AnalystProfilePage: NextPage<AnalystProfilePageProps> = props => {
 
 export default AnalystProfilePage
 
+type Params = {
+  username: string
+} & ParsedUrlQuery
+
 export const getServerSideProps: GetServerSideProps = withSession(async context => {
   // TODO: fetch analyst data from database
   const { analyst } = fakeData
+
+  const { username } = context.params as Params
+
+  console.log({ username })
+
   return {
     props: {
       profileUser: analyst,
