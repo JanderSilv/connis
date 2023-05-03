@@ -38,7 +38,9 @@ export const ProposalDataSectionTwo = (props: Props) => {
       <Box flex={1}>
         {!!budget && (
           <Box>
-            <Title>Orçamento</Title>
+            <Title>
+              {proposalType?.includes(ProposalType.buyOrSell) ? 'Valor Solicitado' : 'Valor Disponível para Investir'}
+            </Title>
             <Typography>
               {new Intl.NumberFormat('pt-BR', {
                 style: 'currency',

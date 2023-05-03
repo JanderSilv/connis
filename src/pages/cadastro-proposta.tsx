@@ -230,28 +230,39 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                   }
                   sx={{ marginTop: 2 }}
                 >
-                  <MaskedTextField
-                    label="Qual o seu orçamento?"
-                    placeholder="Orçamento"
-                    inputMode="numeric"
-                    mask={Number}
-                    radix=","
-                    mapToRadix={['.']}
-                    scale={0}
-                    signed={false}
-                    thousandsSeparator="."
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <AttachMoneyIcon color="primary" />
-                        </InputAdornment>
-                      ),
-                    }}
-                    {...register('budget')}
-                    error={!!errors.budget}
-                    helperText={errors.budget?.message}
-                    size={'small' as any}
-                    fullWidth
+                  <Controller
+                    name="budget"
+                    control={control}
+                    render={({ field: { onChange, ...rest } }) => (
+                      <MaskedTextField
+                        label={
+                          watchedProposalType?.includes(ProposalType.buyOrSell)
+                            ? 'Quanto você está disposto a pagar ou receber pela sua proposta?'
+                            : 'Quanto você está disposto a investir?'
+                        }
+                        placeholder="Valor"
+                        inputMode="numeric"
+                        mask={Number}
+                        radix=","
+                        mapToRadix={['.']}
+                        scale={0}
+                        signed={false}
+                        thousandsSeparator="."
+                        InputProps={{
+                          startAdornment: (
+                            <InputAdornment position="start">
+                              <AttachMoneyIcon color="primary" />
+                            </InputAdornment>
+                          ),
+                        }}
+                        {...rest}
+                        onAccept={newValue => onChange(newValue)}
+                        error={!!errors.budget}
+                        helperText={errors.budget?.message || 'Deixe em branco se não souber.'}
+                        size="small"
+                        fullWidth
+                      />
+                    )}
                   />
                 </Collapse>
               </AnimatedStep>

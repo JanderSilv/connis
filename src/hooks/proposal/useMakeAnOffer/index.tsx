@@ -20,7 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { proposalTypeOptions, trlOptions } from 'src/data/proposal'
 import { useToast } from 'src/hooks/useToast'
 import { formatCurrency, unformatCurrency } from 'src/helpers/formatters'
-import { counterProposalOfferSchema, offerSchema, makeOfferValidationSchema } from './validations'
+import { counterProposalOfferSchema, OfferSchema, makeOfferValidationSchema } from './validations'
 
 import { OfferCategory, ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
@@ -59,13 +59,16 @@ const responsiveCarousel: ResponsiveType = {
 const MakeAnOfferDialog = (props: Props) => {
   const { isOpen, setIsOpen, proposal, offerCategory } = props
   const { showToast } = useToast()
+
+  const formattedBudget = formatCurrency(proposal.budget, { maximumFractionDigits: 0 }).replace('R$', '')
+
   const {
     control,
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     watch,
-  } = useForm<offerSchema>({
+  } = useForm<OfferSchema>({
     resolver: zodResolver(makeOfferValidationSchema(proposal.proposalType)),
     defaultValues:
       offerCategory === OfferCategory.default
@@ -78,7 +81,7 @@ const MakeAnOfferDialog = (props: Props) => {
             proposalType: proposal.proposalType.length === 1 ? proposal.proposalType[0] : undefined,
             trl: proposal.trl,
             goalTRL: proposal.goalTrl,
-            budget: formatCurrency(proposal.budget, { signDisplay: 'never' }),
+            budget: formattedBudget,
           },
   })
 
@@ -91,7 +94,7 @@ const MakeAnOfferDialog = (props: Props) => {
     return acc
   }, [] as CardData[])
 
-  const sendOffer: SubmitHandler<offerSchema> = async data => {
+  const sendOffer: SubmitHandler<OfferSchema> = async data => {
     console.log({ data })
     showToast('Oferta enviada com sucesso', 'success')
     setIsOpen(false)
@@ -168,8 +171,7 @@ const MakeAnOfferDialog = (props: Props) => {
             <ul>
               <li>
                 <Typography>
-                  Você concorda com o orçamento de {formatCurrency(proposal.budget)}. Caso não, realize uma contra
-                  proposta.
+                  Você concorda com o valor de {formatCurrency(proposal.budget)}. Caso não, realize uma contra proposta.
                 </Typography>
               </li>
             </ul>
@@ -259,8 +261,12 @@ const MakeAnOfferDialog = (props: Props) => {
                       control={control}
                       render={({ field: { onChange, ...rest } }) => (
                         <MaskedTextField
-                          label="Qual o seu orçamento?"
-                          placeholder="Orçamento"
+                          label={
+                            watchedProposalType === ProposalType.buyOrSell
+                              ? 'Quanto você está disposto a pagar ou receber pela sua proposta?'
+                              : 'Quanto você está disposto a investir?'
+                          }
+                          placeholder="Valor"
                           inputMode="numeric"
                           mask={Number}
                           radix=","
@@ -276,7 +282,7 @@ const MakeAnOfferDialog = (props: Props) => {
                             ),
                           }}
                           {...rest}
-                          onAccept={value => onChange(value)}
+                          onAccept={newValue => onChange(newValue)}
                           error={!!formErrors.budget}
                           helperText={formErrors.budget?.message}
                           size={'small' as any}
@@ -285,11 +291,11 @@ const MakeAnOfferDialog = (props: Props) => {
                       )}
                     />
                   </Collapse>
-                  <Collapse in={!!watchedBudget && unformatCurrency(watchedBudget) !== proposal.budget} sx={{ mt: 1 }}>
+                  <Collapse in={!!watchedBudget && watchedBudget !== formattedBudget} sx={{ mt: 1 }}>
                     <ul>
                       <li>
                         <Typography color="warning.main">
-                          Você alterou o orçamento para <strong>R$ {watchedBudget}</strong>, o original era{' '}
+                          Você alterou o valor para <strong>R$ {watchedBudget}</strong>, o original era{' '}
                           <strong>{formatCurrency(proposal.budget)}</strong>.
                         </Typography>
                       </li>

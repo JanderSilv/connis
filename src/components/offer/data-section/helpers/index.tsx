@@ -75,16 +75,16 @@ const makeProposalBudgetText = (
   const previousOffer = offersHistory.at(-2)
   if (isTheOfferOwner) {
     if (previousOffer) {
-      if (previousOffer.budget === currentOffer.budget) return 'Você concordou com o orçamento definido pela empresa'
-      else return `Você solicitou um orçamento de`
+      if (previousOffer.budget === currentOffer.budget) return 'Você concordou com o valor definido pela empresa'
+      else return `Você solicitou um valor de`
     } else {
-      if (proposal.budget === currentOffer.budget) return 'Você concordou com o orçamento definido pela empresa'
-      else return `Você solicitou um orçamento de`
+      if (proposal.budget === currentOffer.budget) return 'Você concordou com o valor definido pela empresa'
+      else return `Você solicitou um valor de`
     }
   } else {
     if (previousOffer) {
-      if (previousOffer.budget === currentOffer.budget) return 'A empresa concorda com o orçamento definido'
-      else return `A empresa propôs um orçamento de`
+      if (previousOffer.budget === currentOffer.budget) return 'A empresa concorda com o valor definido'
+      else return `A empresa propôs um valor de`
     }
   }
 }

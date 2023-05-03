@@ -155,7 +155,7 @@ const ProposalsFiltersComponent = ({ form, setProposals }: ProposalFiltersProps)
 
       <Collapse in={watch('types').includes(ProposalType.buyOrSell)}>
         <Box>
-          <FormLabel>Orçamento</FormLabel>
+          <FormLabel>Valor da proposta</FormLabel>
           <Stack mt={1.5} direction="row" spacing={1}>
             <Controller
               name="minBudget"
