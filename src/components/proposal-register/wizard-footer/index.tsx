@@ -7,7 +7,7 @@ import { Wrapper } from './styles'
 
 type WizardStepsProps = {
   nextButtonRef: MutableRefObject<HTMLButtonElement | null>
-  checkCanGoNextCustom?: () => Promise<boolean>
+  checkCanGoNextCustom?: (currentStep: number) => Promise<boolean>
 }
 
 type ProposalKey = keyof Proposal
@@ -42,7 +42,7 @@ export const WizardFooter = (props: WizardStepsProps) => {
       if (Array.isArray(item)) item.forEach(async key => await trigger(key))
       return await trigger(item)
     })()
-    if (!canGoNext || (checkCanGoNextCustom && !(await checkCanGoNextCustom()))) return
+    if (!canGoNext || (checkCanGoNextCustom && !(await checkCanGoNextCustom(activeStep + 1)))) return
     nextStep()
   }
 

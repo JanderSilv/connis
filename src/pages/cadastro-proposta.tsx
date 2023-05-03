@@ -102,7 +102,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
   const nextButtonRef = useRef<HTMLButtonElement>(null)
 
   const { suggestions, feedbacks, getAllSuggestions, handleSuggestionFeedback, getCanGoNextStepCustomCheck } =
-    useProposalRegister(previousStep.current + 1, getValues)
+    useProposalRegister(getValues)
 
   const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter') nextButtonRef.current?.click()

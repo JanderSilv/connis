@@ -20,7 +20,7 @@ type Suggestions = {
 
 const USER_ID = Math.floor(100_000 + Math.random() * 900_000)
 
-export const useProposalRegister = (currentStep: number, getValues: UseFormGetValues<ProposalSchema>) => {
+export const useProposalRegister = (getValues: UseFormGetValues<ProposalSchema>) => {
   const [suggestions, setSuggestions] = useState<Suggestions>({
     proposal: [],
     trl: '',
@@ -72,23 +72,26 @@ export const useProposalRegister = (currentStep: number, getValues: UseFormGetVa
     }
   }, [getValues, toggleLoading])
 
-  const getCanGoNextStepCustomCheck = useCallback(async () => {
-    const customChecks = {
-      5: async () => {
-        if (!!suggestions?.proposal?.length) return true
-        try {
-          await getAllSuggestions()
-          return false
-        } catch (error) {
-          return true
-        }
-      },
-    }
+  const getCanGoNextStepCustomCheck = useCallback(
+    async (currentStep: number) => {
+      const customChecks = {
+        5: async () => {
+          if (!!suggestions?.proposal?.length) return true
+          try {
+            await getAllSuggestions()
+            return false
+          } catch (error) {
+            return true
+          }
+        },
+      }
 
-    const customCheck = customChecks[currentStep as keyof typeof customChecks]
-    if (!customCheck) return true
-    return customChecks[currentStep as keyof typeof customChecks]()
-  }, [currentStep, getAllSuggestions, suggestions?.proposal?.length])
+      const customCheck = customChecks[currentStep as keyof typeof customChecks]
+      if (!customCheck) return true
+      return customChecks[currentStep as keyof typeof customChecks]()
+    },
+    [getAllSuggestions, suggestions?.proposal?.length]
+  )
 
   const handleSuggestionFeedback = useCallback((suggestion: SuggestionsKeys, feedback: Feedback) => {
     // TODO: send feedback to backend
