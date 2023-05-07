@@ -19,11 +19,11 @@ export const RecentOffers = (props: RecentOffersProps) => {
     hasOffers && (
       <Link
         href="/minhas-ofertas"
-        muiLinkProps={{
-          sx: isMobile
+        sx={
+          isMobile
             ? { textAlign: 'center', display: { xs: 'block', sm: 'none' } }
-            : { display: { xs: 'none', sm: 'inline' } },
-        }}
+            : { display: { xs: 'none', sm: 'inline' } }
+        }
       >
         Ver todas
       </Link>

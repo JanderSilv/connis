@@ -93,16 +93,7 @@ const Login: NextPage = () => {
           fullWidth
         />
 
-        <Link
-          href={pages.recoverPassword}
-          muiLinkProps={{
-            width: '100%',
-            variant: 'body2',
-            color: 'text.primary',
-            mb: 2,
-            textAlign: 'right',
-          }}
-        >
+        <Link href={pages.recoverPassword} width="100%" variant="body2" color="text.primary" mb={2} textAlign="right">
           Esqueceu a senha?
         </Link>
 
@@ -113,7 +104,7 @@ const Login: NextPage = () => {
         <SocialLoginButtons mt={1} />
 
         <ForgotPasswordTypography>
-          Não possui uma conta? <Link href={pages.companySignUp}>Cadastre-se aqui</Link>
+          Não possui uma conta? <Link href={pages.signUp}>Cadastre-se aqui</Link>
         </ForgotPasswordTypography>
       </Form>
     </Layout>

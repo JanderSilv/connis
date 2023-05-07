@@ -18,11 +18,11 @@ export const RecentProposals = (props: RecentProposalsProps) => {
     hasProposals && (
       <Link
         href="/minhas-propostas"
-        muiLinkProps={{
-          sx: isMobile
+        sx={
+          isMobile
             ? { textAlign: 'center', display: { xs: 'block', sm: 'none' } }
-            : { display: { xs: 'none', sm: 'inline' } },
-        }}
+            : { display: { xs: 'none', sm: 'inline' } }
+        }
       >
         Ver todas
       </Link>
