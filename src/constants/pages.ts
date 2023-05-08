@@ -8,4 +8,7 @@ export const pages = {
   analystProfile: '/analistas',
   recoverPassword: '/recuperar-senha',
   proposal: '/proposta',
+  signUp: '/cadastro',
+  privacyPolicy: '/politica-de-privacidade',
+  termsOfUse: '/termos-de-uso',
 } as const
