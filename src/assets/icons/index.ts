@@ -2,6 +2,7 @@ export { default as AddShoppingCartIcon } from '@mui/icons-material/AddShoppingC
 export { default as AssignmentOutlinedIcon } from '@mui/icons-material/AssignmentOutlined'
 export { default as AssignmentIcon } from '@mui/icons-material/AssignmentRounded'
 export { default as AttachMoneyIcon } from '@mui/icons-material/AttachMoneyRounded'
+export { default as BadgeOutlinedIcon } from '@mui/icons-material/BadgeOutlined'
 export { default as BiotechIcon } from '@mui/icons-material/BiotechRounded'
 export { default as BusinessOutlinedIcon } from '@mui/icons-material/BusinessOutlined'
 export { default as BusinessIcon } from '@mui/icons-material/BusinessRounded'
