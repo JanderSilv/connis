@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios'
 import { ZodIssue } from 'zod'
 
 export type Component = {
@@ -5,3 +6,7 @@ export type Component = {
 }
 
 export type ResponseError = ZodIssue
+export type HttpResponseError = AxiosError<{
+  title: string
+  message: string
+}>
