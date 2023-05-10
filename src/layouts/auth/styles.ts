@@ -5,9 +5,12 @@ export type WrapperProps = {
     position?: 'left' | 'right'
     breakpoint?: 'sm' | 'md'
   }
+  showFooter?: boolean
 }
 
-export const Wrapper = styled(Box)<WrapperProps>(({ theme, illustration }) => ({
+export const Wrapper = styled(Box, {
+  shouldForwardProp: prop => prop !== 'illustration' && prop !== 'showFooter',
+})<WrapperProps>(({ theme, illustration, showFooter }) => ({
   width: '100%',
   minHeight: '100vh',
   padding: theme.spacing(4),
@@ -27,12 +30,13 @@ export const Wrapper = styled(Box)<WrapperProps>(({ theme, illustration }) => ({
 
   '&:after': {
     content: '""',
-    display: 'block',
+    display: !showFooter ? 'block' : 'none',
 
     [theme.breakpoints.down(illustration?.breakpoint || 'sm')]: {
       width: '100%',
       height: 200,
       background: 'center / contain no-repeat url(/assets/auth/business-make-connection.svg)',
+      display: 'block',
     },
   },
 }))
