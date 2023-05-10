@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessage } from 'openai'
-import { toast } from 'src/helpers/toast'
+import { toast } from 'src/helpers/shared'
 import { suggestions } from './data'
 import { getModeratedProposal, getSuggestionPrompt, sendMessages } from './helpers'
 import { ProposalInput, SuggestionsKeys } from './models'

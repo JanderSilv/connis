@@ -3,7 +3,7 @@ import { UseFormGetValues } from 'react-hook-form'
 
 import { useLoadingBackdrop } from 'src/contexts/loading-backdrop'
 import { formatString } from 'src/helpers/formatters'
-import { toast } from 'src/helpers/toast'
+import { toast } from 'src/helpers/shared'
 import { proposalRegisterService } from 'src/services/proposal-register'
 import { SuggestionsKeys } from 'src/services/proposal-register/models'
 import { ProposalSchema } from 'src/validations/proposal-register'

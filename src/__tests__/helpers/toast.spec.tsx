@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { SnackbarProvider, VariantType } from 'notistack'
-import { toast } from 'src/helpers/toast'
+import { toast } from 'src/helpers/shared'
 
 type ToastProps = {
   variant: VariantType

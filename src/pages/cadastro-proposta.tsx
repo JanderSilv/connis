@@ -40,7 +40,7 @@ import {
 } from 'src/data/proposal'
 // import { withAuth } from 'src/helpers/withAuth'
 import { useProposalRegister } from 'src/hooks/proposal-register'
-import { toast } from 'src/helpers'
+import { toast } from 'src/helpers/shared'
 import { proposalRegisterSchema, ProposalSchema } from 'src/validations/proposal-register'
 
 import { Layout } from 'src/layouts/app'
