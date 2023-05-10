@@ -11,4 +11,5 @@ export const pages = {
   signUp: '/cadastro',
   privacyPolicy: '/politica-de-privacidade',
   termsOfUse: '/termos-de-uso',
+  confirmCode: '/confirmar-codigo',
 } as const
