@@ -1,6 +1,6 @@
 import { UserType } from '../enums'
 import { Analyst } from './analyst'
-import { Company } from './company'
+import { OldCompany } from './company'
 import { ICT } from './ict'
 
 export type User = {
@@ -14,6 +14,15 @@ export type User = {
   createdAt: string
 }
 
-export type CompanyUser = User & Company
-export type ICTUser = User & ICT
-export type AnalystUser = User & Analyst
+export type OldUser = {
+  id: string
+  name: string
+  email: string
+  image?: string
+  createdAt: string
+  updatedAt?: string
+} & (OldCompany | ICT | Analyst)
+
+export type CompanyUser = OldUser & OldCompany
+export type ICTUser = OldUser & ICT
+export type AnalystUser = OldUser & Analyst

@@ -27,7 +27,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 
 import { ProposalCategory, ProposalType } from 'src/models/enums'
-import { User } from 'src/models/types'
+import { OldUser } from 'src/models/types'
 
 import { useConfirmDialog, useLoadingBackdrop } from 'src/contexts'
 import {
@@ -62,7 +62,7 @@ const checkProposalCategoryHasQuestions = (proposalCategory: ProposalCategory) =
 }
 
 type ProposalRegisterProps = {
-  user: User
+  user: OldUser
 }
 
 const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {

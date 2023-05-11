@@ -1,7 +1,7 @@
 import { companySizes } from 'src/data/company'
-import { Company } from 'src/models/types'
+import { OldCompany } from 'src/models/types'
 
-export const makeCompanyData = (company: Company) => [
+export const makeCompanyData = (company: OldCompany) => [
   {
     label: 'CNAE',
     value: company.cnae?.label,

@@ -1,5 +1,5 @@
 import NextAuth, { DefaultUser } from 'next-auth'
-import { User as AppUser } from 'src/models/types'
+import { OldUser as AppUser } from 'src/models/types'
 
 declare module 'next-auth' {
   interface Session {

@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react'
 import { Box, Stack, SvgIcon, Typography } from '@mui/material'
 
-import { User } from 'src/models/types'
+import { OldUser } from 'src/models/types'
 import { formatDate } from 'src/helpers/formatters'
 
 import { UserAvatar } from 'src/components/shared'
@@ -11,7 +11,7 @@ import { CakeIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
 
 type DataSectionProps = {
-  user: User
+  user: OldUser
   data?: {
     icon: typeof SvgIcon
     value?: React.ReactNode

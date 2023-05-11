@@ -1,6 +1,6 @@
 import { Alert, Button, Stack, Typography } from '@mui/material'
 
-import { User } from 'src/models/types'
+import { OldUser } from 'src/models/types'
 
 import { useDeleteDialog } from 'src/hooks'
 import { checkUserIsCompany, checkUserIsICT } from 'src/helpers/users'
@@ -9,7 +9,7 @@ import { DeleteIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
 
 type DeleteProfileSectionProps = {
-  user: User
+  user: OldUser
   dialogDescription?: React.ReactNode
 }
 

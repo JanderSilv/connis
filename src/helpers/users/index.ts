@@ -1,4 +1,4 @@
-import { CompanyUser, ICTUser, User } from 'src/models/types'
+import { CompanyUser, ICTUser, OldUser } from 'src/models/types'
 
-export const checkUserIsCompany = (user: User): user is CompanyUser => user.type === 'company'
-export const checkUserIsICT = (user: User): user is ICTUser => user.type === 'ict'
+export const checkUserIsCompany = (user: OldUser): user is CompanyUser => user.type === 'company'
+export const checkUserIsICT = (user: OldUser): user is ICTUser => user.type === 'ict'

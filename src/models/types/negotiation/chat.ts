@@ -1,8 +1,8 @@
-import { User } from '../user'
+import { OldUser } from '../user'
 
 export type ChatMessage = {
   id: string
-  user: User
+  user: OldUser
   content: string
   createdAt: string
   updatedAt?: string

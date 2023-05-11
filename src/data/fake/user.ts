@@ -7,10 +7,10 @@ import {
   ProposalType,
   TRL,
 } from 'src/models/enums'
-import { Offer, Proposal, User } from 'src/models/types'
+import { Offer, Proposal, OldUser } from 'src/models/types'
 import { ictFakeData } from './ict'
 
-const analyst: User = {
+const analyst: OldUser = {
   id: '5',
   name: 'Analista',
   type: 'analyst',
@@ -20,7 +20,7 @@ const analyst: User = {
   username: 'analista',
 }
 
-const userCompany: User = {
+const userCompany: OldUser = {
   id: '1',
   name: 'Empresa do usuário',
   type: 'company',
@@ -37,6 +37,10 @@ const userCompany: User = {
     city: 'Salvador',
     uf: 'BA',
     cep: '41820790',
+    complement: 'Escritório',
+    number: 1423,
+    street: 'Rua da Bahia',
+    country: 'Brasil',
   },
   email: 'company@email.com.br',
   phone: '71999999999',
@@ -48,7 +52,7 @@ const userCompany: User = {
   ],
 }
 
-const company: User = {
+const company: OldUser = {
   id: '2',
   name: 'Empresa Ofertante',
   type: 'company',
@@ -65,6 +69,10 @@ const company: User = {
     city: 'Salvador',
     uf: 'BA',
     cep: '41820790',
+    complement: 'Escritório',
+    number: 1423,
+    street: 'Rua da Bahia',
+    country: 'Brasil',
   },
   email: 'company@email.com.br',
   phone: '71999999999',
@@ -73,7 +81,7 @@ const company: User = {
   analysts: [{ ...analyst, name: 'Henrique Reis', username: 'henriqueReis' }],
 }
 
-const ict: User = {
+const ict: OldUser = {
   id: '2',
   name: 'Senai Cimatec',
   createdAt: new Date(2022, 10).toLocaleString(),
@@ -142,7 +150,7 @@ const proposal: Proposal = {
   trl: TRL.trl1,
   goalTrl: TRL.trl3,
   budget: 100_000,
-  status: ProposalStatus.opened,
+  status: ProposalStatus.onNegotiation,
   views: 10,
   viewed: false,
 }

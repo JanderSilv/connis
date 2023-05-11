@@ -3,13 +3,13 @@ import { useSession } from 'next-auth/react'
 
 import { formatDate } from 'src/helpers/formatters'
 import { checkHasOnlyOneEmoji } from '../helpers'
-import { ChatMessage, User } from 'src/models/types'
+import { ChatMessage, OldUser } from 'src/models/types'
 
 import { Container } from './styles'
 
 type MessageProps = {
-  previousMessageUserId?: User['id']
-  nextMessageUserId?: User['id']
+  previousMessageUserId?: OldUser['id']
+  nextMessageUserId?: OldUser['id']
 } & ChatMessage
 
 export const Message = (props: MessageProps) => {
