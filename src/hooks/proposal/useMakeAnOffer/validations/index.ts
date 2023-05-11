@@ -27,7 +27,7 @@ export const counterProposalOfferValidationSchema = defaultOfferValidationSchema
         return unformatCurrency(value) > 0
       },
       {
-        message: 'O valor do orçamento deve ser maior que zero',
+        message: 'O valor deve ser maior que zero',
       }
     ),
 })
@@ -58,9 +58,9 @@ export const makeOfferValidationSchema = (proposalType: ProposalType[]) =>
         return true
       },
       {
-        message: 'O orçamento é obrigatório',
+        message: 'O valor é obrigatório',
         path: ['budget'],
       }
     )
 
-export type offerSchema = zod.infer<ReturnType<typeof makeOfferValidationSchema>>
+export type OfferSchema = zod.infer<ReturnType<typeof makeOfferValidationSchema>>

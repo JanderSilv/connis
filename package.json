@@ -30,7 +30,7 @@
     "react-avatar-editor": "^13.0.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.34.2",
-    "react-imask": "^6.4.3",
+    "react-imask": "^6.6.1-alpha.2",
     "react-multi-carousel": "^2.8.2",
     "react-use-wizard": "^2.2.1",
     "yup": "^0.32.11",
