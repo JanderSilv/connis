@@ -1,6 +1,7 @@
 import { Box, Container, Typography } from '@mui/material'
 import { NextPage } from 'next'
 import Head from 'next/head'
+import { contactData } from 'src/data/contact'
 import { Layout } from 'src/layouts/auth'
 
 const PolicyPrivacyPage: NextPage = () => (
@@ -129,4 +130,4 @@ const PolicyPrivacyPage: NextPage = () => (
 
 export default PolicyPrivacyPage
 
-const SupportEmail = () => <a href="mail:suporte.connis@gmail.com">suporte.connis@gmail.com</a>
+const SupportEmail = () => <a href={`mail:${contactData.support}`}>{contactData.support}</a>
