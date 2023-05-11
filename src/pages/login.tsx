@@ -113,8 +113,8 @@ const Login: NextPage = () => {
 
 export default Login
 
-export const getServerSideProps: GetServerSideProps = withPublic(async () => {
+export const getServerSideProps = withPublic(async () => {
   return {
     props: {},
   }
-})
+}, true)
