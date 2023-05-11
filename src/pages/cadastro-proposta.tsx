@@ -259,7 +259,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                         onAccept={newValue => onChange(newValue)}
                         error={!!errors.budget}
                         helperText={errors.budget?.message || 'Deixe em branco se não souber.'}
-                        size="small"
+                        size={'small' as any}
                         fullWidth
                       />
                     )}
