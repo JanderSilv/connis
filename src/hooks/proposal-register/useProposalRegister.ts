@@ -53,7 +53,7 @@ export const useProposalRegister = (getValues: UseFormGetValues<ProposalSchema>)
       })
       for await (const suggestion of proposalRegisterService.getAllSuggestionsGenerator({
         userId: USER_ID,
-        description: getValues('proposalDescription'),
+        description: getValues('description'),
         projectDescription: getValues('projectDescription'),
       })) {
         if (suggestion.key === 'proposal') {

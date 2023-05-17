@@ -32,12 +32,12 @@ const messages = {
 export const proposalRegisterSchema: yup.SchemaOf<ProposalSchema> = yup.object().shape(
   {
     title: yup.string().required('O título da proposta é obrigatório'),
-    proposalCategory: yup
+    category: yup
       .number()
       .min(0, messages.proposalCategory)
       .required(messages.proposalCategory)
       .typeError(messages.proposalCategory),
-    proposalCategoryOther: yup.string().when('proposalCategory', {
+    categoryOther: yup.string().when('proposalCategory', {
       is: ProposalCategory.others,
       then: yup.string().required('A categoria da proposta é obrigatória'),
       otherwise: yup.string().notRequired(),
@@ -46,7 +46,7 @@ export const proposalRegisterSchema: yup.SchemaOf<ProposalSchema> = yup.object()
       if (value) return yup.string().min(10, 'A descrição do projeto deve ter no mínimo 10 caracteres')
       return yup.string().notRequired()
     }),
-    proposalDescription: yup.string().required('A descrição da proposta é obrigatória'),
+    description: yup.string().required('A descrição da proposta é obrigatória'),
     keywords: yup
       .array()
       .of(yup.string().required(messages.keywords))
@@ -61,7 +61,7 @@ export const proposalRegisterSchema: yup.SchemaOf<ProposalSchema> = yup.object()
       .number()
       .required('O TRL é obrigatório')
       .min(yup.ref('trl'), 'O TRL que almeja alcançar deve ser maior ou igual ao TRL atual'),
-    proposalType: yup
+    type: yup
       .array()
       .of(yup.number().required(messages.proposalType))
       .required(messages.proposalType)

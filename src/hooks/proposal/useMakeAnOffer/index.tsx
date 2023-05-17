@@ -69,16 +69,16 @@ const MakeAnOfferDialog = (props: Props) => {
     formState: { errors, isSubmitting },
     watch,
   } = useForm<OfferSchema>({
-    resolver: zodResolver(makeOfferValidationSchema(proposal.proposalType)),
+    resolver: zodResolver(makeOfferValidationSchema(proposal.type)),
     defaultValues:
       offerCategory === OfferCategory.default
         ? {
-            proposalType: proposal.proposalType.length === 1 ? proposal.proposalType[0] : undefined,
+            proposalType: proposal.type.length === 1 ? proposal.type[0] : undefined,
             category: OfferCategory.default,
           }
         : {
             category: OfferCategory.counterProposal,
-            proposalType: proposal.proposalType.length === 1 ? proposal.proposalType[0] : undefined,
+            proposalType: proposal.type.length === 1 ? proposal.type[0] : undefined,
             trl: proposal.trl,
             goalTRL: proposal.goalTrl,
             budget: formattedBudget,
@@ -89,7 +89,7 @@ const MakeAnOfferDialog = (props: Props) => {
 
   const disabledProposalTypeOptions = proposalTypeOptions.reduce((acc, option) => {
     if (option.id === ProposalType.research) return acc
-    if (!proposal.proposalType.includes(option.id)) acc.push({ ...option, disabled: true })
+    if (!proposal.type.includes(option.id)) acc.push({ ...option, disabled: true })
     else acc.push(option)
     return acc
   }, [] as CardData[])
@@ -158,7 +158,7 @@ const MakeAnOfferDialog = (props: Props) => {
                   responsive: responsiveCarousel,
                   partialVisible: true,
                 }}
-                disabled={proposal.proposalType.length === 1}
+                disabled={proposal.type.length === 1}
                 {...rest}
               />
             )}

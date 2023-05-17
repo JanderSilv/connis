@@ -18,14 +18,14 @@ export type Proposal = {
   createdAt: string
   updatedAt?: string
   offerCompany?: CompanyUser | ICTUser
-  proposalCategory: ProposalCategory
-  proposalCategoryOther?: string
+  category: ProposalCategory
+  categoryOther?: string
   projectDescription?: string
-  proposalDescription: string
+  description: string
   keywords: string[]
   trl: TRL
   goalTrl: TRL
-  proposalType: ProposalType[]
+  type: ProposalType[]
   budget?: number
   status: ProposalStatus
   categoryQuestions: {

@@ -7,8 +7,8 @@ import { DataContainer, Section, Title } from 'src/styles/proposal'
 type Props = Proposal
 
 export const ProposalDataSectionOne = (props: Props) => {
-  const { createdAt, proposalCategory, proposalDescription, projectDescription, keywords } = props
-  const { icon: CategoryIcon, title: categoryTitle } = proposalCategories[proposalCategory]
+  const { createdAt, category, description, projectDescription, keywords } = props
+  const { icon: CategoryIcon, title: categoryTitle } = proposalCategories[category]
 
   return (
     <Section>
@@ -31,7 +31,7 @@ export const ProposalDataSectionOne = (props: Props) => {
 
       <DataContainer>
         <Title>Descrição da Proposta</Title>
-        <Typography>{proposalDescription}</Typography>
+        <Typography>{description}</Typography>
       </DataContainer>
 
       <DataContainer>

@@ -48,7 +48,7 @@ export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
             {!!budget && (
               <Box>
                 <Title>
-                  {proposal.proposalType?.includes(ProposalType.buyOrSell)
+                  {proposal.type?.includes(ProposalType.buyOrSell)
                     ? 'Valor Solicitado'
                     : 'Valor Disponível para Investir'}
                 </Title>

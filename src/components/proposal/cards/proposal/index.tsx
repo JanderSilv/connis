@@ -28,14 +28,14 @@ export const ProposalCard = (props: ProposalCardProps) => {
     updatedAt,
     views,
     status,
-    proposalCategory,
-    proposalDescription,
+    category,
+    description,
     unseenActivities,
-    proposalCategoryOther,
+    categoryOther,
     company,
   } = proposal
 
-  const categoryData = proposalCategories[proposalCategory]
+  const categoryData = proposalCategories[category]
 
   const { icon: Icon, title: categoryTitle, id: categoryId } = categoryData
 
@@ -47,7 +47,7 @@ export const ProposalCard = (props: ProposalCardProps) => {
     <>
       <Icon color="inherit" fontSize="large" />
       <Typography component="span" color="inherit">
-        {categoryId === ProposalCategory.others ? proposalCategoryOther : categoryTitle}
+        {categoryId === ProposalCategory.others ? categoryOther : categoryTitle}
       </Typography>
     </>
   )
@@ -65,7 +65,7 @@ export const ProposalCard = (props: ProposalCardProps) => {
           )}
         </Header>
 
-        <Description>{proposalDescription}</Description>
+        <Description>{description}</Description>
       </Box>
 
       {!isRowLayout && (

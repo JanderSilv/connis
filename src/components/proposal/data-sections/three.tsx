@@ -7,13 +7,13 @@ import { DataContainer, Section, Subtitle, Title } from 'src/styles/proposal'
 type Props = Proposal
 
 export const ProposalDataSectionThree = (props: Props) => {
-  const { proposalCategory, categoryQuestions } = props
+  const { category, categoryQuestions } = props
 
   return (
     <Section sx={{ my: 3 }}>
       <Title>Informações Adicionais</Title>
       {(() => {
-        if (proposalCategory === ProposalCategory.waste) {
+        if (category === ProposalCategory.waste) {
           const waste = categoryQuestions.waste
           if (!waste) return
           return makeWasteQuestionsData(waste).map(({ question, answer }, index) => (

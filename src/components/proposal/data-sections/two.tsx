@@ -14,7 +14,7 @@ import { DataContainer, Section, Title } from 'src/styles/proposal'
 type Props = Proposal
 
 export const ProposalDataSectionTwo = (props: Props) => {
-  const { budget, goalTrl, trl, proposalType } = props
+  const { budget, goalTrl, trl, type } = props
 
   return (
     <Section sx={{ mt: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 4 }}>
@@ -39,7 +39,7 @@ export const ProposalDataSectionTwo = (props: Props) => {
         {!!budget && (
           <Box>
             <Title>
-              {proposalType?.includes(ProposalType.buyOrSell) ? 'Valor Solicitado' : 'Valor Disponível para Investir'}
+              {type?.includes(ProposalType.buyOrSell) ? 'Valor Solicitado' : 'Valor Disponível para Investir'}
             </Title>
             <Typography>
               {new Intl.NumberFormat('pt-BR', {
@@ -52,10 +52,14 @@ export const ProposalDataSectionTwo = (props: Props) => {
 
         <DataContainer>
           <Title>Tipo da Proposta</Title>
-          <Typography>{makeProposalTypeText(proposalType)}</Typography>
+          <Typography>{makeProposalTypeText(type)}</Typography>
           <Stack mt={3} direction="row" alignItems="center" gap={1}>
-            {proposalTypeOptions.map(type => (
-              <ProposalTypeData key={type.id} {...type} selected={proposalType.includes(type.id)} />
+            {proposalTypeOptions.map(proposalTypeOption => (
+              <ProposalTypeData
+                key={proposalTypeOption.id}
+                {...proposalTypeOption}
+                selected={type.includes(proposalTypeOption.id)}
+              />
             ))}
           </Stack>
         </DataContainer>

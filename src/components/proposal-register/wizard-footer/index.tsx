@@ -14,10 +14,10 @@ type ProposalKey = keyof Proposal
 
 const steps: (ProposalKey | ProposalKey[])[] = [
   'title',
-  ['proposalCategory', 'proposalCategoryOther'],
-  ['proposalType', 'budget'],
+  ['category', 'categoryOther'],
+  ['type', 'budget'],
   'projectDescription',
-  'proposalDescription',
+  'description',
   'keywords',
   ['trl', 'goalTrl'],
 ]
