@@ -7,9 +7,8 @@ import { ProposalInput, SuggestionsKeys } from './models'
 async function* getAllSuggestionsGenerator(proposal: ProposalInput) {
   const { projectDescription, description, userId } = proposal
 
-  const userInput = `
-    ${projectDescription ? `Descrição do projeto: "${projectDescription}"` : ''}
-    Descrição da proposta: "${description}"
+  const userInput = `${projectDescription ? `Descrição do projeto: "${projectDescription}"` : ''}
+  Descrição da proposta: "${description}"
   `
 
   const proposalModeration = await getModeratedProposal(userInput)
@@ -25,7 +24,8 @@ async function* getAllSuggestionsGenerator(proposal: ProposalInput) {
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: 'system',
-      content: 'Você é um consultor que auxilia empresas a escrever bons pedidos de ajuda para problemas em projetos',
+      content:
+        'Você é um consultor que auxilia empresas a escrever boas propostas de projetos, entende-se proposta como uma solução para um problema, oportunidade ou necessidade de uma empresa.',
     },
   ]
 

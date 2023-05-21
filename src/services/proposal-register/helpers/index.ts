@@ -30,5 +30,7 @@ export const sendMessages = async (body: SendMessagesBody) => {
   }
 }
 
-export const getSuggestionPrompt = (suggestion: SuggestionsKeys, input: string) =>
-  `${suggestions[suggestion]}\n${input}`
+export const getSuggestionPrompt = (suggestion: SuggestionsKeys, input: string) => {
+  if (suggestion === 'proposal') return `${suggestions.proposal}\n${input}`
+  return suggestions[suggestion]
+}
