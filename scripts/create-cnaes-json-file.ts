@@ -51,11 +51,11 @@ const createCNAEsJSONFile = async () => {
 
   const filterProperties = (cnaes: CNAE[]) => {
     console.log('Filtering CNAEs...')
-    const filteredCNAEs = cnaes.map(({ id, descricao }) => ({
+    const auxCNAES = cnaes.map(({ id, descricao }) => ({
       id,
       label: `${formatCNAEId(id)}: ${capitalizeFirstLetters(descricao)}`,
     }))
-    return [...new Set(filteredCNAEs)]
+    return [...new Map(auxCNAES.map(cnae => [cnae.id, cnae])).values()]
   }
 
   const filteredCNAEs = filterProperties(await getCNAEs())
