@@ -89,3 +89,50 @@ export const trlOptions: CardData[] = [
   trls[TRL.trl8],
   trls[TRL.trl9],
 ]
+
+export const trlPage = [
+  {
+    title: 'TRL 1 - Princípios básicos observados',
+    description:
+      'Neste nível, a tecnologia está em estágio inicial de pesquisa, e os princípios básicos da tecnologia ainda estão sendo estudados. É uma fase de exploração científica.',
+  },
+  {
+    title: 'TRL 2 - Conceito formulado',
+    description:
+      'Neste nível, a tecnologia está em fase de concepção, e um conceito inicial já foi formulado. Ainda não há evidências experimentais da viabilidade da tecnologia.',
+  },
+  {
+    title: 'TRL 3 - Prova de conceito experimental',
+    description:
+      'Neste nível, a tecnologia já foi comprovada em experimentos de laboratório e/ou simulações computacionais, mas ainda não foi testada em um ambiente operacional real.',
+  },
+  {
+    title: 'TRL 4 - Modelo ou protótipo validado em ambiente de laboratório',
+    description:
+      'Neste nível, a tecnologia já foi testada em ambiente de laboratório e o protótipo foi validado. Ainda não foi testada em um ambiente real.',
+  },
+  {
+    title: 'TRL 5 - Modelo ou protótipo validado em ambiente relevante',
+    description: 'Neste nível, a tecnologia já foi testada em ambiente relevante, mas ainda não em escala real.',
+  },
+  {
+    title: 'TRL 6 - Protótipo de sistema em ambiente operacional',
+    description:
+      'Neste nível, o protótipo da tecnologia já foi testado em um ambiente operacional real, mas ainda não em escala comercial.',
+  },
+  {
+    title: 'TRL 7 - Sistema de demonstração em ambiente operacional',
+    description:
+      'Neste nível, o sistema de demonstração da tecnologia já foi testado em ambiente operacional relevante, e a tecnologia já pode ser considerada viável para fins de demonstração.',
+  },
+  {
+    title: 'TRL 8 - Sistema completo e qualificado em ambiente operacional',
+    description:
+      'Neste nível, o sistema completo da tecnologia já foi testado em ambiente operacional relevante, e a tecnologia já pode ser considerada qualificada para fins de uso operacional.',
+  },
+  {
+    title: 'TRL 9 - Sistema completo e comprovado em ambiente operacional',
+    description:
+      'Neste nível, o sistema completo da tecnologia já foi testado e comprovado em ambiente operacional real, e a tecnologia já está sendo utilizada em larga escala.',
+  },
+]
