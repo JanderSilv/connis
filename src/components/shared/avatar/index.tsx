@@ -3,7 +3,7 @@ import Image, { ImageProps } from 'next/image'
 
 type UserAvatarProps = {
   name: string
-  src?: string
+  src?: string | null
   size?: number
   componentsProps?: {
     avatar?: AvatarProps
@@ -21,7 +21,7 @@ export const UserAvatar = (props: UserAvatarProps) => {
       {...componentsProps?.avatar}
       sx={{ width: size, height: size, bgcolor: 'primary.main', ...componentsProps?.avatar?.sx }}
     >
-      {src && <Image src={src} width={size} height={size} alt={alt} {...componentsProps?.image} />}
+      {!!src ? <Image src={src} width={size} height={size} alt={alt} {...componentsProps?.image} /> : name[0]}
     </Avatar>
   )
 }

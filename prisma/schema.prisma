@@ -1,0 +1,251 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  refresh_token_expires_in Int?
+  access_token             String? @db.Text
+  expires_at               Int?
+  ext_expires_in           Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  type          String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  company       Company?
+  ict           Ict?
+  Analyst       Analyst?
+  password      String?
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Company {
+  id               Int             @id @default(autoincrement())
+  cnpj             String          @unique
+  phone            String
+  slug             String          @unique
+  socialCapital    Float
+  size             CompanySize
+  analysts         Analyst[]
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId           String          @unique
+  cnae             Cnae            @relation(fields: [cnaeCode], references: [code])
+  cnaeCode         String
+  address          CompanyAddress?
+  Proposal         Proposal[]      @relation("own")
+  OfferedProposals Proposal[]      @relation("offer")
+}
+
+model Cnae {
+  code    String    @id
+  label   String
+  company Company[]
+
+  @@map("CNAE")
+}
+
+enum CompanySize {
+  MICRO
+  SMALL
+  OTHERS
+}
+
+model CompanyAddress {
+  id        Int     @id @default(autoincrement())
+  city      String
+  cep       String
+  uf        String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId Int     @unique
+}
+
+model Analyst {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  company   Company? @relation(fields: [companyId], references: [id])
+  companyId Int?
+  ict       Ict?     @relation(fields: [ictId], references: [id])
+  ictId     Int?
+}
+
+model Ict {
+  id        Int          @id @default(autoincrement())
+  slug      String
+  cnpj      String
+  phone     String
+  website   String?
+  projects  IctProject[]
+  labs      IctLab[]
+  analysts  Analyst[]
+  addressId Int          @unique
+  userId    String       @unique
+  address   IctAddress   @relation(fields: [addressId], references: [id])
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  proposal  Proposal[]
+
+  @@unique([slug])
+  @@map("ICT")
+}
+
+model IctProject {
+  id          Int    @id @default(autoincrement())
+  title       String
+  description String
+  image       Image? @relation(fields: [imageId], references: [id])
+  imageId     Int?   @unique
+  ict         Ict?   @relation(fields: [ictId], references: [id])
+  ictId       Int?
+}
+
+model IctLab {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String
+  images      Image[]
+  ict         Ict?    @relation(fields: [ictId], references: [id])
+  ictId       Int?
+}
+
+model IctAddress {
+  id         Int     @id @default(autoincrement())
+  city       String
+  uf         String
+  cep        String
+  street     String
+  number     String
+  complement String?
+  ict        Ict?
+
+  @@map("ictAddress")
+}
+
+model Proposal {
+  id                    Int              @id @default(autoincrement())
+  title                 String
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  proposalCategory      ProposalCategory
+  proposalCategoryOther String?
+  projectDescription    String?
+  proposalDescription   String
+  keywords              String[]
+  trl                   TRL
+  goalTrl               TRL
+  proposalType          ProposalType[]
+  budget                Float?
+  status                ProposalStatus
+  // categoryQuestions    ProposalCategoryQuestions
+  views                 Int?
+  viewed                Boolean
+  company               Company          @relation(fields: [companyId], references: [id], name: "own")
+  companyId             Int
+  offerCompany          Company?         @relation(fields: [offerCompanyId], references: [id], name: "offer")
+  offerCompanyId        Int?
+  offerIct              Ict?             @relation(fields: [offerIctId], references: [id])
+  offerIctId            Int?
+}
+
+enum ProposalCategory {
+  WASTE
+  DISRUPTIVE_INNOVATION
+  INCREMENTAL_INNOVATION
+  OTHERS
+}
+
+enum TRL {
+  TRL0
+  TRL1
+  TRL2
+  TRL3
+  TRL4
+  TRL5
+  TRL6
+  TRL7
+  TRL8
+  TRL9
+}
+
+enum ProposalType {
+  BUY_OR_SELL
+  EXCHANGE
+  DONATE
+  RESEARCH
+}
+
+enum ProposalStatus {
+  OPENED
+  ON_NEGOTIATION
+  CANCELED
+  FINISHED
+}
+
+// export type ProposalWasteQuestions = {
+//   testHasBeenPerformed?: boolean
+//   toxicity?: boolean
+//   production: {
+//     volume?: string
+//     unit?: string
+//     periodicity?: string
+//   }
+// }
+
+// model ProposalCategoryQuestions {
+//   id                   Int                @id @default(autoincrement())
+//   proposalId           Int                @unique
+//   proposal             Proposal           @relation(fields: [proposalId], references: [id])
+//   wasteQuestions       ProposalWasteQuestions?
+// }
+
+model Image {
+  id         Int         @id @default(autoincrement())
+  src        String
+  alt        String?
+  ictLab     IctLab?     @relation(fields: [ictLabId], references: [id])
+  ictLabId   Int?
+  ictProject IctProject?
+}

@@ -1,4 +1,4 @@
-import { Box, Stack, SvgIcon, Typography } from '@mui/material'
+import { Box, Stack, SvgIcon, SxProps, Typography } from '@mui/material'
 
 import { User } from 'src/models/types'
 import { formatDate } from 'src/helpers/formatters'
@@ -14,6 +14,7 @@ type DataSectionProps = {
   data?: {
     icon: typeof SvgIcon
     value?: React.ReactNode
+    sx?: SxProps
   }[]
 }
 
@@ -69,8 +70,8 @@ export const DataSection = (props: DataSectionProps) => {
             </Typography>
           </Stack>
         </Box>
-        {data?.map(({ icon, value }, index) => (
-          <IconData key={index} icon={icon}>
+        {data?.map(({ value, ...rest }, index) => (
+          <IconData key={index} {...rest}>
             {value}
           </IconData>
         ))}

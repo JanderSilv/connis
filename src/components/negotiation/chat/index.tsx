@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Box, IconButton, InputAdornment, TextField } from '@mui/material'
 
-import { ChatMessage, User } from 'src/models/types'
+import { BaseUser, ChatMessage } from 'src/models/types'
 
 import { useChat } from './hooks/useChat'
 
@@ -13,7 +13,7 @@ import { Container } from './styles'
 
 type ChatProps = {
   messages: ChatMessage[]
-  user: User
+  user: BaseUser
 }
 
 export const Chat = (props: ChatProps) => {

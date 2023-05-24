@@ -19,6 +19,7 @@ type DeleteDialogData = {
   title: string
   description: React.ReactNode
   confirmText: string
+  onDelete: () => void
 }
 
 type DeleteDialogProps = {
@@ -27,7 +28,7 @@ type DeleteDialogProps = {
 } & DeleteDialogData
 
 export const DeleteDialog = (props: DeleteDialogProps) => {
-  const { title, description, confirmText, onClose, open } = props
+  const { title, description, confirmText, onClose, open, onDelete } = props
 
   const {
     register,
@@ -37,9 +38,8 @@ export const DeleteDialog = (props: DeleteDialogProps) => {
     resolver: zodResolver(makeDeleteDialogValidationSchema(confirmText)),
   })
 
-  const handleDelete = (values: DeleteDialogSchema) => {
-    // TODO: implements delete action
-    console.log({ values })
+  const handleDelete = () => {
+    onDelete()
   }
 
   return (

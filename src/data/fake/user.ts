@@ -6,25 +6,28 @@ import {
   ProposalStatus,
   ProposalType,
   TRL,
+  UserType,
 } from 'src/models/enums'
 import { Offer, Proposal, User } from 'src/models/types'
 import { ictFakeData } from './ict'
 
 const analyst: User = {
-  id: 5,
+  id: '5',
   name: 'Analista',
-  type: 'analyst',
+  emailVerified: null,
+  type: UserType.analyst,
   createdAt: new Date(2022, 10).toLocaleString(),
   email: 'analista@email.com.br',
   image: 'https://picsum.photos/200/200',
 }
 
 const userCompany: User = {
-  id: 1,
+  id: '1',
   name: 'Empresa do usuário',
-  type: 'company',
+  type: UserType.company,
   createdAt: new Date(2022, 10).toLocaleString(),
   slug: 'empresa-do-usuario',
+  emailVerified: null,
   cnae: {
     id: '123456',
     label: '6201-5/62:: Desenvolvimento de Programas de Computador Sob Encomenda',
@@ -41,15 +44,16 @@ const userCompany: User = {
   phone: '71999999999',
   size: CompanySize.micro,
   socialCapital: 1_000_000,
-  analysts: [analyst, { ...analyst, id: 2 }],
+  analysts: [analyst, { ...analyst, id: '2' }],
 }
 
 const company: User = {
-  id: 2,
+  id: '2',
   name: 'Empresa Ofertante',
-  type: 'company',
+  type: UserType.company,
   createdAt: new Date(2022, 10).toLocaleString(),
   slug: 'empresa-ofertante',
+  emailVerified: null,
   cnae: {
     id: '123456',
     label: '6201-5/62:: Desenvolvimento de Programas de Computador Sob Encomenda',
@@ -66,15 +70,16 @@ const company: User = {
   phone: '71999999999',
   size: CompanySize.micro,
   socialCapital: 1_000_000,
-  analysts: [analyst, { ...analyst, id: 2 }],
+  analysts: [analyst, { ...analyst, id: '2' }],
 }
 
 const ict: User = {
-  id: 2,
+  id: '4',
   name: 'Senai Cimatec',
   createdAt: new Date(2022, 10).toLocaleString(),
   slug: 'senai-cimatec',
-  type: 'ict',
+  type: UserType.ict,
+  emailVerified: null,
   cnpj: '03795071001350',
   image: 'https://picsum.photos/200/200',
   labs: ictFakeData.labs,
@@ -98,7 +103,7 @@ const offer: Offer = {
   id: 1,
   createdAt: new Date(2022, 10).toLocaleString(),
   updatedAt: new Date().toLocaleString(),
-  company: { ...company, id: 3 },
+  company: { ...company, id: '3' },
   message: 'Podemos agregar ao seu projeto',
   type: ProposalType.buyOrSell,
   proposalId: 1,
@@ -113,8 +118,8 @@ const offer: Offer = {
 const proposal: Proposal = {
   id: 1,
   createdAt: new Date(2022, 10).toLocaleString(),
-  company: { ...userCompany, id: 2 },
-  offerCompany: { ...company, id: 1 },
+  company: { ...userCompany, id: '2' },
+  offerCompany: { ...company, id: '1' },
   keywords: ['Setor', 'Têxtil', 'Resíduos'],
   categoryQuestions: {
     waste: {

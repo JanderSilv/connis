@@ -8,8 +8,8 @@ import { ChatMessage } from 'src/models/types'
 import { Container } from './styles'
 
 type MessageProps = {
-  previousMessageUserId?: number
-  nextMessageUserId?: number
+  previousMessageUserId?: string
+  nextMessageUserId?: string
 } & ChatMessage
 
 export const Message = (props: MessageProps) => {

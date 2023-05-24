@@ -11,7 +11,7 @@ export const ListItemButton = styled(MuiListItemButton)(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
     flexDirection: 'row',
   },
-}))
+})) as typeof MuiListItemButton
 
 export const Card = styled(MuiCard)(() => ({
   width: '100%',

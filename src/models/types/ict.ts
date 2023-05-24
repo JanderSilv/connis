@@ -1,3 +1,4 @@
+import { UserType } from '../enums'
 import { Image } from './common'
 import { AnalystUser } from './user'
 
@@ -26,11 +27,9 @@ export type ICTAddress = {
 }
 
 export type ICT = {
-  type: 'ict'
-  name: string
+  type: UserType.ict
   slug: string
   cnpj: string
-  email: string
   phone: string
   website?: string
   projects: ICTProject[]

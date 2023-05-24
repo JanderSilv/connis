@@ -2,17 +2,19 @@ import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { Session, getServerSession } from 'next-auth'
-import { Autocomplete, Button, InputAdornment, TextField, Typography } from '@mui/material'
+import { Autocomplete, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { authOptions } from './api/auth/[...nextauth]'
 import { pages } from 'src/constants'
+import { useLoadingBackdrop } from 'src/contexts'
 import { cnaesData } from 'src/data/ibge'
 import { useCNPJDialog } from 'src/hooks/company-sign-up'
 import { useToast } from 'src/hooks/useToast'
 import { checkUserIsCompany } from 'src/helpers/users'
-import { jsonBinApi } from 'src/services/json-bin'
+import { reloadSession } from 'src/helpers/reloadSession'
+import { api } from 'src/services/api'
 import { companySocialSignUpValidationSchema, CompanySocialSignUpSchema } from 'src/validations/company-sign-up'
 
 import { Layout } from 'src/layouts/auth'
@@ -21,6 +23,7 @@ import { Title } from 'src/components/company-sign-up'
 import {
   AssignmentOutlinedIcon,
   BusinessOutlinedIcon,
+  EditIcon,
   EmailOutlinedIcon,
   PersonOutlineIcon,
   PhoneOutlinedIcon,
@@ -35,6 +38,7 @@ type Props = {
 const CompanySocialSignUp: NextPage<Props> = ({ session }) => {
   const { replace } = useRouter()
   const { showToast } = useToast()
+  const { toggleLoading } = useLoadingBackdrop()
   const {
     register,
     control,
@@ -44,28 +48,37 @@ const CompanySocialSignUp: NextPage<Props> = ({ session }) => {
   } = useForm<CompanySocialSignUpSchema>({
     resolver: zodResolver(companySocialSignUpValidationSchema),
     defaultValues: {
-      cnae: null,
+      cnae: {
+        id: '',
+        label: '',
+      },
       email: session?.user?.email || '',
       image: session?.user?.image,
     },
   })
-  const { fetchedCompany, CNPJDialog } = useCNPJDialog(reset, session)
+  const { fetchedCompany, setFetchedCompany, CNPJDialog } = useCNPJDialog(reset, session)
+
+  const createCompanyMutation = api.company.createBySocialSignUp.useMutation({
+    onMutate: () => {
+      toggleLoading()
+    },
+    onError: error => {
+      showToast(
+        error?.message || 'Não foi possível fazer o cadastro. Tente novamente mais tarde.',
+        error?.data?.code === 'BAD_REQUEST' ? 'warning' : 'error'
+      )
+    },
+    onSuccess: async () => {
+      await replace(pages.login)
+      reloadSession()
+    },
+    onSettled: () => {
+      toggleLoading()
+    },
+  })
 
   const onSubmit = async (formData: CompanySocialSignUpSchema) => {
-    try {
-      await jsonBinApi.post('/b', formData, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': '$2b$10$AZS8O9vbnQ22oOD6kb3cDucYvYwySweKMgOCr5voMV51D/zKISEt6',
-          'X-Bin-Name': formData.name,
-          'X-Collection-Id': '63ae05d715ab31599e27ac7e',
-        },
-      })
-      replace(pages.login)
-    } catch (error) {
-      console.error(error)
-      showToast('Não foi possível fazer o cadastro. Tente novamente mais tarde.', 'error')
-    }
+    createCompanyMutation.mutate(formData)
   }
 
   return (
@@ -134,6 +147,13 @@ const CompanySocialSignUp: NextPage<Props> = ({ session }) => {
                     startAdornment: (
                       <InputAdornment position="start">
                         <BusinessOutlinedIcon color="primary" />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton aria-label="Trocar CNPJ" onClick={() => setFetchedCompany(null)} size="small">
+                          <EditIcon color="primary" fontSize="small" />
+                        </IconButton>
                       </InputAdornment>
                     ),
                   }}

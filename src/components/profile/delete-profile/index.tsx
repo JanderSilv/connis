@@ -1,12 +1,18 @@
+import { signOut } from 'next-auth/react'
 import { Alert, Button, Stack, Typography } from '@mui/material'
 
 import { User } from 'src/models/types'
 
-import { useDeleteDialog } from 'src/hooks'
+import { pages } from 'src/constants'
+import { useLoadingBackdrop } from 'src/contexts'
 import { checkUserIsCompany, checkUserIsICT } from 'src/helpers/users'
+import { toast } from 'src/helpers/toast'
+import { DeleteDialog } from 'src/hooks'
+import { api } from 'src/services/api'
 
 import { DeleteIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
+import { useState } from 'react'
 
 type DeleteProfileSectionProps = {
   user: User
@@ -16,20 +22,26 @@ type DeleteProfileSectionProps = {
 export const DeleteProfileSection = (props: DeleteProfileSectionProps) => {
   const { user, dialogDescription } = props
 
-  const { DeleteDialog, isDeleteDialogOpen, handleOpenDeleteDialog } = useDeleteDialog({
-    title: 'Deletar conta',
-    description: (
-      <>
-        {dialogDescription}
-        <Alert variant="filled" severity="error" sx={{ mt: 1 }}>
-          Essa ação é irreversível, tenha certeza.
-        </Alert>
-      </>
-    ),
-    confirmText: (() => {
-      if (checkUserIsCompany(user) || checkUserIsICT(user)) return user.slug
-      else return 'deletar-conta'
-    })(),
+  const { toggleLoading } = useLoadingBackdrop()
+
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+  const handleOpenDeleteDialog = () => setIsDeleteDialogOpen(true)
+
+  const deleteUserMutation = api.user.delete.useMutation({
+    onMutate: () => toggleLoading(),
+    onError: () => {
+      toast.show('Não foi possível deletar a conta, tente novamente mais tarde', 'error')
+    },
+    onSuccess: () => {
+      // TODO: Redirect to "Sorry to see you go" page
+      signOut({
+        callbackUrl: pages.login,
+      })
+    },
+    onSettled: () => {
+      toggleLoading()
+    },
   })
 
   return (
@@ -54,9 +66,26 @@ export const DeleteProfileSection = (props: DeleteProfileSectionProps) => {
         >
           Deletar conta
         </Button>
-
-        <DeleteDialog />
       </Stack>
+
+      <DeleteDialog
+        open={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        title="Deletar conta"
+        description={
+          <>
+            {dialogDescription}
+            <Alert variant="filled" severity="error" sx={{ mt: 1 }}>
+              Essa ação é irreversível, tenha certeza.
+            </Alert>
+          </>
+        }
+        confirmText={(() => {
+          if (checkUserIsCompany(user) || checkUserIsICT(user)) return user.slug
+          else return 'deletar-conta'
+        })()}
+        onDelete={() => deleteUserMutation.mutate(user.id)}
+      />
     </Section>
   )
 }

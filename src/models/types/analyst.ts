@@ -1,3 +1,5 @@
+import { UserType } from '../enums'
+
 export type Analyst = {
-  type: 'analyst'
+  type: UserType.analyst
 }

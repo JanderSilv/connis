@@ -10,6 +10,7 @@ import { ptBR } from 'date-fns/locale'
 import { AppProviders } from 'src/contexts/providers'
 import createEmotionCache from 'src/helpers/createEmotionCache'
 import { theme } from 'src/styles/theme'
+import { api } from 'src/services/api'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -17,11 +18,9 @@ interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache
 }
 
-function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }: MyAppProps) {
-  useEffect(() => {
-    setDefaultOptions({ locale: ptBR })
-  }, [])
+setDefaultOptions({ locale: ptBR })
 
+function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }: MyAppProps) {
   return (
     <CacheProvider value={emotionCache}>
       <ThemeProvider theme={theme}>
@@ -38,4 +37,4 @@ function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }: 
   )
 }
 
-export default MyApp
+export default api.withTRPC(MyApp)

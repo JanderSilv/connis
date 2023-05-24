@@ -1,10 +1,13 @@
 import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next'
 import { Session } from 'next-auth'
 import { getServerSession } from 'next-auth'
+
 import { authOptions } from 'src/pages/api/auth/[...nextauth]'
+import { ssg, SSG } from '../ssg'
 
 interface ServerContext extends GetServerSidePropsContext {
   session?: Session | null
+  ssg: SSG
 }
 
 export type ServerProps<P extends { [key: string]: any } = { [key: string]: any }> = (
@@ -14,7 +17,7 @@ export type ServerProps<P extends { [key: string]: any } = { [key: string]: any 
 export const withSession = (getServerSideProps: ServerProps) => async (context: GetServerSidePropsContext) => {
   const session = await getServerSession(context.req, context.res, authOptions)
 
-  const serverSession = { ...context, session }
+  const serverSession = { ...context, session, ssg: ssg(session) }
 
   return await getServerSideProps(serverSession)
 }

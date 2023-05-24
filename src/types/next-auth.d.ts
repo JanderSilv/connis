@@ -1,11 +1,13 @@
-import NextAuth, { DefaultUser } from 'next-auth'
-import { User as AppUser } from 'src/models/types'
+import NextAuth from 'next-auth'
+import { BaseUser, User as AppUser, UserType } from 'src/models/types'
 
 declare module 'next-auth' {
   interface Session {
-    user: AppUser
+    user: BaseUser | AppUser
   }
-  interface User {
-    id: number
+  interface User extends AppUser {
+    type: UserType
+    createdAt: string
+    updatedAt?: string
   }
 }

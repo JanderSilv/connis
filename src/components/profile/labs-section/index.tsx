@@ -57,9 +57,9 @@ export const LabsSection = (props: LabsSectionProps) => {
                     <Box width="100%" height="100%" position="relative">
                       <Image
                         src={firstImage.src}
-                        alt={firstImage.alt}
-                        layout="fill"
-                        objectFit="cover"
+                        alt={firstImage.alt || 'Imagem do laboratório'}
+                        fill
+                        style={{ objectFit: 'cover' }}
                         draggable="false"
                         aria-hidden="true"
                       />
@@ -145,7 +145,7 @@ export const LabDialog = (props: LabDialogProps) => {
               height="100%"
               position="relative"
             >
-              <Image src={image.src} alt={image.alt} layout="fill" objectFit="cover" />
+              <Image src={image.src} alt={image.alt || 'Imagem do laboratório'} style={{ objectFit: 'cover' }} fill />
             </Box>
           ))}
         </Box>
@@ -159,7 +159,13 @@ export const LabDialog = (props: LabDialogProps) => {
           <IconButton onClick={onClose} sx={{ position: 'absolute', top: 10, right: 10, zIndex: 10 }}>
             <CloseIcon sx={{ color: 'primary.contrastText' }} />
           </IconButton>
-          <Image src={selectedImage.src} alt={selectedImage.alt} width={1920} height={1080} objectFit="cover" />
+          <Image
+            src={selectedImage.src}
+            alt={selectedImage.alt || 'Imagem do laboratório'}
+            width={1920}
+            height={1080}
+            style={{ objectFit: 'cover' }}
+          />
         </Dialog>
       )}
     </Dialog>

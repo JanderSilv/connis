@@ -22,14 +22,10 @@ export const withAuth = (getServerSideProps: ServerProps) => async (context: Get
       redirect: { permanent: false, destination: pages.login },
     }
 
-  const checkIfCompanyUserHasCnpj = () => {
-    if (checkUserIsCompany(session.user) && !session.user.cnpj)
-      return {
-        redirect: { permanent: false, destination: pages.companySocialSignUp },
-      }
-  }
-
-  checkIfCompanyUserHasCnpj()
+  if (checkUserIsCompany(session.user) && !session.user.cnpj)
+    return {
+      redirect: { permanent: false, destination: pages.companySocialSignUp },
+    }
 
   const serverSession = { ...context, session }
 
