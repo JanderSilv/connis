@@ -29,14 +29,25 @@ const TRLSPage: NextPage = () => {
           },
         }}
       >
-        <Typography variant="h1" color="primary" textAlign="center" mb={2}>
-          Métrica de TRL (Technology Readiness Level)
+        <Typography variant="h1" color="primary" textAlign="center" mb={1}>
+          Métrica TRL (Technology Readiness Level)
         </Typography>
 
-        <Box component="ul">
+        <Typography mb={2}>
+          Um número TRL é alcançado uma vez que a descrição no diagrama tenha sido alcançada. Por exemplo, alcançar a
+          TRL 4 com sucesso (ambiente de laboratório) não move a tecnologia para TRL 5. TRL 5 é alcançado quando há
+          validação da tecnologia em um ambiente relevante. A tecnologia permanece TRL 4 até que a validação ambiental
+          relevante seja concluída.
+        </Typography>
+
+        <Typography component="h2" variant="h3">
+          Níveis:
+        </Typography>
+
+        <Box component="ul" mt={0}>
           {trlPage.map(item => (
             <li key={item.title}>
-              <Typography component="h2" variant="h6">
+              <Typography component="h3" variant="h4" mb={1}>
                 {item.title}
               </Typography>
               <Typography mb={2}>{item.description}</Typography>
