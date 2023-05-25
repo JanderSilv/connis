@@ -1,7 +1,7 @@
-import { CompanySocialSignUpSchema } from 'src/validations/company-sign-up'
+import { CompanySignUpSchema } from 'src/validations/company-sign-up'
 import { BrasilApiCompany } from './types'
 
-export const mapCompanyFromBrasilApi = (company: BrasilApiCompany): CompanySocialSignUpSchema => {
+export const mapCompanyFromBrasilApi = (company: BrasilApiCompany): CompanySignUpSchema => {
   const { uf, cnpj } = company
 
   return {
@@ -11,6 +11,10 @@ export const mapCompanyFromBrasilApi = (company: BrasilApiCompany): CompanySocia
       uf,
       city: company.municipio,
       cep: company.cep,
+      street: company.logradouro,
+      number: Number(company.numero),
+      complement: company.complemento,
+      country: 'Brasil',
     },
     cnae: {
       id: company.cnae_fiscal.toString(),
