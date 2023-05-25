@@ -175,7 +175,7 @@ const ConfirmCode = (props: ConfirmCodeProps) => {
 }
 
 const ConfirmCodePage: NextPage = () => {
-  const [hasValidatedThePhone, setHasValidatedThePhone] = useState(true)
+  const [hasValidatedThePhone, setHasValidatedThePhone] = useState(false)
 
   return (
     <Layout
