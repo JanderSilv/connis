@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GetServerSideProps, NextPage } from 'next'
+import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { signIn } from 'next-auth/react'
@@ -11,13 +11,16 @@ import { pages } from 'src/constants'
 import { withPublic } from 'src/helpers/auth/withPublic'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
+import { useLoadingBackdrop } from 'src/contexts'
 import { Layout } from 'src/layouts/auth'
 import { Link } from 'src/components/shared'
 import { SocialLoginButtons } from 'src/components/social-login-buttons'
+
 import { LockIcon, PersonIcon, VisibilityIcon, VisibilityOffIcon } from 'src/assets/icons'
 import { ForgotPasswordTypography, Form } from 'src/styles/login'
 
 const Login: NextPage = () => {
+  const { toggleLoading } = useLoadingBackdrop()
   const {
     register,
     handleSubmit,
@@ -29,13 +32,19 @@ const Login: NextPage = () => {
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false)
 
-  const handleLogin = (data: LoginSchema) => {
-    console.log(data)
-    signIn('credentials', {
-      email: data.email,
-      password: data.password,
-      callbackUrl: (query.callbackUrl as string) || undefined,
-    })
+  const handleLogin = async (data: LoginSchema) => {
+    try {
+      toggleLoading()
+      await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        callbackUrl: (query.callbackUrl as string) || undefined,
+      })
+    } catch (error) {
+      console.log({ error })
+    } finally {
+      toggleLoading()
+    }
   }
 
   return (
