@@ -1,4 +1,6 @@
 import { Dispatch, SetStateAction, useCallback, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import {
   Button,
   Dialog,
@@ -17,9 +19,12 @@ import { ResponsiveType } from 'react-multi-carousel'
 import { Controller, FieldErrors, SubmitHandler, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { pages } from 'src/constants'
+import { useLoadingBackdrop } from 'src/contexts'
 import { proposalTypeOptions, trlOptions } from 'src/data/proposal'
 import { useToast } from 'src/hooks/useToast'
 import { formatCurrency, unformatCurrency } from 'src/helpers/formatters'
+import { proposalService } from 'src/services'
 import { counterProposalOfferSchema, OfferSchema, makeOfferValidationSchema } from './validations'
 
 import { OfferCategory, ProposalType } from 'src/models/enums'
@@ -58,8 +63,13 @@ const responsiveCarousel: ResponsiveType = {
 
 const MakeAnOfferDialog = (props: Props) => {
   const { isOpen, setIsOpen, proposal, offerCategory } = props
-  const { showToast } = useToast()
 
+  const { push } = useRouter()
+  const { data: session } = useSession()
+  const { showToast } = useToast()
+  const { toggleLoading } = useLoadingBackdrop()
+
+  const { user } = session!
   const formattedBudget = formatCurrency(proposal.budget, { maximumFractionDigits: 0 }).replace('R$', '')
 
   const {
@@ -69,16 +79,16 @@ const MakeAnOfferDialog = (props: Props) => {
     formState: { errors, isSubmitting },
     watch,
   } = useForm<OfferSchema>({
-    resolver: zodResolver(makeOfferValidationSchema(proposal.type)),
+    resolver: zodResolver(makeOfferValidationSchema(proposal.types)),
     defaultValues:
       offerCategory === OfferCategory.default
         ? {
-            proposalType: proposal.type.length === 1 ? proposal.type[0] : undefined,
+            proposalType: proposal.types.length === 1 ? proposal.types[0] : undefined,
             category: OfferCategory.default,
           }
         : {
             category: OfferCategory.counterProposal,
-            proposalType: proposal.type.length === 1 ? proposal.type[0] : undefined,
+            proposalType: proposal.types.length === 1 ? proposal.types[0] : undefined,
             trl: proposal.trl,
             goalTRL: proposal.goalTrl,
             budget: formattedBudget,
@@ -89,15 +99,37 @@ const MakeAnOfferDialog = (props: Props) => {
 
   const disabledProposalTypeOptions = proposalTypeOptions.reduce((acc, option) => {
     if (option.id === ProposalType.research) return acc
-    if (!proposal.type.includes(option.id)) acc.push({ ...option, disabled: true })
+    if (!proposal.types.includes(option.id)) acc.push({ ...option, disabled: true })
     else acc.push(option)
     return acc
   }, [] as CardData[])
 
   const sendOffer: SubmitHandler<OfferSchema> = async data => {
-    console.log({ data })
-    showToast('Oferta enviada com sucesso', 'success')
-    setIsOpen(false)
+    try {
+      toggleLoading()
+      const { data: offerResponse } = await proposalService.makeOffer(proposal.id, {
+        userProponentId: user.id,
+        companyProponentId: user.companyId || '',
+        description: data.message,
+        suggestions:
+          data.category === OfferCategory.counterProposal
+            ? {
+                budget: unformatCurrency(data.budget) === proposal.budget ? undefined : unformatCurrency(data.budget),
+                trl: data.trl === proposal.trl ? undefined : data.trl,
+                goalTrl: data.goalTRL === proposal.goalTrl ? undefined : data.goalTRL,
+                proposalType: data.proposalType,
+              }
+            : undefined,
+      })
+      showToast('Oferta enviada com sucesso', 'success')
+      setIsOpen(false)
+      push(`${pages.proposal}/${proposal.id}/${pages.offer}/${offerResponse.negotiationId}`)
+    } catch (error) {
+      console.error(error)
+      showToast('Erro ao enviar oferta', 'error')
+    } finally {
+      toggleLoading()
+    }
   }
 
   return (
@@ -158,7 +190,7 @@ const MakeAnOfferDialog = (props: Props) => {
                   responsive: responsiveCarousel,
                   partialVisible: true,
                 }}
-                disabled={proposal.type.length === 1}
+                disabled={proposal.types.length === 1}
                 {...rest}
               />
             )}
