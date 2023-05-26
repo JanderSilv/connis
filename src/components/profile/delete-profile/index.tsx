@@ -1,20 +1,20 @@
 import { Alert, Button, Stack, Typography } from '@mui/material'
 
-import { OldUser } from 'src/models/types'
+import { User } from 'src/models/types'
 
 import { useDeleteDialog } from 'src/hooks'
-import { checkUserIsCompany, checkUserIsICT } from 'src/helpers/users'
 
 import { DeleteIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
 
 type DeleteProfileSectionProps = {
-  user: OldUser
+  user: User
+  entityToDelete: 'user' | 'organization'
   dialogDescription?: React.ReactNode
 }
 
 export const DeleteProfileSection = (props: DeleteProfileSectionProps) => {
-  const { user, dialogDescription } = props
+  const { user, entityToDelete, dialogDescription } = props
 
   const { DeleteDialog, isDeleteDialogOpen, handleOpenDeleteDialog } = useDeleteDialog({
     title: 'Deletar conta',
@@ -26,10 +26,9 @@ export const DeleteProfileSection = (props: DeleteProfileSectionProps) => {
         </Alert>
       </>
     ),
-    confirmText: (() => {
-      if (checkUserIsCompany(user) || checkUserIsICT(user)) return user.slug
-      else return 'deletar-conta'
-    })(),
+    confirmText: user.userName,
+    userId: user.id,
+    entityToDelete,
   })
 
   return (
