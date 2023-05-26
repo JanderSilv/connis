@@ -1,13 +1,4 @@
-import ReactDOMServer from 'react-dom/server'
 import { Box, Button, styled } from '@mui/material'
-import { PhotoCameraIcon } from 'src/assets/icons'
-
-const makeIconContent = () => {
-  const iconSvg = ReactDOMServer.renderToStaticMarkup(<PhotoCameraIcon color="primary" />)
-  const svgIconWithXlmns = iconSvg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" fill="linen" ')
-  const resultUrl = "url('data:image/svg+xml," + svgIconWithXlmns + "')"
-  return resultUrl
-}
 
 export const ChangeAvatarButton = styled(Button)({
   padding: 0,
@@ -20,7 +11,7 @@ export const ChangeAvatarButton = styled(Button)({
       content: '""',
 
       borderRadius: '50%',
-      background: `center / 35px no-repeat ${makeIconContent()}`,
+      background: `center / 35px no-repeat url('/assets/icons/camera.svg')`,
       backgroundColor: 'rgba(0, 0, 0, 0.3)',
 
       position: 'absolute',

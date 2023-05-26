@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from 'react'
 import Image, { ImageProps } from 'next/image'
+import { useSession } from 'next-auth/react'
+import { mutate } from 'swr'
 import AvatarEditor from 'react-avatar-editor'
 import {
   Avatar,
@@ -16,10 +18,14 @@ import {
   Typography,
 } from '@mui/material'
 
+import { useToast } from 'src/hooks'
+import { useAvatar } from './useAvatar'
+import { imageService, userService } from 'src/services'
+
+import { useLoadingBackdrop } from 'src/contexts'
+
 import { ChangeAvatarButton } from './styles'
 import { CloseIcon, DeleteIcon, EditIcon, PhotoCameraIcon, RotateLeftIcon, RotateRightIcon } from 'src/assets/icons'
-import { useAvatar } from './useAvatar'
-import { useSession } from 'next-auth/react'
 
 type UserAvatarProps = {
   name: string
@@ -68,6 +74,9 @@ const ChangeUserAvatar = (props: ChangeUserAvatarProps) => {
   const { avatar, children, userName } = props
 
   const { avatarFile, setAvatarFile, handleEditAvatar } = useAvatar()
+  const { data: session, update } = useSession()
+  const { showToast } = useToast()
+  const { toggleLoading } = useLoadingBackdrop()
 
   const avatarInputRef = useRef<HTMLInputElement>(null)
 
@@ -128,7 +137,37 @@ const ChangeUserAvatar = (props: ChangeUserAvatarProps) => {
             Nova Foto
           </Button>
           {!!avatar && (
-            <Button color="inherit" startIcon={<DeleteIcon />}>
+            <Button
+              color="inherit"
+              startIcon={<DeleteIcon />}
+              onClick={async () => {
+                try {
+                  toggleLoading()
+                  const { user } = session!
+
+                  await userService.deleteImage(user.id)
+                  update({
+                    ...session!,
+                    user: { ...user, image: null },
+                  })
+                  await mutate(
+                    `${userService.baseUrl}/${user.id}`,
+                    {
+                      ...user,
+                      image: null,
+                    },
+                    {
+                      revalidate: false,
+                    }
+                  )
+                  closeDialog()
+                } catch (error) {
+                  showToast('Não foi possível deletar a imagem, tente novamente mais tarde.', 'error')
+                } finally {
+                  toggleLoading()
+                }
+              }}
+            >
               Deletar Foto
             </Button>
           )}
@@ -151,13 +190,17 @@ const EditAvatarDialog = (props: EditAvatarDialogProps) => {
 
   const avatarEditorRef = useRef<AvatarEditor>(null)
 
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
+  const { showToast } = useToast()
+  const { toggleLoading } = useLoadingBackdrop()
 
   const [scale, setScale] = useState(1)
   const [rotate, setRotate] = useState(0)
   const [adjustment, setAdjustment] = useState(0)
 
   if (!image) return null
+
+  const { user } = session!
 
   return (
     <Dialog open={!!image} onClose={onClose} fullWidth>
@@ -243,15 +286,43 @@ const EditAvatarDialog = (props: EditAvatarDialogProps) => {
               if (!avatarEditorRef.current) return
               const canvas = avatarEditorRef.current.getImageScaledToCanvas()
               canvas.toBlob(
-                blob => {
+                async blob => {
                   if (!blob) return
-                  const file = new File([blob], `avatar-${session?.user.name}.jpeg`, { type: 'image/jpeg' })
-                  console.log(file)
+                  const file = new File([blob], `avatar-${user.name}.jpeg`, { type: 'image/jpeg' })
+
+                  const formData = new FormData()
+
+                  formData.append('file', file)
+                  toggleLoading()
+
+                  try {
+                    const { data: imageResponse } = await imageService.upload(formData, `Avatar de ${user.name}`)
+                    await userService.changeImage(user.id, imageResponse.source)
+                    update()
+                    await mutate(
+                      `${userService.baseUrl}/${user.id}`,
+                      {
+                        ...user,
+                        image: imageResponse.source,
+                      },
+                      {
+                        revalidate: false,
+                      }
+                    )
+                    cleanAvatarFile()
+                    showToast('Imagem alterada com sucesso!', 'success')
+                    onClose()
+
+                    if (typeof image === 'string' && !!user.image) imageService.delete(user.image.split('/images/')[1])
+                  } catch (error) {
+                    showToast('Não foi possível trocar a imagem, tente novamente mais tarde.', 'error')
+                  } finally {
+                    toggleLoading()
+                  }
                 },
                 'image/jpeg',
                 1
               )
-              onClose()
             }}
             size="small"
           >
