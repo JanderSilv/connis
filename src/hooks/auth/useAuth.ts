@@ -1,4 +1,4 @@
-import { useSession } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useEffect } from 'react'
 import { api } from 'src/services'
 
@@ -11,8 +11,13 @@ export const useAuth = () => {
       else delete api.defaults.headers.common.Authorization
     }
 
+    const checkIfSessionIsExpired = () => {
+      if (session?.errorStatus === 401) signOut()
+    }
+
     setupTokenAtApiHeaders()
-  }, [session?.accessToken])
+    checkIfSessionIsExpired()
+  }, [session?.accessToken, session?.errorStatus])
 
   return session
 }
