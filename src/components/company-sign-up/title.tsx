@@ -23,6 +23,6 @@ export const Title = ({ isDesktop = false, sx, ...rest }: TitleProps) => (
     }}
     {...rest}
   >
-    Cadastro
+    Cadastre sua empresa
   </Typography>
 )
