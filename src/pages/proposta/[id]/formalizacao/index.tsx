@@ -97,75 +97,75 @@ const NegotiationPage: NextPage<NegotiationPageProps> = props => {
 
           <Box component="aside" flex={0.4} position="relative">
             <Section sx={{ position: 'sticky', top: 32 }}>
-              {userIsTheProposalOwner && proposal.offerCompany ? (
-                <>
-                  <CompanyData {...proposal.offerCompany} />
+              {/* {userIsTheProposalOwner && (proposal as any).offerCompany ? ( */}
+              <>
+                <CompanyData {...(proposal as any).offerCompany} />
 
-                  <Divider sx={{ mt: 2, mb: 1 }} />
+                <Divider sx={{ mt: 2, mb: 1 }} />
 
-                  <ActionsHeader>
-                    <ul>
-                      <li>
-                        <Typography>
-                          &lsquo;Finalizar a negociação&lsquo; significa que você chegou a um acordo com a empresa e a
-                          proposta foi resolvida.
-                        </Typography>
-                      </li>
-                      <li>
-                        <Typography>
-                          &lsquo;Cancelar a negociação&lsquo; significa que você não chegou a um acordo e poderá voltar
-                          a avaliar a oferta de outras empresas.
-                        </Typography>
-                      </li>
-                    </ul>
-                  </ActionsHeader>
+                <ActionsHeader>
+                  <ul>
+                    <li>
+                      <Typography>
+                        &lsquo;Finalizar a negociação&lsquo; significa que você chegou a um acordo com a empresa e a
+                        proposta foi resolvida.
+                      </Typography>
+                    </li>
+                    <li>
+                      <Typography>
+                        &lsquo;Cancelar a negociação&lsquo; significa que você não chegou a um acordo e poderá voltar a
+                        avaliar a oferta de outras empresas.
+                      </Typography>
+                    </li>
+                  </ul>
+                </ActionsHeader>
 
-                  <Stack mt={1} gap={1}>
-                    <Button
-                      variant="contained"
-                      onClick={() =>
-                        handleOpenConfirmDialog({
-                          title: 'Finalizar negociação',
-                          message:
-                            'Significa que você chegou a um acordo com a empresa e a proposta foi resolvida. A proposta não poderá ser reaberta.',
-                          confirmButton: {
-                            onClick: () => {
-                              // TODO: Implements the conclude negotiation
-                              console.log('Finalizar negociação')
-                            },
+                <Stack mt={1} gap={1}>
+                  <Button
+                    variant="contained"
+                    onClick={() =>
+                      handleOpenConfirmDialog({
+                        title: 'Finalizar negociação',
+                        message:
+                          'Significa que você chegou a um acordo com a empresa e a proposta foi resolvida. A proposta não poderá ser reaberta.',
+                        confirmButton: {
+                          onClick: () => {
+                            // TODO: Implements the conclude negotiation
+                            console.log('Finalizar negociação')
                           },
-                        })
-                      }
-                      fullWidth
-                    >
-                      Finalizar negociação
-                    </Button>
+                        },
+                      })
+                    }
+                    fullWidth
+                  >
+                    Finalizar negociação
+                  </Button>
 
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => {
-                        handleOpenConfirmDialog({
-                          title: 'Cancelar negociação',
-                          message:
-                            'Significa que você não chegou a um acordo e poderá voltar a avaliar a oferta de outras empresas.',
-                          confirmButton: {
-                            onClick: () => {
-                              // TODO: Implements the cancel negotiation
-                              console.log('Cancelar negociação')
-                            },
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => {
+                      handleOpenConfirmDialog({
+                        title: 'Cancelar negociação',
+                        message:
+                          'Significa que você não chegou a um acordo e poderá voltar a avaliar a oferta de outras empresas.',
+                        confirmButton: {
+                          onClick: () => {
+                            // TODO: Implements the cancel negotiation
+                            console.log('Cancelar negociação')
                           },
-                        })
-                      }}
-                      fullWidth
-                    >
-                      Cancelar negociação
-                    </Button>
-                  </Stack>
-                </>
-              ) : (
-                <CompanyData {...proposal.company} />
-              )}
+                        },
+                      })
+                    }}
+                    fullWidth
+                  >
+                    Cancelar negociação
+                  </Button>
+                </Stack>
+              </>
+              {/* ) : (
+                <CompanyData {...(proposal as any).company} />
+              )} */}
             </Section>
           </Box>
         </Wrapper>
@@ -211,14 +211,14 @@ export const getServerSideProps: GetServerSideProps = withAuth(async context => 
   const { params, session } = context
   const { id } = params as Params
 
-  if (![proposal.company.id, proposal.offerCompany?.id].includes(session?.user.id)) return { notFound: true }
-  if (proposal.status !== ProposalStatus.onNegotiation)
-    return {
-      redirect: {
-        destination: `${pages.proposal}/${id}`,
-        permanent: false,
-      },
-    }
+  // if (![proposal.company.id, proposal.offerCompany?.id].includes(session?.user.id)) return { notFound: true }
+  // if (proposal.status !== ProposalStatus.onNegotiation)
+  //   return {
+  //     redirect: {
+  //       destination: `${pages.proposal}/${id}`,
+  //       permanent: false,
+  //     },
+  //   }
 
   console.log({ id })
 

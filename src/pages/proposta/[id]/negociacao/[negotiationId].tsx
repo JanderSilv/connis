@@ -55,7 +55,7 @@ const OfferPage: NextPage<OfferPageProps> = ({ offers, proposal, session }) => {
             {userIsTheProposalOwner && proposal.offerCompany ? (
               <CompanyData {...proposal.offerCompany} />
             ) : (
-              <CompanyData {...proposal.company} />
+              <CompanyData {...(proposal as any).company} />
             )}
             {!!currentOffer && (
               <>
@@ -179,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = withAuth(async context => 
   const { params, session } = context
   const { id, offerId } = params as Params
 
-  if (![proposal.company.id, proposal.offerCompany?.id].includes(session?.user.id)) return { notFound: true }
+  // if (![proposal.company.id, proposal.offerCompany?.id].includes(session?.user.id)) return { notFound: true }
 
   console.log({ id, offerId })
 
