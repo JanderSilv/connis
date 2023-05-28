@@ -3,24 +3,31 @@ import { Badge, Box, CardActionArea, CardContent, ListItem, Stack, Typography } 
 
 import { proposalTypeOptions } from 'src/data/proposal'
 import { formatDate } from 'src/helpers/formatters'
-import { Offer } from 'src/models/types'
+import { Negotiation } from 'src/models/types'
 
 import { UserAvatar } from 'src/components/shared'
 import { OfferStatusChip } from '../../chip-status'
 import { BadgeContainer, Card, ContentContainer, Description, Header, ListItemButton } from '../styles'
 
-export type OfferCardProps = {
-  offer: Offer
+export type NegotiationCardProps = {
+  negotiation: Negotiation
   href?: string
   unseenActivities: number
   layout?: 'row' | 'card'
+  hideTitle?: boolean
 }
 
-export const OfferCard = (props: OfferCardProps) => {
-  const { offer, href, unseenActivities, layout = 'row' } = props
-  const { createdAt, updatedAt, description, user, status, type, proposal } = offer
+export const NegotiationCard = (props: NegotiationCardProps) => {
+  const { negotiation, href, unseenActivities, layout = 'row', hideTitle } = props
+  const { interested, proposal, offers } = negotiation
 
-  const { icon: Icon, title: proposalTitle } = proposalTypeOptions[type]
+  const lastOffer = offers[0]
+
+  if (!lastOffer) return null
+
+  const { offerStatus, description, createdAt, updatedAt } = lastOffer
+
+  const { icon: Icon, title: proposalTitle } = proposalTypeOptions[0]
 
   const isRowLayout = layout === 'row'
 
@@ -35,17 +42,21 @@ export const OfferCard = (props: OfferCardProps) => {
 
   const content = (
     <>
-      {isRowLayout && <OfferStatusChip status={status} sx={{ mb: 1, display: { sm: 'none' } }} />}
+      {isRowLayout && <OfferStatusChip status={offerStatus} sx={{ mb: 1, display: { sm: 'none' } }} />}
       <Header mb={1}>
         <Stack direction="row" alignItems="center" gap={2}>
-          <UserAvatar name={user.name} src={user.image} size={25} />
+          <UserAvatar name={interested.name} src={interested.image} size={25} />
           <Typography component="h3" variant="h5">
-            {user.name}
+            {interested.name}
           </Typography>
         </Stack>
-        {isRowLayout && <OfferStatusChip status={status} sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
+        {isRowLayout && <OfferStatusChip status={offerStatus} sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
       </Header>
-      <Typography variant="h3">{proposal?.title}</Typography>
+      {!hideTitle && (
+        <Typography component="h3" variant="h4">
+          {proposal?.title}
+        </Typography>
+      )}
 
       <Description>{description}</Description>
 
@@ -60,10 +71,10 @@ export const OfferCard = (props: OfferCardProps) => {
   if (!isRowLayout)
     return (
       <Card sx={{ width: '100%' }}>
-        <CardActionArea component={Link} href={`/proposta/${proposal?.id}`}>
+        <CardActionArea component={Link} href={`/proposta/${proposal?.id}/negociacao/${negotiation.id}`}>
           <BadgeContainer layout="card">
             {badgeContent}
-            <OfferStatusChip status={status} sx={{ position: 'absolute', top: 10, right: 10 }} />
+            <OfferStatusChip status={offerStatus} sx={{ position: 'absolute', top: 10, right: 10 }} />
           </BadgeContainer>
           <CardContent>{content}</CardContent>
         </CardActionArea>

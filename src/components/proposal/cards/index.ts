@@ -1,2 +1,2 @@
-export * from './offer'
+export * from './negotiation'
 export * from './proposal'
