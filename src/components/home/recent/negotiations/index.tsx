@@ -1,24 +1,24 @@
 import { BoxProps, List, ListProps, Typography } from '@mui/material'
 import { Link } from 'src/components/shared'
-import { OfferCard } from 'src/components/proposal'
+import { NegotiationCard } from 'src/components/proposal'
 
-import { Offer } from 'src/models/types'
+import { Negotiation } from 'src/models/types'
 import { EmptyTypography, Header, Wrapper } from '../styles'
 
-type RecentOffersProps = {
-  offers: Offer[]
+type RecentNegotiationsProps = {
+  negotiations: Negotiation[]
   listProps?: ListProps
 } & BoxProps
 
-export const RecentOffers = (props: RecentOffersProps) => {
-  const { offers, listProps, ...rest } = props
+export const RecentNegotiations = (props: RecentNegotiationsProps) => {
+  const { negotiations, listProps, ...rest } = props
 
-  const hasOffers = offers.length > 0
+  const hasNegotiations = negotiations.length > 0
 
   const seeMoreLinkComponent = (isMobile = false) =>
-    hasOffers && (
+    hasNegotiations && (
       <Link
-        href="/minhas-ofertas"
+        href="/minhas-negociacoes"
         sx={
           isMobile
             ? { textAlign: 'center', display: { xs: 'block', sm: 'none' } }
@@ -33,19 +33,19 @@ export const RecentOffers = (props: RecentOffersProps) => {
     <Wrapper {...rest}>
       <Header>
         <Typography variant="h2" color="primary">
-          Ofertas Recentes
+          Negociações Recentes
         </Typography>
         {seeMoreLinkComponent()}
       </Header>
 
-      {hasOffers ? (
+      {hasNegotiations ? (
         <List {...listProps} aria-label="Ofertas Recentes">
-          {offers.map(offer => (
-            <OfferCard key={offer.id} offer={offer} unseenActivities={offer.viewed ? 1 : 0} />
+          {negotiations.map(negotiation => (
+            <NegotiationCard key={negotiation.id} negotiation={negotiation} unseenActivities={1} />
           ))}
         </List>
       ) : (
-        <EmptyTypography>Nenhuma proposta recente</EmptyTypography>
+        <EmptyTypography>Nenhuma negociação recente</EmptyTypography>
       )}
 
       {seeMoreLinkComponent(true)}
