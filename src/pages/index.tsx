@@ -1,21 +1,21 @@
-import { GetServerSideProps, NextPage } from 'next'
-import Link from 'next/link'
+import { NextPage } from 'next'
 import { Box, Typography } from '@mui/material'
 
 import { HomeProps } from 'src/models/types/home'
 
-import { fakeData } from 'src/data/fake'
+import { checkUserIsCompany } from 'src/helpers/users'
 import { withAuth } from 'src/helpers/withAuth'
+import { proposalService } from 'src/services'
 
 import { Layout } from 'src/layouts/app'
-import { AdCard, ICTHome, RecentOffers, RecentProposals } from 'src/components/home'
+import { AdCard, ICTHome, RecentNegotiations, RecentProposals } from 'src/components/home'
 
 import { LibraryBooksIcon, NoteAddIcon } from 'src/assets/icons'
 import { AsideB, ProposalButton, Title, Wrapper } from 'src/styles/home'
 
 const Home: NextPage<HomeProps> = props => {
   if (props.userType === 'company') {
-    const { myOffers, myProposals } = props
+    const { negotiations, proposals } = props
 
     return (
       <Layout>
@@ -44,8 +44,8 @@ const Home: NextPage<HomeProps> = props => {
           </AsideB>
 
           <Box width="100%" flex={1}>
-            <RecentProposals proposals={myProposals} />
-            <RecentOffers offers={myOffers} mt={4} />
+            <RecentProposals proposals={proposals} />
+            <RecentNegotiations negotiations={negotiations} mt={4} />
           </Box>
 
           <Box component="aside">
@@ -72,22 +72,27 @@ const Home: NextPage<HomeProps> = props => {
 
 export default Home
 
-export const getServerSideProps: GetServerSideProps = withAuth(async context => {
-  const { myProposals, recentOffers } = fakeData
+export const getServerSideProps = withAuth(async context => {
+  const { user } = context.session
+  const { data: proposals } = await proposalService.listCompanyProposals(user.companyId!, {
+    pageSize: 2,
+  })
+  const { data: negotiations } = await proposalService.getCompanyNegotiations({
+    pageSize: 2,
+  })
 
   return {
-    props:
-      context.session.user.type === 'company'
-        ? {
-            userType: 'company',
-            myProposals,
-            myOffers: recentOffers,
-          }
-        : {
-            userType: 'ict',
-            negotiations: myProposals,
-            requests: myProposals,
-            opportunities: myProposals,
-          },
+    props: checkUserIsCompany(user)
+      ? {
+          userType: 'company',
+          proposals,
+          negotiations,
+        }
+      : {
+          userType: 'ict',
+          negotiations: proposals,
+          requests: proposals,
+          opportunities: proposals,
+        },
   }
 })
