@@ -36,7 +36,7 @@ export const ProposalDataSectionOne = (props: Props) => {
 
       <DataContainer>
         <Title>Palavras Chaves</Title>
-        <Stack direction="row" gap={1}>
+        <Stack direction="row" gap={1} flexWrap="wrap">
           {keywords.map(keyword => (
             <Chip key={keyword} label={keyword} color="primary" />
           ))}
