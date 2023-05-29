@@ -1,33 +1,44 @@
-import { useState } from 'react'
-import { GetServerSideProps, NextPage } from 'next'
-import Head from 'next/head'
+import { NextPage } from 'next'
+import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import { Autocomplete, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import { cnaesData } from 'src/data/ibge'
-import { withPublic } from 'src/helpers/auth/withPublic'
-import { useCNPJDialog } from 'src/hooks/company-sign-up'
-import { companySignUpValidationSchema, CompanySignUpSchema } from 'src/validations/company-sign-up'
+import { UserType } from 'src/models/enums'
+import { User } from 'src/models/types'
 
-import { Layout } from 'src/layouts/auth'
+import { useLoadingBackdrop } from 'src/contexts'
+import { pages } from 'src/constants'
+import { cnaesData } from 'src/data/ibge'
+
+import { useCNPJDialog } from 'src/hooks/company-sign-up'
+import { useToast } from 'src/hooks/useToast'
+import { companySignUpValidationSchema, CompanySignUpSchema } from 'src/validations/company-sign-up'
+import { companyService } from 'src/services'
+import { slugify } from 'src/helpers'
+import { withSession } from 'src/helpers/auth'
+
+import { MaskedTextField } from 'src/components/shared'
 import { Title } from 'src/components/company-sign-up'
-import { Link, MaskedTextField } from 'src/components/shared'
-import { SocialLoginButtons } from 'src/components/social-login-buttons'
+import { Layout } from 'src/layouts/auth'
+
 import {
   AssignmentOutlinedIcon,
   BusinessOutlinedIcon,
+  EditIcon,
   EmailOutlinedIcon,
-  LockOutlinedIcon,
   PersonOutlineIcon,
   PhoneOutlinedIcon,
-  VisibilityIcon,
-  VisibilityOffIcon,
 } from 'src/assets/icons'
 import { theme } from 'src/styles/theme'
 import { Form, LeftContainer, Wrapper } from 'src/styles/company-sign-up'
 
-const CompanySignUp: NextPage = () => {
+type Props = {
+  user: User
+}
+
+const CompanySocialSignUp: NextPage<Props> = ({ user }) => {
   const {
     register,
     control,
@@ -43,17 +54,36 @@ const CompanySignUp: NextPage = () => {
       },
     },
   })
-  const { fetchedCompany, CNPJDialog } = useCNPJDialog(reset)
+  const { replace } = useRouter()
+  const { showToast } = useToast()
+  const { toggleLoading } = useLoadingBackdrop()
+  const { update } = useSession()
+  const { fetchedCompany, setFetchedCompany, CNPJDialog } = useCNPJDialog(reset)
 
-  const [shouldShowPassword, setShouldShowPassword] = useState(false)
-  const [shouldShowConfirmPassword, setShouldShowConfirmPassword] = useState(false)
-
-  const onSubmit = (data: CompanySignUpSchema) => {
-    console.log(data)
+  const onSubmit = async (formData: CompanySignUpSchema) => {
+    const { cnae, ...companyInput } = formData
+    try {
+      toggleLoading()
+      await companyService.create({
+        ...companyInput,
+        slug: slugify(companyInput.name),
+        cnaeId: cnae.id,
+        adminId: user.id,
+      })
+      await update()
+      showToast('Cadastro realizado com sucesso!', 'success')
+      replace(pages.home)
+    } catch (error) {
+      console.error(error)
+      showToast('Não foi possível fazer o cadastro. Tente novamente mais tarde.', 'error')
+    } finally {
+      toggleLoading()
+    }
   }
 
   return (
     <Layout
+      documentTitle="Cadastre sua empresa"
       illustration={{
         position: 'left',
         breakpoint: 'md',
@@ -65,10 +95,6 @@ const CompanySignUp: NextPage = () => {
         },
       }}
     >
-      <Head>
-        <title>Cadastro - Connis</title>
-      </Head>
-
       <CNPJDialog />
 
       <Wrapper>
@@ -82,22 +108,8 @@ const CompanySignUp: NextPage = () => {
               }}
               lineHeight="1.3"
             >
-              Junte-se a melhor plataforma de conexão e inovação entre empresas.
+              Complete o seu cadastro e junte-se a melhor plataforma de conexão e inovação entre empresas.
             </Typography>
-            <Typography component="span" mt={1} display="inline-block">
-              Já possui uma conta? <Link href="/login">Faça o Login aqui.</Link>
-            </Typography>
-
-            <SocialLoginButtons
-              mt={2}
-              maxWidth={300}
-              sx={{
-                display: {
-                  xs: 'none',
-                  md: 'flex',
-                },
-              }}
-            />
           </div>
         </LeftContainer>
         <section>
@@ -134,6 +146,13 @@ const CompanySignUp: NextPage = () => {
                         <BusinessOutlinedIcon color="primary" />
                       </InputAdornment>
                     ),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton aria-label="Trocar CNPJ" onClick={() => setFetchedCompany(null)} size="small">
+                          <EditIcon color="primary" fontSize="small" />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
                   }}
                   {...field}
                   error={!!errors.cnpj}
@@ -148,6 +167,7 @@ const CompanySignUp: NextPage = () => {
               variant="standard"
               label="E-mail"
               type="email"
+              inputMode="email"
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -169,6 +189,7 @@ const CompanySignUp: NextPage = () => {
                   variant="standard"
                   label="Telefone"
                   mask="(00) 00000-0000"
+                  inputMode="numeric"
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
@@ -218,77 +239,9 @@ const CompanySignUp: NextPage = () => {
               )}
             />
 
-            <TextField
-              variant="standard"
-              label="Senha"
-              type={shouldShowPassword ? 'text' : 'password'}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon color="primary" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={shouldShowPassword ? 'Esconder Senha' : 'Mostrar Senha'}
-                      onClick={() => setShouldShowPassword(prevState => !prevState)}
-                    >
-                      {shouldShowPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              {...register('password')}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-              fullWidth
-            />
-
-            <TextField
-              variant="standard"
-              label="Confirmar a senha"
-              type={shouldShowConfirmPassword ? 'text' : 'password'}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlinedIcon color="primary" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label={shouldShowConfirmPassword ? 'Esconder Senha' : 'Mostrar Senha'}
-                      onClick={() => setShouldShowConfirmPassword(prevState => !prevState)}
-                    >
-                      {shouldShowConfirmPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-              {...register('passwordConfirmation')}
-              error={!!errors.passwordConfirmation}
-              helperText={errors.passwordConfirmation?.message}
-              sx={{
-                mb: 2,
-              }}
-              fullWidth
-            />
-
             <Button type="submit" variant="contained" fullWidth>
               Cadastrar
             </Button>
-
-            <SocialLoginButtons
-              mt={2}
-              maxWidth={300}
-              mx="auto"
-              sx={{
-                display: {
-                  md: 'none',
-                },
-              }}
-            />
           </Form>
         </section>
       </Wrapper>
@@ -296,10 +249,29 @@ const CompanySignUp: NextPage = () => {
   )
 }
 
-export default CompanySignUp
+export default CompanySocialSignUp
 
-export const getServerSideProps: GetServerSideProps = withPublic(async () => {
+export const getServerSideProps = withSession(async context => {
+  const { session } = context
+
+  if (!session)
+    return {
+      redirect: { permanent: false, destination: pages.login },
+    }
+
+  const { user } = session
+
+  if (user.type !== UserType.CompanyAdmin || !!user.companyId)
+    return {
+      redirect: {
+        destination: pages.home,
+        permanent: false,
+      },
+    }
+
   return {
-    props: {},
+    props: {
+      user,
+    },
   }
 })
