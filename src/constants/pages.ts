@@ -5,7 +5,7 @@ export const pages = {
   home: '/',
   ictProfile: '/icts',
   login: '/login',
-  offer: '/oferta',
+  negotiation: '/negociacao',
   privacyPolicy: '/politica-de-privacidade',
   proposal: '/proposta',
   recoverPassword: '/recuperar-senha',
