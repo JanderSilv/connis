@@ -23,12 +23,13 @@ import { pages } from 'src/constants'
 import { useLoadingBackdrop } from 'src/contexts'
 import { proposalTypeOptions, trlOptions } from 'src/data/proposal'
 import { useToast } from 'src/hooks/useToast'
+import { getLastValue } from './helpers'
 import { formatCurrency, unformatCurrency } from 'src/helpers/formatters'
 import { proposalService } from 'src/services'
 import { counterProposalOfferSchema, OfferSchema, makeOfferValidationSchema } from './validations'
 
 import { OfferCategory, ProposalType } from 'src/models/enums'
-import { Proposal } from 'src/models/types'
+import { Offer, Proposal } from 'src/models/types'
 
 import { AttachMoneyIcon, DescriptionIcon } from 'src/assets/icons'
 import { CardData, CardsSelect, MaskedTextField, SlideTransition } from 'src/components/shared'
@@ -37,6 +38,7 @@ type Props = {
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
   proposal: Proposal
+  offers?: Offer[]
   offerCategory: OfferCategory
 }
 
@@ -62,7 +64,7 @@ const responsiveCarousel: ResponsiveType = {
 }
 
 const MakeAnOfferDialog = (props: Props) => {
-  const { isOpen, setIsOpen, proposal, offerCategory } = props
+  const { isOpen, setIsOpen, proposal, offerCategory, offers } = props
 
   const { push } = useRouter()
   const { data: session } = useSession()
@@ -70,7 +72,11 @@ const MakeAnOfferDialog = (props: Props) => {
   const { toggleLoading } = useLoadingBackdrop()
 
   const { user } = session!
-  const formattedBudget = formatCurrency(proposal.budget, { maximumFractionDigits: 0 }).replace('R$', '')
+  const lastOffer = offers?.[0]
+  const budget = !offers ? proposal.budget : getLastValue('budget', offers, proposal)
+  const formattedBudget = formatCurrency(budget, {
+    maximumFractionDigits: 0,
+  }).replace('R$', '')
 
   const {
     control,
@@ -89,8 +95,8 @@ const MakeAnOfferDialog = (props: Props) => {
         : {
             category: OfferCategory.counterProposal,
             proposalType: proposal.types.length === 1 ? proposal.types[0] : undefined,
-            trl: proposal.trl,
-            goalTRL: proposal.goalTrl,
+            trl: !offers ? proposal.trl : getLastValue('trl', offers, proposal),
+            goalTRL: !offers ? proposal.goalTrl : getLastValue('goalTrl', offers, proposal),
             budget: formattedBudget,
           },
   })
@@ -111,19 +117,20 @@ const MakeAnOfferDialog = (props: Props) => {
         userProponentId: user.id,
         companyProponentId: user.companyId || '',
         description: data.message,
+        proposalType: data.proposalType,
+        offerId: lastOffer?.id,
         suggestions:
           data.category === OfferCategory.counterProposal
             ? {
                 budget: unformatCurrency(data.budget) === proposal.budget ? undefined : unformatCurrency(data.budget),
                 trl: data.trl === proposal.trl ? undefined : data.trl,
                 goalTrl: data.goalTRL === proposal.goalTrl ? undefined : data.goalTRL,
-                proposalType: data.proposalType,
               }
             : undefined,
       })
       showToast('Oferta enviada com sucesso', 'success')
       setIsOpen(false)
-      push(`${pages.proposal}/${proposal.id}/${pages.offer}/${offerResponse.negotiationId}`)
+      push(`${pages.proposal}/${proposal.id}/${pages.negotiation}/${offerResponse.negotiationId}`)
     } catch (error) {
       console.error(error)
       showToast('Erro ao enviar oferta', 'error')
@@ -145,7 +152,7 @@ const MakeAnOfferDialog = (props: Props) => {
           <DescriptionIcon fontSize="large" />
         </Box>
         <DialogTitle textAlign="center" sx={{ pt: 0, pb: 1 }}>
-          Fazer uma oferta
+          {offerCategory === OfferCategory.default ? 'Fazer uma oferta' : 'Fazer uma contraproposta'}
         </DialogTitle>
         <DialogContentText textAlign="center">
           {offerCategory === OfferCategory.default ? (
@@ -163,8 +170,10 @@ const MakeAnOfferDialog = (props: Props) => {
             label="Mensagem"
             placeholder={
               offerCategory === OfferCategory.default
-                ? 'Ex: "Podemos solucionar sua proposta em 3 meses..."'
-                : 'Ex: "Me interessei pela sua proposta, mas gostaria de alterar alguns pontos..."'
+                ? 'Ex: "Podemos solucionar sua proposta em 3 meses e..."'
+                : !lastOffer?.id
+                ? 'Ex: "Me interessei pela sua proposta, mas gostaria de alterar alguns pontos..."'
+                : 'Ex: "Não concordo com o valor proposto, pois...'
             }
             {...register('message')}
             error={!!errors.message}
@@ -328,7 +337,7 @@ const MakeAnOfferDialog = (props: Props) => {
                       <li>
                         <Typography color="warning.main">
                           Você alterou o valor para <strong>R$ {watchedBudget}</strong>, o original era{' '}
-                          <strong>{formatCurrency(proposal.budget)}</strong>.
+                          <strong>{formatCurrency(budget)}</strong>.
                         </Typography>
                       </li>
                     </ul>
@@ -349,7 +358,7 @@ const MakeAnOfferDialog = (props: Props) => {
   )
 }
 
-export const useMakeAnOffer = (proposal: Proposal) => {
+export const useMakeAnOffer = (proposal: Proposal, offers?: Offer[]) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [offerCategory, setOfferCategory] = useState<OfferCategory>(OfferCategory.default)
 
@@ -366,9 +375,10 @@ export const useMakeAnOffer = (proposal: Proposal) => {
           setIsOpen={setIsDialogOpen}
           proposal={proposal}
           offerCategory={offerCategory}
+          offers={offers}
         />
       ),
-      [isDialogOpen, offerCategory, proposal]
+      [isDialogOpen, offerCategory, offers, proposal]
     ),
     isDialogOpen,
     handleOpenMakeAnOfferDialog,
