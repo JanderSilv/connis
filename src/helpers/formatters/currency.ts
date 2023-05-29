@@ -1,5 +1,6 @@
 export const formatCurrency = (value?: number, options?: Intl.NumberFormatOptions) => {
-  if (!value) return ''
+  if (value === undefined) return ''
+  if (value === 0) return 'R$ 0'
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
