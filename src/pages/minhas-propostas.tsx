@@ -3,7 +3,6 @@ import { Box, Container, Grid, Typography } from '@mui/material'
 
 import { Proposal } from 'src/models/types'
 
-import { fakeData } from 'src/data/fake'
 import { withAuth } from 'src/helpers/withAuth'
 import { useProposalsFilters } from 'src/hooks/proposals'
 
@@ -11,6 +10,7 @@ import { ProposalCard } from 'src/components/proposal'
 import { Layout } from 'src/layouts/app'
 
 import { Wrapper } from 'src/styles/proposals'
+import { proposalService } from 'src/services/proposal'
 
 type Props = {
   proposals: Proposal[]
@@ -46,13 +46,12 @@ const MyProposals: NextPage<Props> = ({ proposals }) => {
 
 export default MyProposals
 
-export const getServerSideProps = withAuth(async () => {
-  // TODO: fetch proposals from API
-  const { myProposals } = fakeData
+export const getServerSideProps = withAuth(async context => {
+  const { data: proposals } = await proposalService.listCompanyProposals(context.session.user.companyId!)
 
   return {
     props: {
-      proposals: myProposals,
+      proposals,
     },
   }
 })
