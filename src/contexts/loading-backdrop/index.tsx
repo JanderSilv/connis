@@ -3,6 +3,7 @@ import { Backdrop, Button, ButtonProps, CircularProgress, Stack, Typography, Typ
 
 type LoadingBackdropContextData = {
   toggleLoading: (content?: Content) => void
+  hideLoading: () => void
 }
 
 export const LoadingBackdropContext = createContext({} as LoadingBackdropContextData)
@@ -26,10 +27,16 @@ export const LoadingBackdropProvider = ({ children }: LoadingBackdropProviderPro
     setContent(content)
   }, [])
 
+  const hideLoading = useCallback(() => {
+    setLoading(false)
+    setContent(undefined)
+  }, [])
+
   return (
     <LoadingBackdropContext.Provider
       value={{
         toggleLoading,
+        hideLoading,
       }}
     >
       {children}
@@ -51,9 +58,6 @@ export const LoadingBackdropProvider = ({ children }: LoadingBackdropProviderPro
 }
 
 export const useLoadingBackdrop = () => {
-  const { toggleLoading } = useContext(LoadingBackdropContext)
-
-  return {
-    toggleLoading,
-  }
+  const loadingBackdropContext = useContext(LoadingBackdropContext)
+  return loadingBackdropContext
 }
