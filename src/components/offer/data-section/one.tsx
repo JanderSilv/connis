@@ -8,16 +8,20 @@ import { Offer } from 'src/models/types'
 import { DataContainer, Section, Title } from 'src/styles/proposal'
 import { makeMessageTitle } from './helpers'
 
-export const OfferDataSectionOne = (offer: Offer) => {
-  const { description } = offer
+type Props = {
+  hideStatus?: boolean
+} & Offer
 
-  const { userIsTheOfferOwner, status } = useOfferSession(offer)
+export const OfferDataSectionOne = (props: Props) => {
+  const { description, hideStatus } = props
+
+  const { userIsTheOfferOwner, status } = useOfferSession(props)
 
   return (
     <Section>
-      <OfferStatusChip status={offer.status} />
+      {!hideStatus && <OfferStatusChip status={props.offerStatus} />}
 
-      <DataContainer>
+      <DataContainer sx={{ mt: hideStatus ? 0 : undefined }}>
         <Title>{makeMessageTitle(status, userIsTheOfferOwner)}</Title>
         <Typography>{description}</Typography>
       </DataContainer>
