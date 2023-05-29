@@ -1,7 +1,6 @@
 import { isValidCNPJ } from '@brazilian-utils/brazilian-utils'
 import * as zod from 'zod'
 
-import { regex } from 'src/constants'
 import { CompanySize } from 'src/models/enums'
 
 const messages = {
@@ -17,7 +16,7 @@ export const cnpjValidationSchema = zod.object({
 
 export type CnpjSchema = zod.infer<typeof cnpjValidationSchema>
 
-export const companySocialSignUpValidationSchema = zod
+export const companySignUpValidationSchema = zod
   .object({
     name: zod
       .string()
@@ -29,53 +28,32 @@ export const companySocialSignUpValidationSchema = zod
       city: zod.string().min(1, 'Cidade é obrigatório'),
       cep: zod.string().min(1, 'CEP é obrigatório'),
       uf: zod.string().min(1, 'UF é obrigatório'),
+      street: zod.string({
+        required_error: 'Rua é obrigatório',
+      }),
+      number: zod.number({
+        required_error: 'Número é obrigatório',
+      }),
+      complement: zod.string({
+        required_error: 'Complemento é obrigatório',
+      }),
+      country: zod.string({
+        required_error: 'País é obrigatório',
+      }),
     }),
     size: zod.nativeEnum(CompanySize),
     socialCapital: zod.number().min(1, 'Capital social é obrigatório'),
-    cnae: zod
-      .object(
-        {
-          id: zod.string().min(1, messages.cnae),
-          label: zod.string().min(1, messages.cnae),
-        },
-        {
-          required_error: messages.cnae,
-        }
-      )
-      .transform((value, ctx) => {
-        if (value == null)
-          ctx.addIssue({
-            code: zod.ZodIssueCode.custom,
-            message: messages.cnae,
-          })
-        return value ?? null
-      }),
+    cnae: zod.object(
+      {
+        id: zod.string().min(1, messages.cnae),
+        label: zod.string().min(1, messages.cnae),
+      },
+      {
+        required_error: messages.cnae,
+      }
+    ),
     image: zod.string().nullable().optional(),
   })
   .merge(cnpjValidationSchema)
-
-export type CompanySocialSignUpSchema = zod.infer<typeof companySocialSignUpValidationSchema>
-
-export const companySignUpValidationSchema = companySocialSignUpValidationSchema
-  .extend({
-    password: zod
-      .string()
-      .min(1, 'Senha é obrigatório')
-      .min(8, 'Senha deve ter no mínimo 8 caracteres')
-      .regex(
-        regex.strongPassword,
-        'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número'
-      ),
-    passwordConfirmation: zod.string().min(1, 'Confirmação de senha é obrigatório'),
-  })
-  .superRefine(({ passwordConfirmation, password }, ctx) => {
-    if (passwordConfirmation !== password) {
-      ctx.addIssue({
-        code: zod.ZodIssueCode.custom,
-        message: 'A confirmação de senha não confere',
-        path: ['passwordConfirmation'],
-      })
-    }
-  })
 
 export type CompanySignUpSchema = zod.infer<typeof companySignUpValidationSchema>

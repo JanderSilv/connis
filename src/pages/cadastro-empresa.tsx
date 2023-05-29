@@ -38,7 +38,7 @@ type Props = {
   user: User
 }
 
-const CompanySocialSignUp: NextPage<Props> = ({ user }) => {
+const CompanySignUp: NextPage<Props> = ({ user }) => {
   const {
     register,
     control,
@@ -249,7 +249,7 @@ const CompanySocialSignUp: NextPage<Props> = ({ user }) => {
   )
 }
 
-export default CompanySocialSignUp
+export default CompanySignUp
 
 export const getServerSideProps = withSession(async context => {
   const { session } = context
