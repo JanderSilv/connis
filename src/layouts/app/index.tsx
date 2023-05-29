@@ -2,12 +2,13 @@ import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { signOut, useSession } from 'next-auth/react'
 import { AppBar, AppBarProps, Badge, Box, BoxProps, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
 
+import { pages } from 'src/constants'
+
 import { NotificationPopover } from './notification'
-import { getProfileURL } from './helpers'
 
 import { UserAvatar } from 'src/components/shared'
 import { NotificationsIcon, NotificationsOutlinedIcon } from 'src/assets/icons'
@@ -111,7 +112,7 @@ export const Layout = (props: LayoutProps) => {
                     'aria-labelledby': menuData.buttonId,
                   }}
                 >
-                  <MenuItem onClick={() => push(getProfileURL(session?.user))}>Perfil</MenuItem>
+                  <MenuItem onClick={() => push(`${pages.userProfile}/${session?.user.userName}`)}>Perfil</MenuItem>
                   <MenuItem onClick={() => signOut()}>Sair</MenuItem>
                 </Menu>
               </Box>
