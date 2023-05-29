@@ -1,13 +1,14 @@
 import { ICTOfferStatus } from 'src/models/enums'
-import { ICTUser } from '../user'
+import { User } from '../user'
+import { ICT } from '../ict'
 
 export type ICTOffer = {
   id: string
-  proposalId: string
   description: string
   createdAt: string
   updatedAt?: string
-  user: ICTUser
-  suggestedFundingAgencies: string[]
+  userProponent: User
+  ict: ICT
+  fundingAgencies: string[]
   status: ICTOfferStatus
 }

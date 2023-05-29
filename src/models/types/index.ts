@@ -1,5 +1,6 @@
 export * from './common'
 export * from './company'
+export * from './formalization'
 export * from './negotiation'
 export * from './ict'
 export * from './offer'
