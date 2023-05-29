@@ -4,7 +4,7 @@ import { Badge, Box, Card, CardActionArea, CardContent, Divider, ListItem, Stack
 
 import { Proposal } from 'src/models/types'
 import { proposalCategories } from 'src/data/proposal'
-import { formatDate, formatNumber } from 'src/helpers/formatters'
+import { formatDate, formatNumber, formatString } from 'src/helpers/formatters'
 import { ProposalCategory } from 'src/models/enums'
 
 import { ProposalStatusChip } from '../../chip-status'
@@ -40,7 +40,7 @@ export const ProposalCard = (props: ProposalCardProps) => {
   const { icon: Icon, title: categoryTitle, id: categoryId } = categoryData
 
   const isRowLayout = layout === 'row'
-  const userParticipatesOnProposal = [company.id, proposal.offerCompany?.id].includes(session?.user.id)
+  const userParticipatesOnProposal = session?.user.companyId === company.id
   const shouldShowBadge = isRowLayout && userParticipatesOnProposal
 
   const badgeContent = (
@@ -56,7 +56,9 @@ export const ProposalCard = (props: ProposalCardProps) => {
       <Box>
         {shouldShowBadge && <ProposalStatusChip status={status} sx={{ mb: 1, display: { sm: 'none' } }} />}
         <Header>
-          <Typography variant="h3">{title}</Typography>
+          <Typography component="h3" variant="h4">
+            {title}
+          </Typography>
 
           {shouldShowBadge && (
             <Box display="flex" alignItems="center" gap={1}>
@@ -72,8 +74,19 @@ export const ProposalCard = (props: ProposalCardProps) => {
         <>
           <Divider sx={{ my: 2 }} />
           <Stack mt={1} direction="row" alignItems="center" spacing={1}>
-            <UserAvatar name={company.name} src={company.image} size={20} />
-            <Typography variant="body2">{company.name}</Typography>
+            <UserAvatar
+              name={company.name}
+              src={company.image}
+              size={20}
+              componentsProps={{
+                avatar: {
+                  sx: {
+                    fontSize: 14,
+                  },
+                },
+              }}
+            />
+            <Typography variant="body2">{formatString.capitalizeFirstLetters(company.name)}</Typography>
           </Stack>
         </>
       )}

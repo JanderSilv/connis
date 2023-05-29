@@ -23,6 +23,15 @@ export const Header = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   gap: theme.spacing(1, 2),
+
+  '& > h3, & ~ h3': {
+    lineClamp: 2,
+    WebkitLineClamp: 2,
+    textOverflow: 'ellipsis',
+    WebkitBoxOrient: 'vertical',
+    display: '-webkit-box',
+    overflow: 'hidden',
+  },
 }))
 Header.defaultProps = {
   component: 'header',
