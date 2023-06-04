@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NextPage } from 'next'
-import { useRouter } from 'next/router'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Head from 'next/head'
 import { signIn } from 'next-auth/react'
 import { Button, Typography, TextField, InputAdornment, IconButton } from '@mui/material'
@@ -8,7 +8,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { pages } from 'src/constants'
-import { withPublic } from 'src/helpers/auth/withPublic'
+import { withPublic } from 'src/helpers/auth'
+import { useToast } from 'src/hooks'
 import { LoginSchema, loginSchemaValidation } from 'src/validations/login'
 
 import { useLoadingBackdrop } from 'src/contexts'
@@ -28,23 +29,30 @@ const Login: NextPage = () => {
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchemaValidation),
   })
-  const { query } = useRouter()
+  const { push } = useRouter()
+  const { get } = useSearchParams()
+  const { showToast } = useToast()
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false)
 
   const handleLogin = async (data: LoginSchema) => {
-    try {
+    toggleLoading()
+    const response = await signIn('credentials', {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    })
+    if (!response) return
+
+    if (response.error) {
+      const error = JSON.parse(response.error)
       toggleLoading()
-      await signIn('credentials', {
-        email: data.email,
-        password: data.password,
-        callbackUrl: (query.callbackUrl as string) || undefined,
-      })
-    } catch (error) {
-      console.log({ error })
-    } finally {
+      return showToast(error.message, 'error')
+    } else {
       toggleLoading()
     }
+
+    push(get('callbackUrl') || pages.home)
   }
 
   return (
