@@ -1,15 +1,14 @@
 import { ChatCompletionRequestMessage } from 'openai'
 import { toast } from 'src/helpers/shared'
 import { suggestions } from './data'
-import { getModeratedProposal, getSuggestionPrompt, sendMessages } from './helpers'
+import { getModeratedProposal, getSuggestionPrompt, sendMessages, sendMessagesStream } from './helpers'
 import { ProposalInput, SuggestionsKeys } from './models'
 
 async function* getAllSuggestionsGenerator(proposal: ProposalInput) {
   const { projectDescription, description, userId } = proposal
 
-  const userInput = `${projectDescription ? `Descrição do projeto: "${projectDescription}"` : ''}
-  Descrição da proposta: "${description}"
-  `
+  const userInput = `${projectDescription ? `Descrição do projeto: ${projectDescription}` : ''}
+  Descrição da proposta: ${description}`
 
   const proposalModeration = await getModeratedProposal(userInput)
 
@@ -34,17 +33,29 @@ async function* getAllSuggestionsGenerator(proposal: ProposalInput) {
 
     messages.push({ role: 'user', content: suggestionPrompt })
 
-    const suggestionResponse = await sendMessages({
-      messages,
-      userId,
-    })
+    if (suggestion === 'proposal') {
+      for await (const message of sendMessagesStream({
+        messages,
+        userId,
+      }))
+        yield {
+          key: suggestion as SuggestionsKeys,
+          data: message,
+          moderation: proposalModeration,
+        }
+    } else {
+      const { data: response } = await sendMessages({
+        messages,
+        userId,
+      })
 
-    if (!suggestionResponse?.data) break
+      if (!response) break
 
-    yield {
-      key: suggestion as SuggestionsKeys,
-      data: suggestionResponse.data,
-      moderation: proposalModeration,
+      yield {
+        key: suggestion as SuggestionsKeys,
+        data: response,
+        moderation: proposalModeration,
+      }
     }
   }
 }
