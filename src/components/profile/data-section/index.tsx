@@ -1,32 +1,39 @@
-import { Box, Stack, SvgIcon, Typography } from '@mui/material'
+import { Box, BoxProps, Stack, StackProps, SvgIcon, Typography } from '@mui/material'
 
-import { User } from 'src/models/types'
-import { formatDate } from 'src/helpers/formatters'
+import { formatDate, formatString } from 'src/helpers/formatters'
 
-import { UserAvatar } from 'src/components/shared'
+import { Entity, UserAvatar } from 'src/components/shared'
 import { IconData } from './icon-data'
 
 import { CakeIcon } from 'src/assets/icons'
 import { Section } from 'src/styles/common'
 
+export type DataSectionData = {
+  icon: typeof SvgIcon
+  value?: React.ReactNode
+  order?: number
+}
+
 type DataSectionProps = {
   name: string
-  createdAt: string
+  createdAt?: string
   avatar: {
     src?: string | null
     canEdit?: boolean
   }
-  data?: {
-    icon: typeof SvgIcon
-    value?: React.ReactNode
-  }[]
+  data?: DataSectionData[]
+  children?: React.ReactNode
+  componentProps?: {
+    wrapper?: BoxProps
+  }
+  entity?: Entity
 }
 
 export const DataSection = (props: DataSectionProps) => {
-  const { createdAt, data, name, avatar } = props
+  const { createdAt, data, entity = 'user', name, avatar, children, componentProps } = props
 
   return (
-    <Section sx={{ '&&': { p: 0 }, overflow: 'hidden' }}>
+    <Section {...componentProps?.wrapper} sx={{ '&&': { p: 0 }, overflow: 'hidden', ...componentProps?.wrapper?.sx }}>
       <Stack
         component="header"
         height={130}
@@ -41,6 +48,7 @@ export const DataSection = (props: DataSectionProps) => {
             src={avatar.src}
             size={150}
             canEdit={avatar.canEdit}
+            entityToEdit={entity}
             componentsProps={{
               avatar: { sx: { border: '5px solid white' } },
             }}
@@ -48,15 +56,17 @@ export const DataSection = (props: DataSectionProps) => {
 
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             <Typography variant="h1" color="primary.contrastText">
-              {name}
+              {formatString.capitalizeFirstLetters(name)}
             </Typography>
 
-            <Stack mt={0.5} direction="row" spacing={0.5} color="grey.300">
-              <CakeIcon color="inherit" sx={{ width: '1rem', height: '1rem' }} />
-              <Typography variant="body2" color="inherit">
-                Membro {formatDate.distanceToNow(new Date(createdAt))}
-              </Typography>
-            </Stack>
+            {!!createdAt && (
+              <Stack mt={0.5} direction="row" spacing={0.5} color="grey.300">
+                <CakeIcon color="inherit" sx={{ width: '1rem', height: '1rem' }} />
+                <Typography variant="body2" color="inherit">
+                  Membro {formatDate.distanceToNow(new Date(createdAt))}
+                </Typography>
+              </Stack>
+            )}
           </Box>
         </Stack>
       </Stack>
@@ -67,19 +77,29 @@ export const DataSection = (props: DataSectionProps) => {
             {name}
           </Typography>
 
-          <Stack mt={1} direction="row" spacing={0.5} color="grey.800">
-            <CakeIcon color="inherit" sx={{ width: '1rem', height: '1rem' }} />
-            <Typography variant="body2" color="inherit">
-              Membro {formatDate.distanceToNow(new Date(createdAt))}
-            </Typography>
-          </Stack>
+          {!!createdAt && (
+            <Stack mt={1} direction="row" spacing={0.5} color="grey.800">
+              <CakeIcon color="inherit" sx={{ width: '1rem', height: '1rem' }} />
+              <Typography variant="body2" color="inherit">
+                Membro {formatDate.distanceToNow(new Date(createdAt))}
+              </Typography>
+            </Stack>
+          )}
         </Box>
-        {data?.map(({ icon, value }, index) => (
-          <IconData key={index} icon={icon}>
+        {data?.map(({ icon, value, order }, index) => (
+          <IconData key={index} icon={icon} order={order}>
             {value}
           </IconData>
         ))}
       </Stack>
+
+      {children}
     </Section>
   )
 }
+
+export type DataSectionFooterProps = StackProps
+
+export const DataSectionFooter = (props: DataSectionFooterProps) => (
+  <Stack component="footer" direction="row" p={2} pt={0} {...props} />
+)
