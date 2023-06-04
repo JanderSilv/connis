@@ -8,6 +8,7 @@ type ConfirmDialogContent = {
   message?: string
   confirmButton?: ButtonProps
   cancelButton?: ButtonProps
+  cannotCloseAtClickOutside?: boolean
 }
 
 type ConfirmDialogContextType = {
@@ -39,7 +40,11 @@ export const ConfirmDialogProvider = (props: ConfirmDialogProviderProps) => {
     >
       {children}
 
-      <Dialog open={isConfirmDialogOpen} onClose={() => setIsConfirmDialogOpen(false)} maxWidth="xs">
+      <Dialog
+        open={isConfirmDialogOpen}
+        onClose={() => !dialogContent?.cannotCloseAtClickOutside && setIsConfirmDialogOpen(false)}
+        maxWidth="xs"
+      >
         <Box mt={2} textAlign="center">
           {dialogContent?.icon ? (
             <dialogContent.icon color="primary" sx={{ fontSize: 40 }} />
