@@ -1,14 +1,25 @@
-import { ReactNode } from 'react'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 import { Link as MuiLink, LinkProps as MuiLinkProps } from '@mui/material'
 
 type LinkProps = {
-  children?: ReactNode
+  noEffect?: boolean
+  openInNewTab?: boolean
 } & NextLinkProps &
   MuiLinkProps
 
-export const Link = ({ children, ...rest }: LinkProps) => (
-  <MuiLink component={NextLink} underline="hover" {...rest}>
+const openInNewTabProps = {
+  target: '_blank',
+  rel: 'noopener noreferrer',
+}
+
+export const Link = ({ children, noEffect, openInNewTab, ...rest }: LinkProps) => (
+  <MuiLink
+    component={!openInNewTab ? NextLink : 'a'}
+    underline={noEffect ? 'none' : 'hover'}
+    color={noEffect ? 'inherit' : 'primary'}
+    {...rest}
+    {...(openInNewTab ? openInNewTabProps : {})}
+  >
     {children}
   </MuiLink>
 )
