@@ -9,12 +9,12 @@ export const useOfferSession = (offer?: Offer, serverSession?: Session) => {
     return {
       session: serverSession,
       status: 'authenticated',
-      userIsTheOfferOwner: serverSession?.user.id === offer?.user.id,
+      userIsTheOfferOwner: serverSession?.user.id === offer?.userProponent.id,
     }
 
   return {
     session,
     status,
-    userIsTheOfferOwner: session?.user.id === offer?.user.id,
+    userIsTheOfferOwner: session?.user.id === offer?.userProponent.id,
   }
 }
