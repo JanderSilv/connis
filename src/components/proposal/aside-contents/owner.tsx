@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { mutate } from 'swr'
 import { Button, Stack } from '@mui/material'
 
@@ -10,10 +11,12 @@ import { useToast } from 'src/hooks'
 import { ProposalStatusChip } from '../chip-status'
 import { proposalService } from 'src/services'
 
-type Props = Proposal
+type Props = {
+  hasOffers: boolean
+} & Proposal
 
 export const AsideContentOwner = (props: Props) => {
-  const { id, status } = props
+  const { id, status, hasOffers } = props
 
   const { handleOpenConfirmDialog } = useConfirmDialog()
   const { toggleLoading } = useLoadingBackdrop()
@@ -42,14 +45,18 @@ export const AsideContentOwner = (props: Props) => {
   return (
     <>
       <ProposalStatusChip status={status} size="medium" sx={{ textAlign: 'center', display: 'flex' }} />
-
       <Stack mt={3} gap={1}>
-        {status === ProposalStatus.opened && (
+        {status === ProposalStatus.opened && !hasOffers && (
           <Button variant="contained" fullWidth>
             Editar Proposta
           </Button>
         )}
 
+        {status === ProposalStatus.onFormalization && (
+          <Button component={Link} href={`/proposta/${id}/formalizacao`} variant="outlined" fullWidth>
+            Ir para Formalização
+          </Button>
+        )}
         {status !== ProposalStatus.canceled && (
           <Button
             variant="contained"
@@ -69,7 +76,7 @@ export const AsideContentOwner = (props: Props) => {
             Cancelar Proposta
           </Button>
         )}
-        {status !== ProposalStatus.opened && (
+        {status === ProposalStatus.canceled && (
           <Button
             variant="contained"
             color="primary"

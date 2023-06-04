@@ -1,13 +1,13 @@
 import { Button, Divider, Stack, Typography } from '@mui/material'
-import { CompanyUser } from 'src/models/types'
+import { Company } from 'src/models/types'
 import { ActionsHeader } from './actions-header'
 import { CompanyData } from './common'
 
-type Props = CompanyUser
+type Props = Company
 
 export const ICTAsideContent = (company: Props) => (
   <>
-    <CompanyData {...company} />
+    <CompanyData type="company" {...company} />
 
     <Divider sx={{ mt: 2, mb: 1 }} />
 
