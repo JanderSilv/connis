@@ -14,10 +14,9 @@ type ExcludedProposalKeys =
   | 'budget'
   | 'status'
   | 'viewed'
-  | 'currentOfferId'
   | 'company'
   | 'unseenActivities'
-  | 'offerCompany'
+  | 'userProponentId'
 
 export type ProposalSchema = Omit<Proposal, ExcludedProposalKeys> & {
   budget?: string
@@ -61,7 +60,7 @@ export const proposalRegisterSchema: yup.SchemaOf<ProposalSchema> = yup.object()
       .number()
       .required('O TRL é obrigatório')
       .min(yup.ref('trl'), 'O TRL que almeja alcançar deve ser maior ou igual ao TRL atual'),
-    type: yup
+    types: yup
       .array()
       .of(yup.number().required(messages.proposalType))
       .required(messages.proposalType)

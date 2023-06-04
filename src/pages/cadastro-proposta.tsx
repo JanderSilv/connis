@@ -1,5 +1,6 @@
 import { KeyboardEvent, useRef, useState } from 'react'
-import type { /* GetServerSideProps, */ NextPage } from 'next'
+import type { NextPage } from 'next'
+import { useRouter, useSearchParams } from 'next/navigation'
 import {
   Autocomplete,
   Box,
@@ -11,8 +12,10 @@ import {
   FormLabel,
   IconButton,
   InputAdornment,
+  Link,
   ListSubheader,
   MenuItem,
+  Popover,
   Radio,
   RadioGroup,
   Stack,
@@ -24,12 +27,12 @@ import { AnimatePresence } from 'framer-motion'
 import { Wizard } from 'react-use-wizard'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import axios from 'axios'
 
-import { ProposalCategory, ProposalType } from 'src/models/enums'
-import { OldUser } from 'src/models/types'
+import { ProposalCategory, ProposalType, StorageKeys } from 'src/models/enums'
+import { User } from 'src/models/types'
 
 import { useConfirmDialog, useLoadingBackdrop } from 'src/contexts'
+import { pages } from 'src/constants'
 import {
   proposalCategoryOptions,
   proposalTypeOptions,
@@ -38,9 +41,11 @@ import {
   periodicityOptions,
   proposalAdditionalQuestions,
 } from 'src/data/proposal'
-// import { withAuth } from 'src/helpers/withAuth'
+import { withAuth } from 'src/helpers/withAuth'
+import { unformatCurrency } from 'src/helpers/formatters'
 import { useProposalRegister } from 'src/hooks/proposal-register'
 import { toast } from 'src/helpers/shared'
+import { proposalService } from 'src/services/proposal'
 import { proposalRegisterSchema, ProposalSchema } from 'src/validations/proposal-register'
 
 import { Layout } from 'src/layouts/app'
@@ -51,6 +56,7 @@ import { CardsSelect, MaskedTextField } from 'src/components/shared'
 import {
   AttachMoneyIcon,
   CachedIcon,
+  InfoIcon,
   PlaylistAddIcon,
   ThumbDownOutlinedIcon,
   ThumbUpOutlinedIcon,
@@ -62,13 +68,18 @@ const checkProposalCategoryHasQuestions = (proposalCategory: ProposalCategory) =
 }
 
 type ProposalRegisterProps = {
-  user: OldUser
+  user: User
 }
 
 const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
+  const { get } = useSearchParams()
+  const { push } = useRouter()
+  const { handleOpenConfirmDialog } = useConfirmDialog()
+  const { toggleLoading } = useLoadingBackdrop()
   const formMethods = useForm<ProposalSchema>({
     resolver: yupResolver(proposalRegisterSchema),
     defaultValues: {
+      types: get('research') ? [ProposalType.research] : [],
       keywords: [],
       categoryQuestions: {
         waste: {
@@ -80,8 +91,6 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
       },
     },
   })
-  const { handleOpenConfirmDialog } = useConfirmDialog()
-  const { toggleLoading } = useLoadingBackdrop()
 
   const {
     control,
@@ -91,38 +100,41 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
     watch,
     getValues,
     setValue,
+    reset,
   } = formMethods
 
-  const watchedProposalCategory = watch('proposalCategory')
-  const watchedProposalType = watch('proposalType')
+  const watchedProposalCategory = watch('category')
+  const watchedProposalTypes = watch('types')
+  const watchedProposalKeywords = watch('keywords')
 
   const [keywordsInputValue, setKeywordsInputValue] = useState('')
+  const [trlHelpButtonAnchorElement, setTrlHelpButtonAnchorElement] = useState<HTMLButtonElement>()
 
   const previousStep = useRef(0)
   const nextButtonRef = useRef<HTMLButtonElement>(null)
 
   const { suggestions, feedbacks, getAllSuggestions, handleSuggestionFeedback, getCanGoNextStepCustomCheck } =
-    useProposalRegister(getValues)
+    useProposalRegister(getValues, reset)
+
+  const trlHelpPopoverId = !!trlHelpButtonAnchorElement ? 'trl-popover' : undefined
 
   const handleEnterKey = (event: KeyboardEvent) => {
     if (event.key === 'Enter') nextButtonRef.current?.click()
   }
 
-  const onSubmit = (data: ProposalSchema) => {
-    const proposal = {
-      ...data,
-      budget: Number(data.budget?.replaceAll('.', '')),
-    }
+  const onSubmit = async (data: ProposalSchema) => {
     try {
       toggleLoading()
-      // TODO: Remove this when the API is ready
-      axios.post('https://api.jsonbin.io/v3/b', proposal, {
-        headers: {
-          'X-Master-Key': '$2b$10$AZS8O9vbnQ22oOD6kb3cDucYvYwySweKMgOCr5voMV51D/zKISEt6',
-          'X-Bin-Name': data.title,
-        },
+      const { data: proposalResponse } = await proposalService.create({
+        ...data,
+        categoryOther: data.categoryOther || undefined,
+        budget: unformatCurrency(data.budget),
+        companyId: user.companyId!,
+        userProponentId: user.id,
       })
+      push(`${pages.proposal}/${proposalResponse.id}`)
       toast.show('Proposta cadastrada com sucesso!', 'success')
+      localStorage.removeItem(StorageKeys.Proposal)
     } catch (error) {
       toast.show('Não foi possível cadastrar a proposta. Tente novamente mais tarde.', 'error')
       console.error(error)
@@ -161,17 +173,17 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                   Categoria da Proposta
                 </Typography>
                 <Typography mb={4} textAlign="center">
-                  Selecione a categoria de proposta/problema que melhor descreve o que deseja-se resolver.
+                  Selecione a categoria de proposta que melhor descreve o que deseja-se resolver.
                 </Typography>
                 <Controller
-                  name="proposalCategory"
+                  name="category"
                   control={control}
                   render={({ field: { onChange, ref, ...rest } }) => (
                     <CardsSelect
                       options={proposalCategoryOptions}
                       onChange={value => onChange(value)}
-                      helperText={errors.proposalCategory?.message}
-                      error={!!errors.proposalCategory}
+                      helperText={errors.category?.message}
+                      error={!!errors.category}
                       carouselRef={ref}
                       {...rest}
                     />
@@ -188,9 +200,9 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                         </InputAdornment>
                       ),
                     }}
-                    {...register('proposalCategoryOther')}
-                    helperText={errors.proposalCategoryOther?.message}
-                    error={!!errors.proposalCategoryOther}
+                    {...register('categoryOther')}
+                    helperText={errors.categoryOther?.message}
+                    error={!!errors.categoryOther}
                     onKeyDown={handleEnterKey}
                     size="small"
                     fullWidth
@@ -207,15 +219,15 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                 </Typography>
 
                 <Controller
-                  name="proposalType"
+                  name="types"
                   control={control}
                   render={({ field: { onChange, ref, ...rest } }) => (
                     <CardsSelect
                       id="proposal-type"
                       options={proposalTypeOptions}
                       onChange={value => onChange(value)}
-                      helperText={errors.proposalType?.message}
-                      error={!!errors.proposalType}
+                      helperText={errors.types?.message}
+                      error={!!errors.types}
                       carouselRef={ref}
                       {...rest}
                       multiple
@@ -225,8 +237,8 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
 
                 <Collapse
                   in={
-                    watchedProposalType?.includes(ProposalType.research) ||
-                    watchedProposalType?.includes(ProposalType.buyOrSell)
+                    watchedProposalTypes?.includes(ProposalType.research) ||
+                    watchedProposalTypes?.includes(ProposalType.buyOrSell)
                   }
                   sx={{ marginTop: 2 }}
                 >
@@ -236,7 +248,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                     render={({ field: { onChange, ...rest } }) => (
                       <MaskedTextField
                         label={
-                          watchedProposalType?.includes(ProposalType.buyOrSell)
+                          watchedProposalTypes?.includes(ProposalType.buyOrSell)
                             ? 'Quanto você está disposto a pagar ou receber pela sua proposta?'
                             : 'Quanto você está disposto a investir?'
                         }
@@ -269,10 +281,11 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
 
               <AnimatedStep previousStep={previousStep}>
                 <Typography variant="h2" mb={1} textAlign="center">
-                  Descrição do projeto
+                  Descrição do projeto <Typography variant="caption">(opcional)</Typography>
                 </Typography>
                 <Typography mb={4} textAlign="center">
-                  A descrição do projeto ajudará as empresas a melhor entender o contexto do problema.
+                  A descrição do projeto ajudará as empresas a melhor entender o contexto o qual a proposta está
+                  inserida.
                 </Typography>
                 <TextField
                   placeholder="Descreva o projeto"
@@ -294,26 +307,26 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                   Descrição da proposta
                 </Typography>
                 <Typography mb={4} textAlign="center">
-                  A objetivo da descrição da proposta é explicar o problema que deseja-se resolver. Forneça o máximo de
-                  detalhes possível, porém de forma objetiva.
+                  A objetivo da descrição da proposta é explicar o que deseja-se resolver. Forneça o máximo de detalhes
+                  possível, porém de forma objetiva.
                 </Typography>
 
                 <TextField
                   label="Descreva de maneira detalhada o que deseja-se resolver."
                   variant="standard"
                   placeholder="Descreva o problema"
-                  {...register('proposalDescription')}
+                  {...register('description')}
                   inputProps={{ maxLength: maxLengths.proposalDescription }}
                   helperText={
-                    errors.proposalDescription?.message ||
-                    `${watch('proposalDescription')?.length || 0}/${maxLengths.proposalDescription}`
+                    errors.description?.message ||
+                    `${watch('description')?.length || 0}/${maxLengths.proposalDescription}`
                   }
-                  error={!!errors.proposalDescription}
+                  error={!!errors.description}
                   multiline
                   fullWidth
                 />
 
-                <Collapse in={!!suggestions?.proposal?.length}>
+                <Collapse in={!!suggestions.proposal}>
                   <Box mt={4} pt={4} px={4} pb={2} borderRadius={5} bgcolor="#faf0ea">
                     <Typography variant="h3" mb={1}>
                       Sugestões de melhorias para descrição da sua proposta geradas por uma Inteligência Artificial
@@ -323,13 +336,23 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                       &apos;Próximo&apos; para prosseguir.
                     </Typography>
 
-                    <ul aria-label="Lista de sugestões de melhorias para descrição da sua proposta">
-                      {suggestions?.proposal?.map((item, index) => (
-                        <li key={index}>
-                          <Typography>{item}</Typography>
-                        </li>
-                      ))}
-                    </ul>
+                    <ol aria-label="Lista de sugestões de melhorias para descrição da sua proposta">
+                      {suggestions?.proposal
+                        ?.split('\n')
+                        .map(item => {
+                          const itemTrimmed = item.trim()
+                          if (itemTrimmed.startsWith('- ')) return itemTrimmed.slice(2)
+                          return itemTrimmed
+                        })
+                        .map(
+                          (item, index) =>
+                            !!item && (
+                              <li key={index}>
+                                <Typography>{item}</Typography>
+                              </li>
+                            )
+                        )}
+                    </ol>
 
                     <Stack direction="row" alignItems="center" justifyContent="flex-end" mt={3}>
                       <Tooltip title="Gerar novas sugestões">
@@ -337,9 +360,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                           onClick={() => {
                             handleOpenConfirmDialog({
                               title: 'Gerar novas sugestões',
-                              // TODO: Implements the request IA limit
-                              message:
-                                'Gerar sugestões com a IA tem um custo para nós, por isso limitamos a 3 usos por dia. Este será o uso 2/3.',
+                              message: 'Deseja gerar novas sugestões?',
                               confirmButton: {
                                 onClick: getAllSuggestions,
                               },
@@ -443,7 +464,8 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                         <li key={keyword}>
                           <Chip
                             label={keyword}
-                            onClick={() => setValue('keywords', [...getValues('keywords'), keyword])}
+                            onClick={() => setValue('keywords', [...watchedProposalKeywords, keyword])}
+                            disabled={watchedProposalKeywords.includes(keyword)}
                           />
                         </li>
                       ))}
@@ -476,9 +498,38 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
               </AnimatedStep>
 
               <AnimatedStep previousStep={previousStep}>
-                <Typography variant="h2" mb={4} textAlign="center">
-                  Níveis de Maturidade (TRL)
-                </Typography>
+                <Stack mb={4} direction="row" alignItems="center" justifyContent="center" spacing={0.5}>
+                  <Typography variant="h2" textAlign="center">
+                    Níveis de Maturidade (TRL)
+                  </Typography>
+
+                  <IconButton onClick={event => setTrlHelpButtonAnchorElement(event.currentTarget)}>
+                    <InfoIcon fontSize="small" />
+                  </IconButton>
+                  <Popover
+                    id={trlHelpPopoverId}
+                    open={!!trlHelpButtonAnchorElement}
+                    anchorEl={trlHelpButtonAnchorElement}
+                    onClose={() => setTrlHelpButtonAnchorElement(undefined)}
+                    PaperProps={{
+                      sx: {
+                        maxWidth: 300,
+                        padding: 2,
+                      },
+                    }}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                  >
+                    <Typography variant="body2">
+                      Para melhor entendimento sobre os níveis de maturidade, clique abaixo:
+                    </Typography>
+                    <Link href={pages.trls} variant="body2" target="_blank" rel="noopener noreferrer">
+                      Ler mais
+                    </Link>
+                  </Popover>
+                </Stack>
 
                 <FormLabel htmlFor="trl" sx={{ mt: 3 }}>
                   Qual o nível de maturidade da sua proposta?
@@ -684,11 +735,11 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
 
 export default ProposalRegister
 
-// export const getServerSideProps: GetServerSideProps = withAuth(async context => ({
-//   props: {
-//     user: context.session.user,
-//   },
-// }))
+export const getServerSideProps = withAuth(async context => ({
+  props: {
+    user: context.session.user,
+  },
+}))
 
 const maxLengths = {
   projectDescription: 1000,
