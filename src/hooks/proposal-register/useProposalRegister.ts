@@ -1,12 +1,15 @@
-import { useCallback, useState } from 'react'
-import { UseFormGetValues } from 'react-hook-form'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { UseFormGetValues, UseFormReset } from 'react-hook-form'
 
-import { useLoadingBackdrop } from 'src/contexts/loading-backdrop'
+import { StorageKeys } from 'src/models/enums'
+import { SuggestionsKeys } from 'src/services/proposal-register/models'
+
 import { formatString } from 'src/helpers/formatters'
 import { toast } from 'src/helpers/shared'
 import { proposalRegisterService } from 'src/services/proposal-register'
-import { SuggestionsKeys } from 'src/services/proposal-register/models'
 import { ProposalSchema } from 'src/validations/proposal-register'
+
+import { useConfirmDialog, useLoadingBackdrop } from 'src/contexts'
 
 type PartialRecord<K extends keyof any, T> = Partial<Record<K, T>>
 
@@ -15,32 +18,54 @@ type Feedback = 'good' | 'bad'
 type Feedbacks = PartialRecord<SuggestionsKeys, Feedback>
 
 type Suggestions = {
-  [K in SuggestionsKeys]?: K extends 'trl' ? string : string[]
+  [K in SuggestionsKeys]?: K extends 'trl' | 'proposal' ? string : string[]
 }
 
 const USER_ID = Math.floor(100_000 + Math.random() * 900_000)
 
-export const useProposalRegister = (getValues: UseFormGetValues<ProposalSchema>) => {
+export const useProposalRegister = (
+  getValues: UseFormGetValues<ProposalSchema>,
+  reset: UseFormReset<ProposalSchema>
+) => {
+  const { handleOpenConfirmDialog } = useConfirmDialog()
+  const { toggleLoading, hideLoading } = useLoadingBackdrop()
+
   const [suggestions, setSuggestions] = useState<Suggestions>({
-    proposal: [],
+    proposal: '',
     trl: '',
     keywords: [],
   })
-
   const [feedbacks, setFeedbacks] = useState<Feedbacks>()
 
-  const { toggleLoading } = useLoadingBackdrop()
+  const askedKeepProposalRef = useRef(false)
+
+  useEffect(() => {
+    const getStoredProposal = () => {
+      const storedProposal = localStorage.getItem(StorageKeys.Proposal)
+      if (storedProposal) {
+        handleOpenConfirmDialog({
+          title: 'Você possui uma proposta salva',
+          message: 'Deseja continuar o cadastro de onde parou?',
+          confirmButton: {
+            children: 'Sim',
+            onClick: () => reset(JSON.parse(storedProposal)),
+          },
+          cancelButton: {
+            children: 'Não',
+            onClick: () => {
+              localStorage.removeItem(StorageKeys.Proposal)
+            },
+          },
+          cannotCloseAtClickOutside: true,
+        })
+        askedKeepProposalRef.current = true
+      }
+    }
+
+    if (!askedKeepProposalRef.current) getStoredProposal()
+  }, [handleOpenConfirmDialog, reset])
 
   const getAllSuggestions = useCallback(async () => {
-    const splitProposal = (suggestion?: string) =>
-      suggestion
-        ?.split('\n')
-        .filter(item => item !== '')
-        .map(item => {
-          const itemTrimmed = item.trim()
-          if (itemTrimmed.startsWith('- ')) return itemTrimmed.slice(2)
-          return itemTrimmed
-        })
     const splitKeywords = (suggestion?: string) =>
       suggestion
         ?.replaceAll('.', '')
@@ -57,8 +82,11 @@ export const useProposalRegister = (getValues: UseFormGetValues<ProposalSchema>)
         projectDescription: getValues('projectDescription'),
       })) {
         if (suggestion.key === 'proposal') {
-          setSuggestions(prevSuggestions => ({ ...prevSuggestions, proposal: splitProposal(suggestion.data) }))
-          toggleLoading()
+          setSuggestions(prevSuggestions => ({
+            ...prevSuggestions,
+            proposal: prevSuggestions.proposal + suggestion.data,
+          }))
+          hideLoading()
         }
         if (suggestion.key === 'trl') setSuggestions(prevSuggestions => ({ ...prevSuggestions, trl: suggestion.data }))
         if (suggestion.key === 'keywords')
@@ -70,13 +98,13 @@ export const useProposalRegister = (getValues: UseFormGetValues<ProposalSchema>)
       toggleLoading()
       throw error
     }
-  }, [getValues, toggleLoading])
+  }, [getValues, hideLoading, toggleLoading])
 
   const getCanGoNextStepCustomCheck = useCallback(
     async (currentStep: number) => {
       const customChecks = {
         5: async () => {
-          if (!!suggestions?.proposal?.length) return true
+          if (!!suggestions.proposal) return true
           try {
             await getAllSuggestions()
             return false
@@ -90,7 +118,7 @@ export const useProposalRegister = (getValues: UseFormGetValues<ProposalSchema>)
       if (!customCheck) return true
       return customChecks[currentStep as keyof typeof customChecks]()
     },
-    [getAllSuggestions, suggestions?.proposal?.length]
+    [getAllSuggestions, suggestions?.proposal]
   )
 
   const handleSuggestionFeedback = useCallback((suggestion: SuggestionsKeys, feedback: Feedback) => {
