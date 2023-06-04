@@ -30,6 +30,32 @@ export const sendMessages = async (body: SendMessagesBody) => {
   }
 }
 
+export async function* sendMessagesStream(body: SendMessagesBody) {
+  const response = await fetch('/api/open-ai/chat-completion/stream', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
+  const data = response.body
+
+  if (!data) return
+
+  const reader = data.getReader()
+  const decoder = new TextDecoder()
+  let done = false
+
+  while (!done) {
+    const { value, done: doneReading } = await reader.read()
+    done = doneReading
+    const chunkValue = decoder.decode(value)
+    console.log('chunkValue', chunkValue)
+    yield chunkValue
+  }
+}
+
 export const getSuggestionPrompt = (suggestion: SuggestionsKeys, input: string) => {
   if (suggestion === 'proposal') return `${suggestions.proposal}\n${input}`
   return suggestions[suggestion]
