@@ -1,7 +1,7 @@
-import { formatCNPJ } from 'src/helpers/formatters/cnpj'
-import { ICTUser } from 'src/models/types'
+import { formatCNPJ, formatString } from 'src/helpers/formatters'
+import { ICT } from 'src/models/types'
 
-export const makeICTData = (ict: ICTUser) => [
+export const makeICTData = (ict: ICT) => [
   {
     label: 'CNAE',
     value: ict.cnpj,
@@ -12,6 +12,6 @@ export const makeICTData = (ict: ICTUser) => [
   },
   {
     label: 'Local',
-    value: `${ict.address.city} - ${ict.address.uf}`,
+    value: `${formatString.capitalizeFirstLetter(ict.address.city)} - ${ict.address.uf}`,
   },
 ]

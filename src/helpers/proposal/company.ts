@@ -1,7 +1,8 @@
 import { companySizes } from 'src/data/company'
-import { OldCompany } from 'src/models/types'
+import { Company } from 'src/models/types'
+import { formatString } from '../formatters'
 
-export const makeCompanyData = (company: OldCompany) => [
+export const makeCompanyData = (company: Company) => [
   {
     label: 'CNAE',
     value: company.cnae?.label,
@@ -13,7 +14,7 @@ export const makeCompanyData = (company: OldCompany) => [
   },
   {
     label: 'Local',
-    value: `${company.address.city} - ${company.address.uf}`,
+    value: `${formatString.capitalizeFirstLetter(company.address.city)} - ${company.address.uf}`,
   },
   {
     label: 'Capital Social',
