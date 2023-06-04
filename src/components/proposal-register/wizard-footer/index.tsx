@@ -1,9 +1,11 @@
-import { MutableRefObject, useEffect } from 'react'
+import { MutableRefObject, useEffect, useState } from 'react'
 import { Box, Button, Fade, Typography } from '@mui/material'
 import { useWizard } from 'react-use-wizard'
 import { useFormContext } from 'react-hook-form'
+
 import { Proposal } from 'src/models/types'
 import { Wrapper } from './styles'
+import { StorageKeys } from 'src/models/enums'
 
 type WizardStepsProps = {
   nextButtonRef: MutableRefObject<HTMLButtonElement | null>
@@ -25,13 +27,13 @@ const steps: (ProposalKey | ProposalKey[])[] = [
 export const WizardFooter = (props: WizardStepsProps) => {
   const { nextButtonRef, checkCanGoNextCustom } = props
   const { nextStep, previousStep, isFirstStep, isLastStep, activeStep, stepCount } = useWizard()
-  const {
-    trigger,
-    clearErrors,
-    formState: { isSubmitSuccessful },
-  } = useFormContext<Proposal>()
+  const { trigger, clearErrors, getValues } = useFormContext<Proposal>()
+
+  const [buttonsAreDisabled, setButtonsAreDisabled] = useState(false)
 
   useEffect(() => {
+    setButtonsAreDisabled(true)
+    setTimeout(() => setButtonsAreDisabled(false), 1000)
     setTimeout(() => clearErrors(), 0)
   }, [clearErrors, activeStep])
 
@@ -43,6 +45,7 @@ export const WizardFooter = (props: WizardStepsProps) => {
       return await trigger(item)
     })()
     if (!canGoNext || (checkCanGoNextCustom && !(await checkCanGoNextCustom(activeStep + 1)))) return
+    localStorage.setItem(StorageKeys.Proposal, JSON.stringify(getValues()))
     nextStep()
   }
 
@@ -52,8 +55,9 @@ export const WizardFooter = (props: WizardStepsProps) => {
         <Typography component="span">{`${activeStep + 1} de ${stepCount}`}</Typography>
       </Box>
       <Box>
+        <button type="submit" style={{ opacity: 0, all: 'unset' }} disabled={buttonsAreDisabled} />
         <Fade in={!isFirstStep}>
-          <Button onClick={previousStep} disabled={isSubmitSuccessful}>
+          <Button onClick={previousStep} disabled={buttonsAreDisabled}>
             Voltar
           </Button>
         </Fade>
@@ -61,7 +65,7 @@ export const WizardFooter = (props: WizardStepsProps) => {
           type={!isLastStep ? 'button' : 'submit'}
           ref={nextButtonRef}
           onClick={handleNext}
-          disabled={isSubmitSuccessful}
+          disabled={buttonsAreDisabled}
         >
           {!isLastStep ? 'Próximo' : 'Cadastrar'}
         </Button>
