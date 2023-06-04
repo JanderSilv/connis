@@ -30,6 +30,7 @@ export const ActionsHeader = (props: ActionsHeaderProps) => {
         PaperProps={{
           sx: {
             paddingRight: 2,
+            maxWidth: 650,
           },
         }}
         anchorOrigin={{
