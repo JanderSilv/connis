@@ -8,6 +8,7 @@ export const pages = {
   negotiation: '/negociacao',
   privacyPolicy: '/politica-de-privacidade',
   proposal: '/proposta',
+  proposalRegistration: '/cadastro-proposta',
   recoverPassword: '/recuperar-senha',
   signUp: '/cadastro',
   termsOfUse: '/termos-de-uso',
