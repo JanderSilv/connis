@@ -19,8 +19,9 @@ type Props = {
   offers: Offer[]
 }
 
-export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
-  const { budget, trl, goalTRL, proposal, type } = currentOffer
+export const OfferDataSectionTwo = ({ currentOffer, offers, proposal }: Props) => {
+  const { suggestion, proposalType } = currentOffer
+  const { trl, goalTrl, budget } = suggestion
 
   const { userIsTheOfferOwner } = useOfferSession(currentOffer)
 
@@ -31,16 +32,17 @@ export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
       <Box flex={1}>
         <Title>TRLs</Title>
 
-        <Typography>{makeTRLText(currentOffer, userIsTheOfferOwner)}</Typography>
-
-        <Stack mt={3} direction="row" alignItems="center" gap={1}>
-          <TRLData trl={trl} />
-          <DoubleArrowIcon fontSize="large" color="primary" />
-          <TRLData trl={goalTRL} />
-        </Stack>
+        <Typography>{makeTRLText({ offer: currentOffer, offers, proposal }, userIsTheOfferOwner)}</Typography>
+        {!!trl && !!goalTrl && (
+          <Stack mt={3} direction="row" alignItems="center" gap={1}>
+            <TRLData trl={trl} />
+            <DoubleArrowIcon fontSize="large" color="primary" />
+            <TRLData trl={goalTrl} />
+          </Stack>
+        )}
       </Box>
 
-      {[ProposalType.buyOrSell, ProposalType.research].includes(type) && (
+      {[ProposalType.buyOrSell, ProposalType.research].includes(proposalType) && (
         <>
           <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'flex' } }} />
 
@@ -48,7 +50,7 @@ export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
             {!!budget && (
               <Box>
                 <Title>
-                  {proposal.type?.includes(ProposalType.buyOrSell)
+                  {proposal.types?.includes(ProposalType.buyOrSell)
                     ? 'Valor Solicitado'
                     : 'Valor Disponível para Investir'}
                 </Title>
@@ -61,10 +63,14 @@ export const OfferDataSectionTwo = ({ currentOffer, offers }: Props) => {
 
             <DataContainer>
               <Title>Tipo da Proposta</Title>
-              <Typography>{makeProposalTypeText(type, userIsTheOfferOwner)}</Typography>
+              <Typography>{makeProposalTypeText(proposalType, userIsTheOfferOwner)}</Typography>
               <Stack mt={3} direction="row" alignItems="center" gap={1}>
-                {proposalTypeOptions.map(proposalType => (
-                  <ProposalTypeData key={proposalType.id} {...proposalType} selected={proposalType.id === type} />
+                {proposalTypeOptions.map(proposalTypeOption => (
+                  <ProposalTypeData
+                    key={proposalTypeOption.id}
+                    {...proposalTypeOption}
+                    selected={proposalTypeOption.id === proposalType}
+                  />
                 ))}
               </Stack>
             </DataContainer>
