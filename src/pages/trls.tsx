@@ -4,6 +4,7 @@ import { Box, Container, Typography } from '@mui/material'
 import { trlPage } from 'src/data/proposal'
 
 import { Layout } from 'src/layouts/auth'
+import { VideoWrapper } from 'src/styles/shared'
 
 const TRLSPage: NextPage = () => {
   return (
@@ -33,12 +34,16 @@ const TRLSPage: NextPage = () => {
           Métrica TRL (Technology Readiness Level)
         </Typography>
 
-        <Typography mb={2}>
-          Um número TRL é alcançado uma vez que a descrição no diagrama tenha sido alcançada. Por exemplo, alcançar a
-          TRL 4 com sucesso (ambiente de laboratório) não move a tecnologia para TRL 5. TRL 5 é alcançado quando há
-          validação da tecnologia em um ambiente relevante. A tecnologia permanece TRL 4 até que a validação ambiental
-          relevante seja concluída.
-        </Typography>
+        <VideoWrapper>
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/jfAJgkaRgj4"
+            title="YouTube video player"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </VideoWrapper>
 
         <Typography component="h2" variant="h3">
           Níveis:
@@ -54,6 +59,14 @@ const TRLSPage: NextPage = () => {
             </li>
           ))}
         </Box>
+
+        <Typography>
+          <strong>Observação: </strong>
+          Um número TRL é alcançado uma vez que a descrição no diagrama tenha sido alcançada. Por exemplo, alcançar a
+          TRL 4 com sucesso (ambiente de laboratório) não move a tecnologia para TRL 5. TRL 5 é alcançado quando há
+          validação da tecnologia em um ambiente relevante. A tecnologia permanece TRL 4 até que a validação ambiental
+          relevante seja concluída.
+        </Typography>
       </Container>
     </Layout>
   )
