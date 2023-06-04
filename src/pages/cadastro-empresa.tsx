@@ -18,6 +18,7 @@ import { companySignUpValidationSchema, CompanySignUpSchema } from 'src/validati
 import { companyService } from 'src/services'
 import { slugify } from 'src/helpers'
 import { withSession } from 'src/helpers/auth'
+import { toastHttpError } from 'src/helpers/shared'
 
 import { MaskedTextField } from 'src/components/shared'
 import { Title } from 'src/components/company-sign-up'
@@ -74,8 +75,7 @@ const CompanySignUp: NextPage<Props> = ({ user }) => {
       showToast('Cadastro realizado com sucesso!', 'success')
       replace(pages.home)
     } catch (error) {
-      console.error(error)
-      showToast('Não foi possível fazer o cadastro. Tente novamente mais tarde.', 'error')
+      toastHttpError(error, 'Não foi possível fazer o cadastro. Tente novamente mais tarde.')
     } finally {
       toggleLoading()
     }

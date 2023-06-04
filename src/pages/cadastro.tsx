@@ -21,6 +21,7 @@ import { pages } from 'src/constants'
 import { useLoadingBackdrop } from 'src/contexts'
 import { debounceRegister } from 'src/helpers'
 import { withPublic } from 'src/helpers/auth'
+import { toastHttpError } from 'src/helpers/shared'
 import { useToast } from 'src/hooks/useToast'
 import { useStep } from 'src/hooks/sign-up'
 import { UserSignUpSchema, userSignUpValidationSchema } from 'src/validations/user-sign-up'
@@ -78,8 +79,7 @@ const UserSignUp: NextPage = () => {
       })
       replace(`${pages.confirmCode}?userId=${data.id}`)
     } catch (error) {
-      console.error(error)
-      showToast('Não foi possível fazer o cadastro. Tente novamente mais tarde.', 'error')
+      toastHttpError(error, 'Não foi possível fazer o cadastro. Tente novamente mais tarde.')
     } finally {
       toggleLoading()
     }
