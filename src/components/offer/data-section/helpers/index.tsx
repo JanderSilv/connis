@@ -2,16 +2,22 @@ import { proposalTypesTexts } from 'src/data/proposal'
 import { ProposalType } from 'src/models/enums'
 import { Offer, Proposal } from 'src/models/types'
 
-const makeTRLText = (offer: Offer, isTheOfferOwner: boolean) => {
-  const { proposal, trl, goalTRL } = offer
+type NegotiationData = {
+  proposal: Proposal
+  offer: Offer
+  offers: Offer[]
+}
+
+const makeTRLText = (data: NegotiationData, isTheOfferOwner: boolean) => {
+  const { offer, offers, proposal } = data
+  const { goalTrl, trl } = offer.suggestion
 
   if (!proposal) return null
 
   const conditionals = {
-    trl: !trl || proposal.trl === trl,
-    goalTRL: !goalTRL || proposal.goalTrl === goalTRL,
+    trl: !trl || getLastValue('trl', offers, proposal) === trl,
+    goalTRL: !goalTrl || getLastValue('goalTrl', offers, proposal) === goalTrl,
   }
-
   let trlText: React.ReactNode = ''
   let goalTRLText: React.ReactNode = ''
 
@@ -28,7 +34,7 @@ const makeTRLText = (offer: Offer, isTheOfferOwner: boolean) => {
     else
       goalTRLText = (
         <>
-          e pode auxiliar o projeto a atingir a <strong>TRL {goalTRL}</strong>
+          e pode auxiliar o projeto a atingir a <strong>TRL {goalTrl}</strong>
         </>
       )
   } else {
@@ -44,7 +50,7 @@ const makeTRLText = (offer: Offer, isTheOfferOwner: boolean) => {
     else
       goalTRLText = (
         <>
-          e espera auxílio para atingir a <strong>TRL {goalTRL}</strong>
+          e espera auxílio para atingir a <strong>TRL {goalTrl}</strong>
         </>
       )
   }
@@ -73,20 +79,31 @@ const makeProposalBudgetText = (
   isTheOfferOwner: boolean
 ) => {
   const previousOffer = offersHistory.at(-2)
+
   if (isTheOfferOwner) {
     if (previousOffer) {
-      if (previousOffer.budget === currentOffer.budget) return 'Você concordou com o valor definido pela empresa'
+      if (previousOffer?.suggestion.budget === currentOffer.suggestion.budget)
+        return 'Você concordou com o valor definido pela empresa'
       else return `Você solicitou um valor de`
     } else {
-      if (proposal.budget === currentOffer.budget) return 'Você concordou com o valor definido pela empresa'
+      if (proposal.budget === currentOffer.suggestion.budget) return 'Você concordou com o valor definido pela empresa'
       else return `Você solicitou um valor de`
     }
   } else {
     if (previousOffer) {
-      if (previousOffer.budget === currentOffer.budget) return 'A empresa concorda com o valor definido'
+      if (previousOffer?.suggestion.budget === currentOffer.suggestion.budget)
+        return 'A empresa concorda com o valor definido'
       else return `A empresa propôs um valor de`
     }
   }
+}
+
+type OfferProperty = keyof Offer['suggestion']
+
+const getLastValue = (property: OfferProperty, offers: Offer[], proposal: Proposal) => {
+  const offer = offers.reverse().find(offer => !!offer.suggestion[property])
+  if (offer) return offer.suggestion[property]
+  return proposal[property]
 }
 
 export { makeTRLText, makeMessageTitle, makeProposalTypeText, makeProposalBudgetText }
