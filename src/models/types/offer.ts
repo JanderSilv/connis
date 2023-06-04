@@ -1,20 +1,22 @@
-import { OfferCategory, OfferStatus, ProposalType, TRL } from '../enums'
-import { Proposal } from './proposal'
-import { CompanyUser, ICTUser } from './user'
+import { OfferStatus } from '../enums'
+import { Company } from './company'
+import { User } from './user'
 
 export type Offer = {
   id: string
-  proposalId: string
+  description: string
+  userProponent: User
+  company: Company
+  offerStatus: OfferStatus
+  proposalType: number
+  suggestion: ProposalChangeSuggestion
   createdAt: string
   updatedAt?: string
-  user: CompanyUser | ICTUser
-  description: string
-  category: OfferCategory
-  status: OfferStatus
-  type: ProposalType
   viewed: boolean
+}
+
+export type ProposalChangeSuggestion = {
+  trl?: number
+  goalTrl?: number
   budget?: number
-  trl: TRL
-  goalTRL: TRL
-  proposal?: Proposal
 }

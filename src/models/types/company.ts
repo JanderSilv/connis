@@ -1,12 +1,11 @@
 import { CompanySize } from '../enums/company'
-import { AnalystUser } from './user'
 
-type CNAE = {
+export type CNAE = {
   id: string
   label: string
 }
 
-type CompanyAddress = {
+export type CompanyAddress = {
   id: string
   city: string
   cep: string
@@ -17,26 +16,18 @@ type CompanyAddress = {
   country: string
 }
 
-export type OldCompany = {
-  type: 'company'
-  cnpj: string
-  phone: string
-  slug: string
-  address: CompanyAddress
-  cnae: CNAE | null
-  socialCapital: number
-  size: CompanySize
-  analysts: AnalystUser[]
-}
-
 export type Company = {
   id: string
-  type: 'company'
+  name: string
+  createdAt: string
+  updatedAt?: string
+  email: string
   cnpj: string
+  image?: string | null
   phone: string
   slug: string
   address: CompanyAddress
-  cnaeId: string
+  cnae: CNAE
   socialCapital: number
   size: CompanySize
   analystsIds: string[]

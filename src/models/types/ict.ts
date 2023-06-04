@@ -1,5 +1,5 @@
 import { Image } from './common'
-import { AnalystUser } from './user'
+import { User } from './user'
 
 export type ICTProject = {
   id: string
@@ -26,15 +26,18 @@ export type ICTAddress = {
 }
 
 export type ICT = {
-  type: 'ict'
+  id: string
   name: string
+  createdAt: string
+  updatedAt?: string
   slug: string
   cnpj: string
   email: string
+  image?: string
   phone: string
   website?: string
   projects: ICTProject[]
-  labs: ICTLab[]
-  analysts: AnalystUser[]
+  laboratories: ICTLab[]
+  analysts: User[]
   address: ICTAddress
 }
