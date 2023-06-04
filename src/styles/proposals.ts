@@ -22,7 +22,7 @@ export const Wrapper = styled(Box)(({ theme }) => ({
 
   [theme.breakpoints.up('md')]: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
   },
   [theme.breakpoints.up('lg')]: {
     padding: theme.spacing(3),

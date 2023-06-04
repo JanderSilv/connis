@@ -74,8 +74,9 @@ export const KeyData = styled(Typography)(({ theme }) => ({
 
 export const Tabs = styled(MuiTabs)(({ theme }) => ({
   display: 'none',
+  paddingInline: theme.spacing(4),
 
-  [theme.breakpoints.up('sm')]: {
+  [theme.breakpoints.up('md')]: {
     marginTop: theme.spacing(2),
     display: 'flex',
 
