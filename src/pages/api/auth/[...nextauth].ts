@@ -1,10 +1,13 @@
-import NextAuth, { DefaultSession, NextAuthOptions } from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import AzureADProvider from 'next-auth/providers/azure-ad'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
+import { HttpResponseError } from 'src/models/types'
+
 import { pages } from 'src/constants'
-import { fakeData } from 'src/data/fake'
+import { authStorage } from 'src/helpers/auth'
+import { api, userService } from 'src/services'
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -23,37 +26,87 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       authorize: async credentials => {
-        // TODO: remove this fake data, and use real data from database
-        console.log({ credentials })
-        const user = fakeData.userCompany
+        try {
+          if (!credentials) return null
+          const { data: loginResponse } = await userService.login(credentials.email, credentials.password)
+          api.defaults.headers.common.Authorization = `Bearer ${loginResponse.jwtToken}`
+          authStorage.storeToken(loginResponse.jwtToken)
+          const { data: user } = await userService.getCurrent()
 
-        if (user) return user
-        else return null
-        // Any object returned will be saved in `user` property of the JWT
-        // If you return null then an error will be displayed advising the user to check their details.
-        // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+          if (user)
+            return {
+              ...user,
+              accessToken: loginResponse.jwtToken,
+            }
+          else return null
+        } catch (err) {
+          const error = err as HttpResponseError
+          throw new Error(
+            JSON.stringify({
+              message: error.response?.data?.message || 'Credenciais Inválidas',
+              status: error.response?.status || 404,
+            })
+          )
+        }
       },
     }),
   ],
   secret: process.env.JWT_SECRET,
+  session: {
+    strategy: 'jwt',
+    maxAge: 60 * 60 * 24, // 24 hours
+  },
+  jwt: {
+    maxAge: 60 * 60 * 24, // 24 hours
+  },
   pages: {
     signIn: pages.login,
-    newUser: pages.companySocialSignUp,
+    newUser: pages.signUp,
   },
   callbacks: {
-    session: async ({ session }) => {
-      // TODO: remove this fake data, and use real data from database
-      const { user } = session as DefaultSession
-      return {
-        ...session,
-        user: {
-          ...fakeData.company,
-          type: 'company',
-          image: fakeData.company.image || (user?.image ? user.image : ''),
-          email: fakeData.company.email || (user?.email ? user.email : ''),
-          // cnpj: '',
-        },
+    jwt: async ({ token, user, trigger }) => {
+      if (trigger === 'update') {
+        const { data } = await userService.getCurrent()
+        token.user = {
+          ...data,
+          name: data.name as string,
+          email: data.email as string,
+        }
       }
+
+      if (!user) return token
+
+      token.user = {
+        ...user,
+        name: user.name as string,
+        email: user.email as string,
+      }
+      token.accessToken = user.accessToken
+      return token
+    },
+    session: async ({ token, session }) => {
+      const { user, accessToken } = token
+
+      delete (user as any)['accessToken']
+
+      if (user?.id && accessToken) {
+        session.user = user
+        session.accessToken = accessToken
+        api.defaults.headers.common.Authorization = `Bearer ${accessToken}`
+        return session
+      }
+
+      const storedToken = authStorage.getToken() || ''
+      try {
+        const { data } = await userService.getCurrent()
+        api.defaults.headers.common.Authorization = `Bearer ${storedToken}`
+        session.user = data
+      } catch (error) {
+        session.errorStatus = (error as any).response?.status
+      }
+
+      session.accessToken = storedToken
+      return session
     },
   },
 }
