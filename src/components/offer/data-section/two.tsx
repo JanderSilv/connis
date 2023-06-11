@@ -21,7 +21,6 @@ type Props = {
 
 export const OfferDataSectionTwo = ({ currentOffer, offers, proposal }: Props) => {
   const { suggestion, proposalType } = currentOffer
-  const { trl, goalTrl, budget } = suggestion
 
   const { userIsTheOfferOwner } = useOfferSession(currentOffer)
 
@@ -33,11 +32,11 @@ export const OfferDataSectionTwo = ({ currentOffer, offers, proposal }: Props) =
         <Title>TRLs</Title>
 
         <Typography>{makeTRLText({ offer: currentOffer, offers, proposal }, userIsTheOfferOwner)}</Typography>
-        {!!trl && !!goalTrl && (
+        {!!suggestion?.trl && !!suggestion?.goalTrl && (
           <Stack mt={3} direction="row" alignItems="center" gap={1}>
-            <TRLData trl={trl} />
+            <TRLData trl={suggestion?.trl} />
             <DoubleArrowIcon fontSize="large" color="primary" />
-            <TRLData trl={goalTrl} />
+            <TRLData trl={suggestion?.goalTrl} />
           </Stack>
         )}
       </Box>
@@ -47,7 +46,7 @@ export const OfferDataSectionTwo = ({ currentOffer, offers, proposal }: Props) =
           <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'flex' } }} />
 
           <Box flex={1}>
-            {!!budget && (
+            {!!suggestion?.budget && (
               <Box>
                 <Title>
                   {proposal.types?.includes(ProposalType.buyOrSell)
@@ -55,8 +54,8 @@ export const OfferDataSectionTwo = ({ currentOffer, offers, proposal }: Props) =
                     : 'Valor Disponível para Investir'}
                 </Title>
                 <Typography>
-                  {makeProposalBudgetText(proposal, currentOffer, offers, userIsTheOfferOwner)}{' '}
-                  <span>{formatCurrency(budget)}</span>{' '}
+                  {makeProposalBudgetText({ offer: currentOffer, offers, proposal }, userIsTheOfferOwner)}{' '}
+                  <span>{formatCurrency(suggestion?.budget)}</span>{' '}
                 </Typography>
               </Box>
             )}

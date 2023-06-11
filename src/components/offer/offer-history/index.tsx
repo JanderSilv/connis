@@ -40,9 +40,9 @@ export const OfferHistory = ({ proposal, offers, user }: OfferHistoryProps) => {
     const previousOfferSuggestion = offers[index - 1].suggestion
 
     return (
-      previousOfferSuggestion.budget !== suggestion.budget ||
-      previousOfferSuggestion.trl !== suggestion.trl ||
-      previousOfferSuggestion.goalTrl !== suggestion.goalTrl
+      previousOfferSuggestion?.budget !== suggestion.budget ||
+      previousOfferSuggestion?.trl !== suggestion.trl ||
+      previousOfferSuggestion?.goalTrl !== suggestion.goalTrl
     )
   }
 

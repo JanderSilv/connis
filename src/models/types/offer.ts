@@ -9,7 +9,7 @@ export type Offer = {
   company: Company
   offerStatus: OfferStatus
   proposalType: number
-  suggestion: ProposalChangeSuggestion
+  suggestion?: ProposalChangeSuggestion
   createdAt: string
   updatedAt?: string
   viewed: boolean
