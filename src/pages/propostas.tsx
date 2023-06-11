@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { GetStaticProps, NextPage } from 'next'
-import { Box, Container, Grid, Stack, Typography } from '@mui/material'
+import { AnimatePresence } from 'framer-motion'
+import { Box, Container, Stack, Typography } from '@mui/material'
 
+import { ProposalType } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
 
 import { useIsElementOnScreen } from 'src/hooks'
@@ -9,6 +11,7 @@ import { useProposalsFilters } from 'src/hooks/proposals'
 import { proposalService } from 'src/services/proposal'
 
 import { ProposalCard } from 'src/components/proposal'
+import { MotionGridContainer, MotionGridItem } from 'src/components/motion'
 import { Layout } from 'src/layouts/app'
 
 import { Wrapper } from 'src/styles/proposals'
@@ -19,8 +22,12 @@ type Props = {
 
 const Proposals: NextPage<Props> = props => {
   const { initialProposals } = props
-  const { filteredProposals, ProposalsFilters, isLoadingMore, setSize, size, isReachingEnd } =
-    useProposalsFilters(initialProposals)
+  const { filteredProposals, ProposalsFilters, isLoadingMore, setSize, size, isReachingEnd } = useProposalsFilters(
+    initialProposals,
+    {
+      organization: 'company',
+    }
+  )
 
   const infiniteScrollTextRef = useRef<HTMLParagraphElement>(null)
   const isInfiniteScrollTextVisible = useIsElementOnScreen(infiniteScrollTextRef)
@@ -41,21 +48,23 @@ const Proposals: NextPage<Props> = props => {
         </Box>
 
         <Container component="main" maxWidth="xl">
-          {filteredProposals.length ? (
-            <Grid container spacing={2}>
-              {filteredProposals.map(proposal => (
-                <Grid key={proposal.id} item sm={6} lg={4} xl={3}>
-                  <ProposalCard key={proposal.id} proposal={proposal} layout="card" />
-                </Grid>
-              ))}
-            </Grid>
-          ) : (
-            <Stack alignItems="center" justifyContent="center" height="100%">
-              <Typography variant="body2" color="grey.700" textAlign="center">
-                Nenhuma proposta encontrada 😥
-              </Typography>
-            </Stack>
-          )}
+          <AnimatePresence mode="wait">
+            {filteredProposals.length ? (
+              <MotionGridContainer>
+                {filteredProposals.map(proposal => (
+                  <MotionGridItem key={proposal.id}>
+                    <ProposalCard key={proposal.id} proposal={proposal} layout="card" />
+                  </MotionGridItem>
+                ))}
+              </MotionGridContainer>
+            ) : (
+              <Stack alignItems="center" justifyContent="center" height="100%">
+                <Typography variant="body2" color="grey.700" textAlign="center">
+                  Nenhuma proposta encontrada 😥
+                </Typography>
+              </Stack>
+            )}
+          </AnimatePresence>
 
           {size >= 12 && (
             <Typography ref={infiniteScrollTextRef} textAlign="center">
@@ -76,7 +85,10 @@ export default Proposals
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    const { data: proposals } = await proposalService.getAll()
+    const { data: proposals } = await proposalService.list({
+      pageSize: 12,
+      type: [ProposalType.buyOrSell, ProposalType.donate, ProposalType.exchange],
+    })
     return {
       props: {
         initialProposals: proposals,
