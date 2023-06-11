@@ -1,22 +1,24 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { Box, Container, Grid, useScrollTrigger } from '@mui/material'
+import { AnimatePresence } from 'framer-motion'
+import { Box, Container, useScrollTrigger } from '@mui/material'
 
 import { ICTHomeProps } from 'src/models/types/home'
 
 import { useTab } from 'src/hooks/proposal'
 import { useProposalsFilters } from 'src/hooks/proposals'
+import { useNegotiationsFilters } from 'src/hooks/negotiations'
 
-import { MobileNavigation, ProposalCard } from 'src/components/proposal'
+import { MobileNavigation, NegotiationCard, ProposalCard } from 'src/components/proposal'
 import { ScrollTop, TabPanel } from 'src/components/shared'
+import { MotionGridContainer, MotionGridItem } from 'src/components/motion'
 import { Layout } from 'src/layouts/app'
 
-import { ForwardToInboxIcon, HandshakeIcon, TipsAndUpdatesOutlinedIcon } from 'src/assets/icons'
+import { ForwardToInboxIcon, HandshakeIcon, LibraryBooksIcon, TipsAndUpdatesOutlinedIcon } from 'src/assets/icons'
 import { Title } from 'src/styles/home'
 import { Tab, Tabs } from 'src/styles/proposal'
 import { Wrapper } from 'src/styles/proposals'
 
 export const ICTHome = (props: Omit<ICTHomeProps, 'userType'>) => {
-  const { negotiations, opportunities, requests } = props
+  const { catalog, negotiations, opportunities, requests } = props.data
 
   const scrollTrigger = useScrollTrigger()
 
@@ -33,18 +35,27 @@ export const ICTHome = (props: Omit<ICTHomeProps, 'userType'>) => {
       label: 'Oportunidades',
       icon: TipsAndUpdatesOutlinedIcon,
     },
+    {
+      label: 'Catálogo',
+      icon: LibraryBooksIcon,
+    },
   ])
-  const { ProposalsFilters: NegotiationsProposalsFilters, filteredProposals: negotiationsFilteredProposals } =
-    useProposalsFilters(negotiations)
+  const { filteredNegotiations: negotiationsFilteredProposals } = useNegotiationsFilters(negotiations)
   const { ProposalsFilters: RequestsProposalsFilters, filteredProposals: requestsFilteredProposals } =
-    useProposalsFilters(requests)
-  const { ProposalsFilters: OpportunitiesProposalsFilters, filteredProposals: opportunitiesFilteredProposals } =
-    useProposalsFilters(opportunities)
+    useProposalsFilters(requests, {
+      organization: 'ict',
+    })
+  const { filteredNegotiations: opportunitiesFilteredProposals } = useNegotiationsFilters(opportunities)
+  const { ProposalsFilters: CatalogProposalsFilters, filteredProposals: catalogFilteredProposals } =
+    useProposalsFilters(catalog, {
+      organization: 'company',
+    })
 
   const filters = {
-    0: <NegotiationsProposalsFilters />,
+    0: null,
     1: <RequestsProposalsFilters />,
-    2: <OpportunitiesProposalsFilters />,
+    2: null,
+    3: <CatalogProposalsFilters />,
   }
 
   return (
@@ -65,58 +76,49 @@ export const ICTHome = (props: Omit<ICTHomeProps, 'userType'>) => {
         <Container component="main" maxWidth="xl">
           <AnimatePresence mode="wait">
             <TabPanel key={selectedTab === 0 ? 'negotiations' : 'none'} value={selectedTab} index={0}>
-              <MotionGrid
-                container
-                spacing={2}
-                variants={containerAnimation}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                {negotiationsFilteredProposals.map((proposal, index) => (
-                  <MotionGrid key={index} item sm={6} lg={4} xl={3} variants={itemAnimation}>
-                    <ProposalCard proposal={proposal} layout="card" />
-                  </MotionGrid>
+              <MotionGridContainer>
+                {negotiationsFilteredProposals.map((negotiation, index) => (
+                  <MotionGridItem key={index}>
+                    <NegotiationCard negotiation={negotiation} layout="card" unseenActivities={1} />
+                  </MotionGridItem>
                 ))}
-              </MotionGrid>
+              </MotionGridContainer>
             </TabPanel>
           </AnimatePresence>
 
           <AnimatePresence mode="wait">
             <TabPanel key={selectedTab === 1 ? 'requests' : 'none'} value={selectedTab} index={1}>
-              <MotionGrid
-                container
-                spacing={2}
-                variants={containerAnimation}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
+              <MotionGridContainer>
                 {requestsFilteredProposals.map(proposal => (
-                  <MotionGrid key={proposal.id} item sm={6} lg={4} xl={3} variants={itemAnimation}>
+                  <MotionGridItem key={proposal.id}>
                     <ProposalCard key={proposal.id} proposal={proposal} layout="card" />
-                  </MotionGrid>
+                  </MotionGridItem>
                 ))}
-              </MotionGrid>
+              </MotionGridContainer>
             </TabPanel>
           </AnimatePresence>
 
           <AnimatePresence mode="wait">
             <TabPanel key={selectedTab === 2 ? 'opportunities' : 'none'} value={selectedTab} index={2}>
-              <MotionGrid
-                container
-                spacing={2}
-                variants={containerAnimation}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                {opportunitiesFilteredProposals.map(proposal => (
-                  <MotionGrid key={proposal.id} item sm={6} lg={4} xl={3} variants={itemAnimation}>
-                    <ProposalCard key={proposal.id} proposal={proposal} layout="card" />
-                  </MotionGrid>
+              <MotionGridContainer>
+                {opportunitiesFilteredProposals.map(negotiation => (
+                  <MotionGridItem key={negotiation.id}>
+                    <NegotiationCard negotiation={negotiation} layout="card" unseenActivities={1} />
+                  </MotionGridItem>
                 ))}
-              </MotionGrid>
+              </MotionGridContainer>
+            </TabPanel>
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <TabPanel key={selectedTab === 3 ? 'catalog' : 'none'} value={selectedTab} index={3}>
+              <MotionGridContainer>
+                {catalogFilteredProposals.map(proposal => (
+                  <MotionGridItem key={proposal.id}>
+                    <ProposalCard key={proposal.id} proposal={proposal} layout="card" />
+                  </MotionGridItem>
+                ))}
+              </MotionGridContainer>
             </TabPanel>
           </AnimatePresence>
         </Container>
@@ -132,28 +134,4 @@ export const ICTHome = (props: Omit<ICTHomeProps, 'userType'>) => {
       <ScrollTop scrollTrigger={scrollTrigger} hasMobileNavigation />
     </Layout>
   )
-}
-
-const MotionGrid = motion(Grid)
-
-const containerAnimation = {
-  hidden: { opacity: 1, scale: 0 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      delayChildren: 0.3,
-      staggerChildren: 0.2,
-    },
-  },
-  exit: {
-    opacity: 0,
-  },
-}
-const itemAnimation = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-  },
 }
