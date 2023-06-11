@@ -4,7 +4,13 @@ const nextConfig = {
   swcMinify: true,
   images: {
     // TODO: removes test domains
-    domains: ['lh3.googleusercontent.com', 'picsum.photos', 'embrapii.org.br', 'www.senaicimatec.com.br'],
+    domains: [
+      'lh3.googleusercontent.com',
+      'picsum.photos',
+      'embrapii.org.br',
+      'www.senaicimatec.com.br',
+      'connisfilestorage.blob.core.windows.net',
+    ],
   },
 }
 
