@@ -8,6 +8,11 @@ type LoginResponse = {
   jwtToken: string
 }
 
+export type ResetPasswordInput = {
+  token: string
+  newPassword: string
+}
+
 const baseUrl = '/user'
 
 const changeUserImage = (userId: string, url: string) =>
@@ -43,6 +48,11 @@ const login = async (email: string, password: string) =>
 
 const getCurrentUser = () => api.get<User>(`${baseUrl}/current`)
 
+const requestPasswordReset = (email: string) => api.get(`${baseUrl}/${email}/password-reset`)
+
+const resetPassword = (userId: string, data: ResetPasswordInput) =>
+  api.patch(`${baseUrl}/${userId}/password-reset`, data)
+
 export const userService = {
   baseUrl,
   changeImage: changeUserImage,
@@ -57,4 +67,6 @@ export const userService = {
   login,
   validateCode,
   resendCode,
+  requestPasswordReset,
+  resetPassword,
 }
