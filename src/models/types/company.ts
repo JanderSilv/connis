@@ -1,19 +1,9 @@
 import { CompanySize } from '../enums/company'
+import { Address } from './address'
 
 export type CNAE = {
   id: string
   label: string
-}
-
-export type CompanyAddress = {
-  id: string
-  city: string
-  cep: string
-  uf: string
-  street: string
-  number: number
-  complement: string
-  country: string
 }
 
 export type Company = {
@@ -26,7 +16,7 @@ export type Company = {
   image?: string | null
   phone: string
   slug: string
-  address: CompanyAddress
+  address: Address
   cnae: CNAE
   socialCapital: number
   size: CompanySize

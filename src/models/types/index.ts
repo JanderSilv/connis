@@ -1,3 +1,4 @@
+export * from './address'
 export * from './common'
 export * from './company'
 export * from './formalization'

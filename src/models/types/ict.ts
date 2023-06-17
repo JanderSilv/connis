@@ -1,3 +1,4 @@
+import { Address } from './address'
 import { Image } from './common'
 import { User } from './user'
 
@@ -15,16 +16,6 @@ export type ICTLab = {
   images?: Image[]
 }
 
-export type ICTAddress = {
-  id: string
-  city: string
-  uf: string
-  cep: string
-  street: string
-  number: string
-  complement?: string
-}
-
 export type ICT = {
   id: string
   name: string
@@ -39,5 +30,5 @@ export type ICT = {
   projects: ICTProject[]
   laboratories: ICTLab[]
   analysts: User[]
-  address: ICTAddress
+  address: Address
 }
