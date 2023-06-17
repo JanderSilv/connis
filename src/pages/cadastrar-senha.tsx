@@ -1,19 +1,27 @@
 import { useState } from 'react'
 import { NextPage } from 'next'
-import { useRouter } from 'next/router'
+import { useSearchParams } from 'next/navigation'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material'
 
+import { pages } from 'src/constants'
+import { useLoadingBackdrop } from 'src/contexts'
+import { withPublic } from 'src/helpers/auth'
+import { toastHttpError } from 'src/helpers/shared'
+import { useToast } from 'src/hooks'
+import { userService } from 'src/services'
 import { RegisterPasswordSchema, registerPasswordSchemaValidation } from 'src/validations/register-password'
+
 import { Layout } from 'src/layouts/auth'
+
 import { LockIcon, VisibilityIcon, VisibilityOffIcon } from 'src/assets/icons'
 import { Form } from 'src/styles/auth'
 
-const RegisterPassword: NextPage = () => {
-  const { query } = useRouter()
+const RegisterPasswordPage: NextPage = () => {
+  const { get } = useSearchParams()
   const {
     register,
     handleSubmit,
@@ -21,12 +29,25 @@ const RegisterPassword: NextPage = () => {
   } = useForm<RegisterPasswordSchema>({
     resolver: zodResolver(registerPasswordSchemaValidation),
   })
+  const { showToast } = useToast()
+  const { toggleLoading } = useLoadingBackdrop()
 
   const [shouldShowPassword, setShouldShowPassword] = useState(false)
   const [shouldShowConfirmPassword, setShouldShowConfirmPassword] = useState(false)
 
-  const onSubmit = (data: RegisterPasswordSchema) => {
-    console.log({ token: query.token, data })
+  const onSubmit = async (data: RegisterPasswordSchema) => {
+    try {
+      toggleLoading()
+      await userService.resetPassword(get('user')!, {
+        token: get('token')!.replaceAll(' ', '+'),
+        newPassword: data.password,
+      })
+      showToast('Senha atualizada com sucesso!', 'success')
+    } catch (error) {
+      toastHttpError(error)
+    } finally {
+      toggleLoading()
+    }
   }
 
   return (
@@ -122,4 +143,20 @@ const RegisterPassword: NextPage = () => {
   )
 }
 
-export default RegisterPassword
+export default RegisterPasswordPage
+
+export const getServerSideProps = withPublic(async context => {
+  const { token, user } = context.query
+
+  if (!token || !user)
+    return {
+      redirect: {
+        destination: pages.login,
+        permanent: false,
+      },
+    }
+
+  return {
+    props: {},
+  }
+}, true)

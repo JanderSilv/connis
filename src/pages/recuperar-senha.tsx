@@ -5,8 +5,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, InputAdornment, TextField, Typography } from '@mui/material'
 
+import { useLoadingBackdrop } from 'src/contexts'
+import { toastHttpError } from 'src/helpers/shared'
+import { userService } from 'src/services'
 import { RecoverPasswordSchema, recoverPasswordSchemaValidation } from 'src/validations/recover-password'
+
 import { Layout } from 'src/layouts/auth'
+
 import { EmailOutlinedIcon } from 'src/assets/icons'
 import { Form } from 'src/styles/auth'
 
@@ -19,8 +24,18 @@ const RecoverPassword: NextPage = () => {
     resolver: zodResolver(recoverPasswordSchemaValidation),
   })
 
-  const onSubmit = (data: RecoverPasswordSchema) => {
-    console.log(data)
+  const { toggleLoading } = useLoadingBackdrop()
+
+  const onSubmit = async (data: RecoverPasswordSchema) => {
+    try {
+      toggleLoading()
+      await userService.requestPasswordReset(data.email)
+    } catch (error) {
+      toastHttpError(error)
+      throw error
+    } finally {
+      toggleLoading()
+    }
   }
 
   return (
@@ -41,7 +56,7 @@ const RecoverPassword: NextPage = () => {
 
             <TextField
               variant="standard"
-              label="Email da Empresa"
+              label="Email do usuário"
               type="email"
               InputProps={{
                 startAdornment: (
