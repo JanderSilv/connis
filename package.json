@@ -19,6 +19,7 @@
     "@mui/material": "^5.10.1",
     "axios": "^0.27.2",
     "date-fns": "^2.29.3",
+    "date-fns-tz": "^2.0.0",
     "emoji-picker-react": "^4.4.7",
     "eventsource-parser": "^1.0.0",
     "framer-motion": "^10.0.0",
