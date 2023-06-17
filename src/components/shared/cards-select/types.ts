@@ -13,7 +13,7 @@ export type CardData = {
 }
 
 type CardsSelectUnique = {
-  value: number
+  value?: number
   onChange: (id: number) => void
   multiple?: never
 }
