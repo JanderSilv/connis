@@ -1,6 +1,7 @@
 export * from './company'
 export * from './negotiation'
 export * from './offer'
+export * from './pagination'
 export * from './proposal'
 export * from './storage-keys'
 export * from './user'
