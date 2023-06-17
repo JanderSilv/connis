@@ -1,2 +1,2 @@
-export * from './is-server'
+export * from './checkIsServer'
 export * from './toast'
