@@ -12,8 +12,9 @@ const openInNewTabProps = {
   rel: 'noopener noreferrer',
 }
 
-export const Link = ({ children, noEffect, openInNewTab, ...rest }: LinkProps) => (
+export const Link = ({ href, children, noEffect, openInNewTab, ...rest }: LinkProps) => (
   <MuiLink
+    href={!openInNewTab ? href : urlify(href as string)}
     component={!openInNewTab ? NextLink : 'a'}
     underline={noEffect ? 'none' : 'hover'}
     color={noEffect ? 'inherit' : 'primary'}
@@ -23,3 +24,5 @@ export const Link = ({ children, noEffect, openInNewTab, ...rest }: LinkProps) =
     {children}
   </MuiLink>
 )
+
+const urlify = (url: string) => (!/^(?:f|ht)tps?:\/\//.test(url) ? `http://${url}` : url)
