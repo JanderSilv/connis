@@ -62,11 +62,12 @@ const CompanySignUp: NextPage<Props> = ({ user }) => {
   const { fetchedCompany, setFetchedCompany, CNPJDialog } = useCNPJDialog(reset)
 
   const onSubmit = async (formData: CompanySignUpSchema) => {
-    const { cnae, ...companyInput } = formData
+    const { cnae, phone, ...companyInput } = formData
     try {
       toggleLoading()
       await companyService.create({
         ...companyInput,
+        phone: `+55${phone.replace(/\D/g, '')}`,
         slug: slugify(companyInput.name),
         cnaeId: cnae.id,
         adminId: user.id,
