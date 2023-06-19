@@ -2,14 +2,15 @@ import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { Badge, Box, Card, CardActionArea, CardContent, Divider, ListItem, Stack, Typography } from '@mui/material'
 
+import { ProposalCategory } from 'src/models/enums'
 import { Proposal } from 'src/models/types'
+
 import { proposalCategories } from 'src/data/proposal'
 import { formatDate, formatNumber, formatString } from 'src/helpers/formatters'
-import { ProposalCategory } from 'src/models/enums'
 
+import { UserAvatar } from 'src/components/shared'
 import { ProposalStatusChip } from '../../chip-status'
 import { BadgeContainer, ContentContainer, Description, Header, ListItemButton } from '../styles'
-import { UserAvatar } from 'src/components/shared'
 
 export type ProposalCardProps = {
   proposal: Proposal
@@ -21,19 +22,7 @@ export const ProposalCard = (props: ProposalCardProps) => {
 
   const { data: session } = useSession()
 
-  const {
-    id,
-    title,
-    createdAt,
-    updatedAt,
-    views,
-    status,
-    category,
-    description,
-    unseenActivities,
-    categoryOther,
-    company,
-  } = proposal
+  const { id, title, createdAt, updatedAt, views, status, category, description, categoryOther, company } = proposal
 
   const categoryData = proposalCategories[category]
 
@@ -138,7 +127,7 @@ export const ProposalCard = (props: ProposalCardProps) => {
       <ListItemButton component={Link} href={`/proposta/${id}`}>
         <ContentContainer>{content}</ContentContainer>
 
-        <Badge badgeContent={unseenActivities} max={9} color="error">
+        <Badge badgeContent={1} max={9} color="error">
           <BadgeContainer>{badgeContent}</BadgeContainer>
         </Badge>
       </ListItemButton>

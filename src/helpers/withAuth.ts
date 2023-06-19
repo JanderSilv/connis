@@ -44,5 +44,6 @@ export const withAuth = (getServerSideProps: ServerProps) => async (context: Get
         redirect: { permanent: false, destination: pages.login },
       }
     }
+    throw new Error(error.message, { cause: error })
   }
 }

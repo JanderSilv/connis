@@ -3,14 +3,12 @@ import { ProposalType } from 'src/models/enums'
 import { ProposalWasteQuestions } from 'src/models/types'
 
 export const makeProposalTypeText = (proposalType: ProposalType[]) => {
-  if (proposalType[0] === ProposalType.research) return null
-
   const baseText = 'A empresa está aberta a negociações envolvendo'
   const texts = {
     [ProposalType.buyOrSell]: 'valores',
     [ProposalType.exchange]: 'troca de bens',
     [ProposalType.donate]: 'doação',
-    [ProposalType.research]: '',
+    [ProposalType.research]: 'pesquisa e desenvolvimento',
   }
 
   if (proposalType.length === 1)

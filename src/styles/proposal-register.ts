@@ -6,6 +6,7 @@ export const Wrapper = styled(Box)(({ theme }) => ({
   flex: 1,
   alignItems: 'center',
   justifyContent: 'center',
+  overflowX: 'hidden',
 
   [theme.breakpoints.up('sm')]: {
     padding: theme.spacing(2, 4),

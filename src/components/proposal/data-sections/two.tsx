@@ -18,26 +18,32 @@ export const ProposalDataSectionTwo = (props: Props) => {
 
   return (
     <Section sx={{ mt: 3, display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 4 }}>
-      <Box flex={1}>
-        <Title>TRLs</Title>
+      {!!trl && !!goalTrl && (
+        <>
+          <Box flex={1}>
+            <Title>TRLs</Title>
 
-        <Typography>
-          A empresa identifica que a proposta se encaixa na <strong>TRL {trl}</strong> e espera auxílio para atingir a{' '}
-          <strong>TRL {goalTrl}</strong>.
-        </Typography>
+            <Typography>
+              A empresa identifica que a proposta se encaixa na <strong>TRL {trl}</strong> e espera auxílio para atingir
+              a <strong>TRL {goalTrl}</strong>.
+            </Typography>
 
-        <Stack mt={3} direction="row" alignItems="center" gap={1}>
-          <TRLData trl={trl} />
-          <DoubleArrowIcon fontSize="large" color="primary" />
-          <TRLData trl={goalTrl} />
-        </Stack>
-      </Box>
+            <Stack mt={3} direction="row" alignItems="center" gap={1}>
+              <TRLData trl={trl} />
+              <>
+                <DoubleArrowIcon fontSize="large" color="primary" />
+                <TRLData trl={goalTrl} />
+              </>
+            </Stack>
+          </Box>
 
-      <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'flex' } }} />
+          <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', sm: 'flex' } }} />
+        </>
+      )}
 
       <Box flex={1}>
         {!!budget && (
-          <Box>
+          <Box mb={2}>
             <Title>
               {types?.includes(ProposalType.buyOrSell) ? 'Valor Solicitado' : 'Valor Disponível para Investir'}
             </Title>
@@ -50,7 +56,7 @@ export const ProposalDataSectionTwo = (props: Props) => {
           </Box>
         )}
 
-        <DataContainer>
+        <DataContainer sx={{ mt: 0 }}>
           <Title>Tipo da Proposta</Title>
           <Typography>{makeProposalTypeText(types)}</Typography>
           <Stack mt={3} direction="row" alignItems="center" gap={1}>

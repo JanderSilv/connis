@@ -55,7 +55,7 @@ export const DataSection = (props: DataSectionProps) => {
           />
 
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <Typography variant="h1" color="primary.contrastText">
+            <Typography variant="h1" color="primary.contrastText" maxWidth={620}>
               {formatString.capitalizeFirstLetters(name)}
             </Typography>
 

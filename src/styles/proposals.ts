@@ -11,7 +11,6 @@ import {
 import { Component } from 'src/models/types'
 
 export const Wrapper = styled(Box)(({ theme }) => ({
-  marginTop: theme.spacing(2),
   padding: theme.spacing(2),
 
   display: 'flex',

@@ -61,6 +61,7 @@ export const LabsSection = (props: LabsSectionProps) => {
                         draggable="false"
                         aria-hidden="true"
                         style={{ objectPosition: 'cover' }}
+                        sizes="100vw"
                         fill
                       />
                     </Box>
@@ -149,6 +150,7 @@ export const LabDialog = (props: LabDialogProps) => {
                 src={image.src}
                 alt={image.alt || 'Imagem do laborátorio'}
                 style={{ objectPosition: 'cover' }}
+                sizes="100vw"
                 fill
               />
             </Box>

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Step, StepButton, StepContent, Stepper, Typography } from '@mui/material'
 
 import { offerCategories } from 'src/data/offer'
-import { formatDate } from 'src/helpers/formatters'
+import { formatDate, formatString } from 'src/helpers/formatters'
 
 import { OfferCategory } from 'src/models/enums'
 import { Offer, Proposal, User } from 'src/models/types'
@@ -61,8 +61,10 @@ export const OfferHistory = ({ proposal, offers, user }: OfferHistoryProps) => {
               onClick={() => setActivatedOfferSteps(prev => ({ ...prev, [offer.id]: !prev[offer.id] }))}
               sx={{ '& .MuiStepLabel-label:is(.Mui-active, .Mui-completed)': { fontWeight: '400' } }}
             >
-              <strong>{user.companyId === offer.company.id ? 'Você' : offer.company.name}</strong> fez uma{' '}
-              {offerCategories[offerCategory].text} {formatDate.distanceToNow(new Date(offer.createdAt))}
+              <strong>
+                {user.companyId === offer.company.id ? 'Você' : formatString.capitalizeFirstLetters(offer.company.name)}
+              </strong>{' '}
+              fez uma {offerCategories[offerCategory].text} {formatDate.distanceToNow(new Date(offer.createdAt))}
             </StepButton>
             <StepContent>
               <OfferDataSectionOne {...offer} hideStatus={index !== 0} />

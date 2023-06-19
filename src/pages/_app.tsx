@@ -14,6 +14,8 @@ import { theme } from 'src/styles/theme'
 
 const clientSideEmotionCache = createEmotionCache()
 
+setDefaultOptions({ locale: ptBR })
+
 interface MyAppProps extends AppProps {
   emotionCache?: EmotionCache
 }

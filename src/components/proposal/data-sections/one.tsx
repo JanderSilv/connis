@@ -24,10 +24,12 @@ export const ProposalDataSectionOne = (props: Props) => {
         </Typography>
       </DataContainer>
 
-      <DataContainer>
-        <Title>Descrição do Projeto</Title>
-        <Typography>{projectDescription}</Typography>
-      </DataContainer>
+      {projectDescription && (
+        <DataContainer>
+          <Title>Descrição do Projeto</Title>
+          <Typography>{projectDescription}</Typography>
+        </DataContainer>
+      )}
 
       <DataContainer>
         <Title>Descrição da Proposta</Title>
