@@ -5,3 +5,5 @@ export const companySizes = {
   [CompanySize.small]: 'Pequeno',
   [CompanySize.others]: 'Média ou Grande',
 }
+
+export * from './profile'
