@@ -1,17 +1,18 @@
 import { Proposal } from '../proposal'
-import { Offer } from '../offer'
+import { Negotiation } from '../negotiation'
 
 export type CompanyHomeProps = {
   userType: 'company'
-  myProposals: Proposal[]
-  myOffers: Offer[]
+  proposals: Proposal[]
+  negotiations: Negotiation[]
 }
 
 export type ICTHomeProps = {
   userType: 'ict'
-  negotiations: Proposal[]
-  requests: Proposal[]
-  opportunities: Proposal[]
+  data: {
+    negotiations: Negotiation[]
+    catalog: Proposal[]
+  }
 }
 
 export type HomeProps = CompanyHomeProps | ICTHomeProps
