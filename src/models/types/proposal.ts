@@ -23,15 +23,12 @@ export type Proposal = {
   projectDescription?: string
   description: string
   keywords: string[]
-  trl: TRL
-  goalTrl: TRL
+  trl?: TRL
+  goalTrl?: TRL
   types: ProposalType[]
   budget?: number
   status: ProposalStatus
-  categoryQuestions?: {
-    waste?: ProposalWasteQuestions
-  }
+  wasteQuestions?: ProposalWasteQuestions
   views?: number
-  viewed: boolean
-  unseenActivities?: number
+  suggestedSectors?: string[]
 }

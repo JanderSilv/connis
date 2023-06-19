@@ -29,7 +29,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 
 import { ProposalCategory, ProposalType, StorageKeys } from 'src/models/enums'
-import { User } from 'src/models/types'
+import { ProposalWasteQuestions, User } from 'src/models/types'
 
 import { useConfirmDialog, useLoadingBackdrop } from 'src/contexts'
 import { pages } from 'src/constants'
@@ -44,7 +44,7 @@ import {
 import { withAuth } from 'src/helpers/withAuth'
 import { unformatCurrency } from 'src/helpers/formatters'
 import { useProposalRegister } from 'src/hooks/proposal-register'
-import { toast } from 'src/helpers/shared'
+import { toast, toastHttpError } from 'src/helpers/shared'
 import { proposalService } from 'src/services/proposal'
 import { proposalRegisterSchema, ProposalSchema } from 'src/validations/proposal-register'
 
@@ -81,12 +81,10 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
     defaultValues: {
       types: get('research') ? [ProposalType.research] : [],
       keywords: [],
-      categoryQuestions: {
-        waste: {
-          production: {
-            unit: '',
-            periodicity: '',
-          },
+      wasteQuestions: {
+        production: {
+          unit: '',
+          periodicity: '',
         },
       },
     },
@@ -131,13 +129,17 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
         budget: unformatCurrency(data.budget),
         companyId: user.companyId!,
         userProponentId: user.id,
+        suggestedSectors: suggestions.sector,
+        wasteQuestions:
+          data.category === ProposalCategory.waste && checkWasteQuestionsHasValues(data.wasteQuestions)
+            ? data.wasteQuestions
+            : undefined,
       })
-      push(`${pages.proposal}/${proposalResponse.id}`)
       toast.show('Proposta cadastrada com sucesso!', 'success')
       localStorage.removeItem(StorageKeys.Proposal)
+      push(`${pages.proposal}/${proposalResponse.id}`)
     } catch (error) {
-      toast.show('Não foi possível cadastrar a proposta. Tente novamente mais tarde.', 'error')
-      console.error(error)
+      toastHttpError(error, 'Não foi possível cadastrar a proposta. Tente novamente mais tarde.')
     } finally {
       toggleLoading()
     }
@@ -160,8 +162,9 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                   variant="standard"
                   placeholder="Defina o título da proposta"
                   {...register('title')}
-                  helperText={errors.title?.message}
+                  inputProps={{ maxLength: maxLengths.title }}
                   error={!!errors.title}
+                  helperText={errors.title?.message || `${watch('title')?.length || 0}/${maxLengths.title}`}
                   onKeyDown={handleEnterKey}
                   sx={{ mb: 4 }}
                   fullWidth
@@ -362,7 +365,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                               title: 'Gerar novas sugestões',
                               message: 'Deseja gerar novas sugestões?',
                               confirmButton: {
-                                onClick: getAllSuggestions,
+                                onClick: () => getAllSuggestions(true),
                               },
                             })
                           }}
@@ -498,7 +501,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
               </AnimatedStep>
 
               <AnimatedStep previousStep={previousStep}>
-                <Stack mb={4} direction="row" alignItems="center" justifyContent="center" spacing={0.5}>
+                <Stack mb={0.5} direction="row" alignItems="center" justifyContent="center" spacing={0.5}>
                   <Typography variant="h2" textAlign="center">
                     Níveis de Maturidade (TRL)
                   </Typography>
@@ -506,6 +509,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                   <IconButton onClick={event => setTrlHelpButtonAnchorElement(event.currentTarget)}>
                     <InfoIcon fontSize="small" />
                   </IconButton>
+                  <Typography variant="caption">(opcional)</Typography>
                   <Popover
                     id={trlHelpPopoverId}
                     open={!!trlHelpButtonAnchorElement}
@@ -531,9 +535,12 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                   </Popover>
                 </Stack>
 
-                <FormLabel htmlFor="trl" sx={{ mt: 3 }}>
-                  Qual o nível de maturidade da sua proposta?
-                </FormLabel>
+                <Typography mb={3} textAlign="center">
+                  O nível de maturidade da sua proposta é um indicador de quão desenvolvida ela está. Caso sua proposta
+                  não seja um projeto ou desenvolvimento de uma tecnologia, você pode pular essa etapa.
+                </Typography>
+
+                <FormLabel htmlFor="trl">Qual o nível de maturidade da sua proposta?</FormLabel>
                 <Controller
                   name="trl"
                   control={control}
@@ -610,14 +617,15 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
               {checkProposalCategoryHasQuestions(watchedProposalCategory) && (
                 <AnimatedStep previousStep={previousStep}>
                   <Typography variant="h2" mb={0.5} textAlign="center">
-                    Descrições adicionais sobre a proposta {proposalCategoryOptions[watchedProposalCategory].title}
+                    Descrições adicionais sobre a proposta {proposalCategoryOptions[watchedProposalCategory].title}{' '}
+                    <Typography variant="caption">(opcional)</Typography>
                   </Typography>
                   <Typography mb={2} textAlign="center">
                     Essas descrições são opcionais, mas ajudarão as empresas a entender o atual estado do resíduo.
                   </Typography>
                   {(() => {
                     if (watchedProposalCategory === ProposalCategory.waste) {
-                      const wasteErrors = errors.categoryQuestions?.waste
+                      const wasteErrors = errors.wasteQuestions
 
                       const hasError = (() => {
                         if (!wasteErrors?.production) return false
@@ -630,7 +638,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                       return (
                         <>
                           <Controller
-                            name="categoryQuestions.waste.testHasBeenPerformed"
+                            name="wasteQuestions.testHasBeenPerformed"
                             control={control}
                             render={({ field }) => (
                               <FormControl error={!!wasteErrors?.testHasBeenPerformed} sx={{ marginTop: 4 }} fullWidth>
@@ -654,7 +662,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                           />
 
                           <Controller
-                            name="categoryQuestions.waste.toxicity"
+                            name="wasteQuestions.toxicity"
                             control={control}
                             render={({ field }) => (
                               <FormControl error={!!wasteErrors?.toxicity} sx={{ marginTop: '2rem' }} fullWidth>
@@ -680,14 +688,14 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                               id="production-volume"
                               label="Valor"
                               variant="standard"
-                              {...register('categoryQuestions.waste.production.volume')}
+                              {...register('wasteQuestions.production.volume')}
                               error={!!wasteErrors?.production?.volume}
                               size="small"
                               sx={{ maxWidth: 130 }}
                               fullWidth
                             />
                             <TextField
-                              {...register('categoryQuestions.waste.production.unit')}
+                              {...register('wasteQuestions.production.unit')}
                               variant="standard"
                               label="Unidade"
                               error={!!wasteErrors?.production?.unit}
@@ -704,7 +712,7 @@ const ProposalRegister: NextPage<ProposalRegisterProps> = ({ user }) => {
                               ])}
                             </TextField>
                             <TextField
-                              {...register('categoryQuestions.waste.production.periodicity')}
+                              {...register('wasteQuestions.production.periodicity')}
                               variant="standard"
                               label="Periodicidade"
                               error={!!wasteErrors?.production?.periodicity}
@@ -742,6 +750,19 @@ export const getServerSideProps = withAuth(async context => ({
 }))
 
 const maxLengths = {
+  title: 150,
   projectDescription: 1000,
   proposalDescription: 2000,
+}
+
+const checkWasteQuestionsHasValues = (wasteQuestions?: ProposalWasteQuestions) => {
+  if (!wasteQuestions) return false
+  const { production, testHasBeenPerformed, toxicity } = wasteQuestions
+  return (
+    production?.periodicity &&
+    production?.unit &&
+    production?.volume &&
+    testHasBeenPerformed !== null &&
+    toxicity !== null
+  )
 }

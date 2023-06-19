@@ -54,11 +54,11 @@ export const proposalRegisterSchema: yup.SchemaOf<ProposalSchema> = yup.object()
       .min(1, messages.keywords),
     trl: yup
       .number()
-      .required('O TRL é obrigatório')
+      .notRequired()
       .max(yup.ref('goalTrl'), 'O TRL atual deve ser menor ou igual ao TRL que almeja alcançar'),
     goalTrl: yup
       .number()
-      .required('O TRL é obrigatório')
+      .notRequired()
       .min(yup.ref('trl'), 'O TRL que almeja alcançar deve ser maior ou igual ao TRL atual'),
     types: yup
       .array()
@@ -71,23 +71,18 @@ export const proposalRegisterSchema: yup.SchemaOf<ProposalSchema> = yup.object()
       .test('is-bigger-than-zero', 'O valor deve ser maior que zero', value =>
         !value ? true : Number(unformatCurrency(value)) > 0
       ),
-    categoryQuestions: yup.object({
-      waste: yup.object({
-        testHasBeenPerformed: yup.boolean().notRequired(),
-        toxicity: yup.boolean().notRequired(),
-        production: yup.object({
-          volume: yup.string().notRequired(),
-          unit: yup
-            .string()
-            .test('unit', 'A unidade é obrigatória', (value, context) => !context.parent.volume || !!value),
-          periodicity: yup
-            .string()
-            .test(
-              'periodicity',
-              'A periodicidade é obrigatória',
-              (value, context) => !context.parent.volume || !!value
-            ),
-        }),
+    suggestedSectors: yup.array().of(yup.string()).notRequired(),
+    wasteQuestions: yup.object({
+      testHasBeenPerformed: yup.boolean().notRequired(),
+      toxicity: yup.boolean().notRequired(),
+      production: yup.object({
+        volume: yup.string().notRequired(),
+        unit: yup
+          .string()
+          .test('unit', 'A unidade é obrigatória', (value, context) => !context.parent.volume || !!value),
+        periodicity: yup
+          .string()
+          .test('periodicity', 'A periodicidade é obrigatória', (value, context) => !context.parent.volume || !!value),
       }),
     }),
   },
