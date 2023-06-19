@@ -1,7 +1,9 @@
 import { useCallback, useRef, useState } from 'react'
 import Image, { ImageProps } from 'next/image'
+import { useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { mutate } from 'swr'
+import useSWRImmutable from 'swr/immutable'
 import AvatarEditor from 'react-avatar-editor'
 import {
   Avatar,
@@ -18,9 +20,11 @@ import {
   Typography,
 } from '@mui/material'
 
+import { Company, ICT } from 'src/models/types'
+
 import { useToast } from 'src/hooks'
 import { useAvatar } from './useAvatar'
-import { imageService, userService } from 'src/services'
+import { companyService, ictService, imageService, userService } from 'src/services'
 
 import { useLoadingBackdrop } from 'src/contexts'
 
@@ -35,11 +39,21 @@ type UserAvatarProps = {
     avatar?: AvatarProps
     image?: ImageProps
   }
+} & (CanEditAvatarProps | CannotEditAvatarProps)
+
+type CanEditAvatarProps = {
   canEdit?: boolean
+  entityToEdit: Entity
+}
+type CannotEditAvatarProps = {
+  canEdit?: false
+  entityToEdit?: never
 }
 
+export type Entity = 'user' | 'ict' | 'company'
+
 export const UserAvatar = (props: UserAvatarProps) => {
-  const { name, src, size = 35, componentsProps, canEdit } = props
+  const { name, src, size = 35, componentsProps, canEdit, entityToEdit } = props
 
   const alt = `Avatar de ${name}`
 
@@ -47,7 +61,12 @@ export const UserAvatar = (props: UserAvatarProps) => {
     <Avatar
       alt={alt}
       {...componentsProps?.avatar}
-      sx={{ width: size, height: size, bgcolor: 'primary.main', ...componentsProps?.avatar?.sx }}
+      sx={{
+        width: size,
+        height: size,
+        bgcolor: 'primary.main',
+        ...componentsProps?.avatar?.sx,
+      }}
     >
       {!!src ? <Image src={src} width={size} height={size} alt={alt} {...componentsProps?.image} /> : name[0]}
     </Avatar>
@@ -56,7 +75,7 @@ export const UserAvatar = (props: UserAvatarProps) => {
   if (!canEdit) return avatar
 
   return (
-    <ChangeUserAvatar avatar={src} userName={name}>
+    <ChangeUserAvatar avatar={src} entityToEdit={entityToEdit} userName={name}>
       {avatar}
     </ChangeUserAvatar>
   )
@@ -66,12 +85,13 @@ type ChangeUserAvatarProps = {
   userName: string
   avatar?: string | null
   children: React.ReactNode
+  entityToEdit: Entity
 }
 
 const AVATAR_SIZE = 260
 
 const ChangeUserAvatar = (props: ChangeUserAvatarProps) => {
-  const { avatar, children, userName } = props
+  const { avatar, children, userName, entityToEdit } = props
 
   const { avatarFile, setAvatarFile, handleEditAvatar } = useAvatar()
   const { data: session, update } = useSession()
@@ -173,7 +193,12 @@ const ChangeUserAvatar = (props: ChangeUserAvatarProps) => {
           )}
         </DialogActions>
 
-        <EditAvatarDialog image={avatarFile} onClose={closeDialog} cleanAvatarFile={cleanAvatarFile} />
+        <EditAvatarDialog
+          image={avatarFile}
+          entityToEdit={entityToEdit}
+          onClose={closeDialog}
+          cleanAvatarFile={cleanAvatarFile}
+        />
       </Dialog>
     </>
   )
@@ -181,15 +206,17 @@ const ChangeUserAvatar = (props: ChangeUserAvatarProps) => {
 
 type EditAvatarDialogProps = {
   image?: File | string
+  entityToEdit: Entity
   onClose: () => void
   cleanAvatarFile: () => void
 }
 
 const EditAvatarDialog = (props: EditAvatarDialogProps) => {
-  const { image, onClose, cleanAvatarFile } = props
+  const { image, onClose, cleanAvatarFile, entityToEdit } = props
 
   const avatarEditorRef = useRef<AvatarEditor>(null)
 
+  const { get } = useSearchParams()
   const { data: session, update } = useSession()
   const { showToast } = useToast()
   const { toggleLoading } = useLoadingBackdrop()
@@ -197,6 +224,11 @@ const EditAvatarDialog = (props: EditAvatarDialogProps) => {
   const [scale, setScale] = useState(1)
   const [rotate, setRotate] = useState(0)
   const [adjustment, setAdjustment] = useState(0)
+
+  const { data: organization } = useSWRImmutable<Company | ICT>(() => {
+    if (entityToEdit === 'user') return null
+    return [entityToEdit === 'company' ? companyService.baseUrl : ictService.baseUrl, get('slug')]
+  })
 
   if (!image) return null
 
@@ -295,30 +327,75 @@ const EditAvatarDialog = (props: EditAvatarDialogProps) => {
                   formData.append('file', file)
                   toggleLoading()
 
+                  let isOk = false
+                  const organizationImage = organization?.image
+
                   try {
                     const { data: imageResponse } = await imageService.upload(formData, `Avatar de ${user.name}`)
-                    await userService.changeImage(user.id, imageResponse.source)
-                    update()
-                    await mutate(
-                      `${userService.baseUrl}/${user.id}`,
-                      {
-                        ...user,
-                        image: imageResponse.source,
-                      },
-                      {
-                        revalidate: false,
+                    switch (entityToEdit) {
+                      case 'user':
+                        {
+                          await userService.changeImage(user.id, imageResponse.source)
+                          await mutate(
+                            `${userService.baseUrl}/${user.id}`,
+                            {
+                              ...user,
+                              image: imageResponse.source,
+                            },
+                            {
+                              revalidate: false,
+                            }
+                          )
+                          update()
+                        }
+                        break
+                      case 'company':
+                        {
+                          await companyService.update(user.companyId!, {
+                            image: imageResponse.source,
+                          })
+                          await mutate(
+                            [companyService.baseUrl, get('slug')],
+                            {
+                              ...organization,
+                              image: imageResponse.source,
+                            },
+                            {
+                              revalidate: false,
+                            }
+                          )
+                        }
+                        break
+                      case 'ict': {
+                        await ictService.update(user.ictId!, {
+                          image: imageResponse.source,
+                        })
+                        await mutate(
+                          [ictService.baseUrl, get('slug')],
+                          {
+                            ...organization,
+                            image: imageResponse.source,
+                          },
+                          {
+                            revalidate: false,
+                          }
+                        )
                       }
-                    )
+                    }
+                    isOk = true
                     cleanAvatarFile()
                     showToast('Imagem alterada com sucesso!', 'success')
                     onClose()
-
-                    if (typeof image === 'string' && !!user.image) imageService.delete(user.image.split('/images/')[1])
                   } catch (error) {
                     showToast('Não foi possível trocar a imagem, tente novamente mais tarde.', 'error')
                   } finally {
                     toggleLoading()
                   }
+
+                  if (!isOk) return
+                  if (entityToEdit === 'user' && !!user.image) imageService.delete(user.image.split('/images/')[1])
+                  if (entityToEdit !== 'user' && !!organizationImage)
+                    imageService.delete(organizationImage.split('/images/')[1])
                 },
                 'image/jpeg',
                 1
