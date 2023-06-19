@@ -1,6 +1,6 @@
-import { ICTUser } from 'src/models/types'
+import { ICT } from 'src/models/types'
 
-const labs: ICTUser['labs'] = [
+const labs: ICT['laboratories'] = [
   {
     id: '0',
     title: 'Apresentação',
@@ -69,7 +69,7 @@ const labs: ICTUser['labs'] = [
   },
 ]
 
-const projects: ICTUser['projects'] = [
+const projects: ICT['projects'] = [
   {
     id: '0',
     title: 'Apresentação',
