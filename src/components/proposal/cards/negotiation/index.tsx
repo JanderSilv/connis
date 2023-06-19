@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { Badge, Box, CardActionArea, CardContent, ListItem, Stack, Typography } from '@mui/material'
 
+import { pages } from 'src/constants'
 import { proposalTypeOptions } from 'src/data/proposal'
-import { formatDate } from 'src/helpers/formatters'
+import { formatDate, formatString } from 'src/helpers/formatters'
 import { Negotiation } from 'src/models/types'
 
 import { UserAvatar } from 'src/components/shared'
@@ -19,7 +20,7 @@ export type NegotiationCardProps = {
 
 export const NegotiationCard = (props: NegotiationCardProps) => {
   const { negotiation, href, unseenActivities, layout = 'row', hideTitle } = props
-  const { interested, proposal, offers } = negotiation
+  const { companyInterested, proposal, offers } = negotiation
 
   const lastOffer = offers[0]
 
@@ -44,10 +45,21 @@ export const NegotiationCard = (props: NegotiationCardProps) => {
     <>
       {isRowLayout && <OfferStatusChip status={offerStatus} sx={{ mb: 1, display: { sm: 'none' } }} />}
       <Header mb={1}>
-        <Stack direction="row" alignItems="center" gap={2}>
-          <UserAvatar name={interested.name} src={interested.image} size={25} />
+        <Stack direction="row" alignItems="center" gap={1}>
+          <UserAvatar
+            name={companyInterested.name}
+            src={companyInterested.image}
+            size={25}
+            componentsProps={{
+              avatar: {
+                sx: {
+                  fontSize: 14,
+                },
+              },
+            }}
+          />
           <Typography component="h3" variant="h5">
-            {interested.name}
+            {formatString.capitalizeFirstLetters(companyInterested.name)}
           </Typography>
         </Stack>
         {isRowLayout && <OfferStatusChip status={offerStatus} sx={{ display: { xs: 'none', sm: 'inline-flex' } }} />}
@@ -83,7 +95,10 @@ export const NegotiationCard = (props: NegotiationCardProps) => {
 
   return (
     <ListItem disableGutters>
-      <ListItemButton component={Link} href={href || `/proposta/${proposal?.id}`}>
+      <ListItemButton
+        component={Link}
+        href={href || `${pages.proposal}/${proposal?.id}${pages.negotiation}/${negotiation.id}`}
+      >
         <ContentContainer>{content}</ContentContainer>
 
         <Badge badgeContent={unseenActivities} max={9} color="error">
