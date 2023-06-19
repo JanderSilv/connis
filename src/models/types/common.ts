@@ -3,3 +3,5 @@ export type Image = {
   src: string
   alt?: string
 }
+
+export type Organization = 'ict' | 'company'
