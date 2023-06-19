@@ -1,18 +1,19 @@
 import * as zod from 'zod'
+import { OrderDirection } from 'src/models/enums'
 
 export const proposalsFiltersSchema = zod
   .object({
-    search: zod.string().optional(),
-    categories: zod.array(zod.number()).optional().default([]),
-    types: zod.array(zod.number()).optional().default([]),
-    trls: zod.array(zod.number()).optional().default([]),
+    contains: zod.string().optional(),
+    state: zod.string().optional(),
+    category: zod.array(zod.number()).optional().default([]),
+    type: zod.array(zod.number()).optional().default([]),
+    trl: zod.array(zod.number()).optional().default([]),
     minBudget: zod
       .number()
       .optional()
       .refine(value => !!value && value > 0, {
         message: 'O valor mínimo deve ser maior que zero',
-      })
-      .default(1000),
+      }),
     maxBudget: zod
       .number()
       .optional()
@@ -25,10 +26,11 @@ export const proposalsFiltersSchema = zod
           message: 'O valor máximo deve ser maior que zero',
         }
       ),
+    orderDirection: zod.nativeEnum(OrderDirection),
   })
   .refine(
     ({ minBudget, maxBudget }) => {
-      if (maxBudget === undefined) return true
+      if (maxBudget === undefined || minBudget === undefined) return true
       return maxBudget >= minBudget
     },
     {
