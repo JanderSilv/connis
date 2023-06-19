@@ -1,0 +1,137 @@
+[
+  {
+    "name": "Acre",
+    "uf": "AC",
+    "location": [-8.77, -70.55]
+  },
+  {
+    "name": "Alagoas",
+    "uf": "AL",
+    "location": [-9.62, -36.82]
+  },
+  {
+    "name": "Amapá",
+    "uf": "AP",
+    "location": [1.41, -51.77]
+  },
+  {
+    "name": "Amazonas",
+    "uf": "AM",
+    "location": [-3.47, -65.1]
+  },
+  {
+    "name": "Bahia",
+    "uf": "BA",
+    "location": [-13.29, -41.71]
+  },
+  {
+    "name": "Ceará",
+    "uf": "CE",
+    "location": [-5.2, -39.53]
+  },
+  {
+    "name": "Distrito Federal",
+    "uf": "DF",
+    "location": [-15.83, -47.86]
+  },
+  {
+    "name": "Espírito Santo",
+    "uf": "ES",
+    "location": [-19.19, -40.34]
+  },
+  {
+    "name": "Goiás",
+    "uf": "GO",
+    "location": [-15.98, -49.86]
+  },
+  {
+    "name": "Maranhão",
+    "uf": "MA",
+    "location": [-5.42, -45.44]
+  },
+  {
+    "name": "Mato Grosso",
+    "uf": "MT",
+    "location": [-12.64, -55.42]
+  },
+  {
+    "name": "Mato Grosso do Sul",
+    "uf": "MS",
+    "location": [-20.51, -54.54]
+  },
+  {
+    "name": "Minas Gerais",
+    "uf": "MG",
+    "location": [-18.1, -44.38]
+  },
+  {
+    "name": "Pará",
+    "uf": "PA",
+    "location": [-3.79, -52.48]
+  },
+  {
+    "name": "Paraíba",
+    "uf": "PB",
+    "location": [-7.28, -36.72]
+  },
+  {
+    "name": "Paraná",
+    "uf": "PR",
+    "location": [-24.89, -51.55]
+  },
+  {
+    "name": "Pernambuco",
+    "uf": "PE",
+    "location": [-8.38, -37.86]
+  },
+  {
+    "name": "Piauí",
+    "uf": "PI",
+    "location": [-6.6, -42.28]
+  },
+  {
+    "name": "Rio de Janeiro",
+    "uf": "RJ",
+    "location": [-22.25, -42.66]
+  },
+  {
+    "name": "Rio Grande do Norte",
+    "uf": "RN",
+    "location": [-5.81, -36.59]
+  },
+  {
+    "name": "Rio Grande do Sul",
+    "uf": "RS",
+    "location": [-30.17, -53.5]
+  },
+  {
+    "name": "Rondônia",
+    "uf": "RO",
+    "location": [-10.83, -63.34]
+  },
+  {
+    "name": "Roraima",
+    "uf": "RR",
+    "location": [1.99, -61.33]
+  },
+  {
+    "name": "Santa Catarina",
+    "uf": "SC",
+    "location": [-27.45, -50.95]
+  },
+  {
+    "name": "São Paulo",
+    "uf": "SP",
+    "location": [-22.19, -48.79]
+  },
+  {
+    "name": "Sergipe",
+    "uf": "SE",
+    "location": [-10.57, -37.45]
+  },
+  {
+    "name": "Tocantins",
+    "uf": "TO",
+    "location": [-9.46, -48.26]
+  }
+]
