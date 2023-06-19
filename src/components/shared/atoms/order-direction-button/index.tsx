@@ -1,3 +1,4 @@
+import { forwardRef } from 'react'
 import { Button, ButtonProps } from '@mui/material'
 
 import { OrderDirection } from 'src/models/enums'
@@ -9,11 +10,12 @@ type OrderDirectionButtonProps = {
   onClick: (value: OrderDirection) => void
 } & Omit<ButtonProps, 'onClick'>
 
-export const OrderDirectionButton = (props: OrderDirectionButtonProps) => {
-  const { value, onClick, ...rest } = props
+export const OrderDirectionButton = forwardRef<HTMLButtonElement, OrderDirectionButtonProps>((props, ref) => {
+  const { value = OrderDirection.Desc, onClick, ...rest } = props
 
   return (
     <Button
+      ref={ref}
       endIcon={value === OrderDirection.Asc ? <ArrowUpwardIcon /> : <ArrowDownwardIcon />}
       onClick={() => {
         if (value === OrderDirection.Asc) onClick(OrderDirection.Desc)
@@ -24,4 +26,6 @@ export const OrderDirectionButton = (props: OrderDirectionButtonProps) => {
       {value === OrderDirection.Desc ? 'Mais recentes' : 'Mais antigos'}
     </Button>
   )
-}
+})
+
+OrderDirectionButton.displayName = 'OrderDirectionButton'
