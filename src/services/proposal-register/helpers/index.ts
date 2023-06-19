@@ -51,7 +51,6 @@ export async function* sendMessagesStream(body: SendMessagesBody) {
     const { value, done: doneReading } = await reader.read()
     done = doneReading
     const chunkValue = decoder.decode(value)
-    console.log('chunkValue', chunkValue)
     yield chunkValue
   }
 }

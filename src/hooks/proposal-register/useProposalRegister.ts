@@ -22,6 +22,11 @@ type Suggestions = {
 }
 
 const USER_ID = Math.floor(100_000 + Math.random() * 900_000)
+const INITIAL_SUGGESTIONS: Suggestions = {
+  proposal: '',
+  trl: '',
+  keywords: [],
+}
 
 export const useProposalRegister = (
   getValues: UseFormGetValues<ProposalSchema>,
@@ -30,11 +35,7 @@ export const useProposalRegister = (
   const { handleOpenConfirmDialog } = useConfirmDialog()
   const { toggleLoading, hideLoading } = useLoadingBackdrop()
 
-  const [suggestions, setSuggestions] = useState<Suggestions>({
-    proposal: '',
-    trl: '',
-    keywords: [],
-  })
+  const [suggestions, setSuggestions] = useState(INITIAL_SUGGESTIONS)
   const [feedbacks, setFeedbacks] = useState<Feedbacks>()
 
   const askedKeepProposalRef = useRef(false)
@@ -65,40 +66,55 @@ export const useProposalRegister = (
     if (!askedKeepProposalRef.current) getStoredProposal()
   }, [handleOpenConfirmDialog, reset])
 
-  const getAllSuggestions = useCallback(async () => {
-    const splitKeywords = (suggestion?: string) =>
-      suggestion
-        ?.replaceAll('.', '')
-        .split(',')
-        .map(item => formatString.capitalizeFirstLetter(item.trim()))
+  const getAllSuggestions = useCallback(
+    async (shouldReset?: boolean) => {
+      const splitKeywords = (suggestion?: string) =>
+        suggestion
+          ?.replaceAll('.', '')
+          .split(',')
+          .map(item => formatString.capitalizeFirstLetter(item.trim()))
 
-    try {
-      toggleLoading({
-        description: 'Aguarde alguns instantes. Uma IA está analisando sua proposta para sugerir melhorias.',
-      })
-      for await (const suggestion of proposalRegisterService.getAllSuggestionsGenerator({
-        userId: USER_ID,
-        description: getValues('description'),
-        projectDescription: getValues('projectDescription'),
-      })) {
-        if (suggestion.key === 'proposal') {
-          setSuggestions(prevSuggestions => ({
-            ...prevSuggestions,
-            proposal: prevSuggestions.proposal + suggestion.data,
-          }))
-          hideLoading()
+      if (shouldReset) setSuggestions(INITIAL_SUGGESTIONS)
+
+      try {
+        toggleLoading({
+          description: 'Aguarde alguns instantes. Uma IA está analisando sua proposta para sugerir melhorias.',
+        })
+        for await (const suggestion of proposalRegisterService.getAllSuggestionsGenerator({
+          userId: USER_ID,
+          description: getValues('description'),
+          projectDescription: getValues('projectDescription'),
+          types: getValues('types'),
+        })) {
+          if (suggestion.key === 'proposal') {
+            setSuggestions(prevSuggestions => ({
+              ...prevSuggestions,
+              proposal: prevSuggestions.proposal + suggestion.data,
+            }))
+            hideLoading()
+          }
+          if (suggestion.key === 'trl')
+            setSuggestions(prevSuggestions => ({ ...prevSuggestions, trl: suggestion.data }))
+          if (suggestion.key === 'keywords')
+            setSuggestions(prevSuggestions => ({ ...prevSuggestions, keywords: splitKeywords(suggestion.data) }))
+          if (suggestion.key === 'sector') {
+            try {
+              const sector = JSON.parse(suggestion.data) as string[]
+              if (sector) setSuggestions(prevSuggestions => ({ ...prevSuggestions, sector }))
+            } catch (error) {
+              console.error(error)
+            }
+          }
         }
-        if (suggestion.key === 'trl') setSuggestions(prevSuggestions => ({ ...prevSuggestions, trl: suggestion.data }))
-        if (suggestion.key === 'keywords')
-          setSuggestions(prevSuggestions => ({ ...prevSuggestions, keywords: splitKeywords(suggestion.data) }))
+      } catch (error) {
+        console.error('useProposalRegister', { error })
+        toast.show('Ocorreu um erro ao obter as sugestões. Prossiga o cadastro normalmente.', 'info')
+        toggleLoading()
+        throw error
       }
-    } catch (error) {
-      console.error('useProposalRegister', { error })
-      toast.show('Ocorreu um erro ao obter as sugestões. Prossiga o cadastro normalmente.', 'info')
-      toggleLoading()
-      throw error
-    }
-  }, [getValues, hideLoading, toggleLoading])
+    },
+    [getValues, hideLoading, toggleLoading]
+  )
 
   const getCanGoNextStepCustomCheck = useCallback(
     async (currentStep: number) => {

@@ -1,8 +1,11 @@
 import { ChatCompletionRequestMessage } from 'openai'
-import { toast } from 'src/helpers/shared'
-import { suggestions } from './data'
-import { getModeratedProposal, getSuggestionPrompt, sendMessages, sendMessagesStream } from './helpers'
+
+import { ProposalType } from 'src/models/enums'
 import { ProposalInput, SuggestionsKeys } from './models'
+
+import { suggestions } from './data'
+import { toast } from 'src/helpers/shared'
+import { getModeratedProposal, getSuggestionPrompt, sendMessages, sendMessagesStream } from './helpers'
 
 async function* getAllSuggestionsGenerator(proposal: ProposalInput) {
   const { projectDescription, description, userId } = proposal
@@ -24,7 +27,7 @@ async function* getAllSuggestionsGenerator(proposal: ProposalInput) {
     {
       role: 'system',
       content:
-        'Você é um consultor que auxilia empresas a escrever boas propostas de projetos, entende-se proposta como uma solução para um problema, oportunidade ou necessidade de uma empresa.',
+        'Você é um consultor que auxilia empresas a escrever boas propostas, entende-se proposta como uma solução para um problema, oportunidade ou necessidade de uma empresa.',
     },
   ]
 
@@ -34,22 +37,30 @@ async function* getAllSuggestionsGenerator(proposal: ProposalInput) {
     messages.push({ role: 'user', content: suggestionPrompt })
 
     if (suggestion === 'proposal') {
+      let proposalResponse = ''
       for await (const message of sendMessagesStream({
         messages,
         userId,
-      }))
+      })) {
+        proposalResponse += message
         yield {
           key: suggestion as SuggestionsKeys,
           data: message,
           moderation: proposalModeration,
         }
+      }
+      messages.push({ role: 'assistant', content: proposalResponse })
     } else {
+      if (suggestion === 'sector' && !proposal.types.includes(ProposalType.research)) continue
+
       const { data: response } = await sendMessages({
         messages,
         userId,
       })
 
       if (!response) break
+
+      messages.push({ role: 'assistant', content: response })
 
       yield {
         key: suggestion as SuggestionsKeys,
