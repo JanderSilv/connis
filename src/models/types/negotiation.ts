@@ -5,8 +5,8 @@ import { Proposal } from './proposal'
 
 export type Negotiation = {
   id: string
-  proponent: Company
-  interested: Company
+  companyProponent: Company
+  companyInterested: Company
   proposal: Proposal
   offers: Offer[]
   ictOffers: ICTOffer[]
