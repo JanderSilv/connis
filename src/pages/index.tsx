@@ -3,9 +3,13 @@ import { Box, Typography } from '@mui/material'
 
 import { HomeProps } from 'src/models/types/home'
 
+import { OrderDirection, ProposalStatus, ProposalType } from 'src/models/enums'
+import { Negotiation } from 'src/models/types'
+
+import { pages } from 'src/constants'
 import { checkUserIsCompany } from 'src/helpers/users'
 import { withAuth } from 'src/helpers/withAuth'
-import { proposalService } from 'src/services'
+import { negotiationService, proposalService } from 'src/services'
 
 import { Layout } from 'src/layouts/app'
 import { AdCard, ICTHome, RecentNegotiations, RecentProposals } from 'src/components/home'
@@ -54,8 +58,7 @@ const Home: NextPage<HomeProps> = props => {
                 src: '/assets/images/cimatec-startups.jpg',
                 alt: 'Banner do programa Cimatec Startups',
               }}
-              href="https://www.senaicimatec.com.br/infraestrutura"
-              openInNewTab
+              href={`${pages.ictProfile}/senai-cimatec`}
             >
               Conheça o ICT Cimatec e desenvolva seu projeto ou ideia conosco.
             </AdCard>
@@ -65,34 +68,72 @@ const Home: NextPage<HomeProps> = props => {
     )
   }
 
-  const { negotiations, requests, opportunities } = props
-
-  return <ICTHome negotiations={negotiations} opportunities={opportunities} requests={requests} />
+  return <ICTHome data={props.data} />
 }
 
 export default Home
 
 export const getServerSideProps = withAuth(async context => {
   const { user } = context.session
-  const { data: proposals } = await proposalService.listCompanyProposals(user.companyId!, {
-    pageSize: 2,
-  })
-  const { data: negotiations } = await proposalService.getCompanyNegotiations({
-    pageSize: 2,
-  })
+
+  if (checkUserIsCompany(user)) {
+    const [{ data: proposals }, { data: interestedNegotiations }, { data: proponentNegotiations }] = await Promise.all([
+      proposalService.list({
+        pageSize: 2,
+        companyId: user.companyId!,
+        orderDirection: OrderDirection.Desc,
+        orderBy: 'createdAt',
+      }),
+      negotiationService.list({
+        pageSize: 2,
+        companyInterestedId: user.companyId!,
+      }),
+      negotiationService.list({
+        pageSize: 2,
+        companyProponentId: user.companyId!,
+      }),
+    ])
+
+    const negotiations = fillNegotiations(interestedNegotiations, proponentNegotiations)
+
+    return {
+      props: {
+        userType: 'company',
+        proposals,
+        negotiations,
+      },
+    }
+  }
+
+  const [{ data: negotiations }, { data: catalog }] = await Promise.all([
+    negotiationService.list({
+      iCTInterestedId: user.ictId!,
+    }),
+    proposalService.list({
+      pageSize: 8,
+      type: [ProposalType.buyOrSell, ProposalType.donate, ProposalType.exchange],
+      status: [ProposalStatus.opened],
+      orderBy: 'createdAt',
+      orderDirection: OrderDirection.Desc,
+    }),
+  ])
 
   return {
-    props: checkUserIsCompany(user)
-      ? {
-          userType: 'company',
-          proposals,
-          negotiations,
-        }
-      : {
-          userType: 'ict',
-          negotiations: proposals,
-          requests: proposals,
-          opportunities: proposals,
-        },
+    props: {
+      userType: 'ict',
+      data: {
+        negotiations,
+        catalog,
+      },
+    },
   }
 })
+
+const fillNegotiations = (interestedNegotiations: Negotiation[], proponentNegotiations: Negotiation[]) => {
+  const negotiations = interestedNegotiations
+  if (interestedNegotiations.length < 2)
+    proponentNegotiations.forEach(negotiation => {
+      if (negotiations.length < 2) negotiations.push(negotiation)
+    })
+  return negotiations
+}
