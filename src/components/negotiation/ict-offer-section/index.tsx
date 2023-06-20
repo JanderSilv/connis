@@ -1,10 +1,14 @@
-import Link from 'next/link'
+import NextLink from 'next/link'
 import { BoxProps, Button, Chip, Stack, Typography } from '@mui/material'
 
 import { ICTOffer } from 'src/models/types'
-import { Section } from 'src/styles/proposal'
-import { UserAvatar } from 'src/components/shared'
+
+import { pages } from 'src/constants'
+
 import { useConfirmDialog } from 'src/contexts/confirm-dialog'
+import { Link, UserAvatar } from 'src/components/shared'
+
+import { Section } from 'src/styles/proposal'
 
 type ICTOfferProps = {
   ictOffer: ICTOffer
@@ -13,14 +17,21 @@ type ICTOfferProps = {
 
 export const ICTOfferSection = (props: ICTOfferProps) => {
   const { ictOffer, boxProps } = props
-  const { description, suggestedFundingAgencies, user } = ictOffer
+  const { description, fundingAgencies, ict } = ictOffer
 
   const { handleOpenConfirmDialog } = useConfirmDialog()
 
   return (
     <Section {...boxProps}>
-      <Stack component="header" direction="row" spacing={1} alignItems="center">
-        <UserAvatar src={user.image} name={user.name} size={20} />
+      <Stack
+        component={Link}
+        href={`${pages.ictProfile}/${ict.slug}`}
+        direction="row"
+        spacing={1}
+        alignItems="center"
+        noEffect
+      >
+        <UserAvatar src={ict.image} name={ict.name} size={20} />
         <Typography variant="h3" component="h2">
           Oferta da ICT Cimatec
         </Typography>
@@ -32,13 +43,13 @@ export const ICTOfferSection = (props: ICTOfferProps) => {
         Agências de fomento sugeridas
       </Typography>
       <Stack direction="row" spacing={1} mt={1}>
-        {suggestedFundingAgencies.map(suggestedFundingAgency => (
+        {fundingAgencies.map(suggestedFundingAgency => (
           <Chip key={suggestedFundingAgency} label={suggestedFundingAgency} color="default" />
         ))}
       </Stack>
 
       <Stack direction="row" spacing={2} mt={4} justifyContent="space-between">
-        <Button component={Link} href={`/ict/${user.slug}`} variant="outlined" size="small">
+        <Button component={NextLink} href={`${pages.ictProfile}/${ict.slug}`} variant="outlined" size="small">
           Ver perfil da ICT
         </Button>
 
@@ -49,7 +60,7 @@ export const ICTOfferSection = (props: ICTOfferProps) => {
             size="small"
             onClick={() =>
               handleOpenConfirmDialog({
-                title: `Rejeitar oferta da ICT ${user.name}`,
+                title: `Rejeitar oferta da ICT ${ict.name}`,
                 confirmButton: {
                   onClick: () => {
                     // TODO: Implements the reject offer
@@ -66,7 +77,7 @@ export const ICTOfferSection = (props: ICTOfferProps) => {
             size="small"
             onClick={() =>
               handleOpenConfirmDialog({
-                title: `Aceitar oferta da ICT ${user.name}`,
+                title: `Aceitar oferta da ICT ${ict.name}`,
                 message:
                   'Caso a outra empresa também aceite a oferta, a ICT entrará no chat para participar da negociação.',
                 confirmButton: {
