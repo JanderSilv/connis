@@ -1,66 +1,102 @@
 import { NextPage } from 'next'
-import Head from 'next/head'
-import { Container } from '@mui/material'
+import NextLink from 'next/link'
+import { SWRConfig, unstable_serialize } from 'swr'
+import { Button, Container } from '@mui/material'
 
-import { ICTUser } from 'src/models/types'
+import { ICT, User } from 'src/models/types'
 
+import { pages } from 'src/constants'
 import { fakeData } from 'src/data/fake'
+import { makeICTDataSectionData } from 'src/data/ict'
 import { withSession } from 'src/helpers/auth'
-import { formatCNPJ } from 'src/helpers/formatters/cnpj'
+import { ictService } from 'src/services'
 
-import { Link } from 'src/components/shared'
-import { AnalystsTableSection, DataSection, DeleteProfileSection, LabsSection } from 'src/components/profile'
+import {
+  AnalystsTableSection,
+  DataSection,
+  DataSectionFooter,
+  DeleteProfileSection,
+  LabsSection,
+} from 'src/components/profile'
 import { Layout } from 'src/layouts/app'
 
-import { BusinessIcon, EmailIcon, LanguageIcon, PlaceIcon } from 'src/assets/icons'
-
 type ICTProfilePageProps = {
-  profileUser: ICTUser
-  user: ICTUser | null
+  ict: ICT
+  user: User | null
 }
 
 const ICTProfilePage: NextPage<ICTProfilePageProps> = props => {
-  const { user, profileUser } = props
-  const { name, analysts, labs } = profileUser
+  const { user, ict } = props
 
-  const documentTitle = `${name} - Connis`
-  const isTheProfileOwner = user?.id === profileUser.id
+  const ictFetchKey = [ictService.baseUrl, ict.slug]
+
+  const { id, name, analysts, laboratories } = ict
+  const isTheProfileOwner = user?.ictId === id
 
   return (
-    <Layout>
-      <Head>
-        <title>{documentTitle}</title>
-      </Head>
+    <Layout documentTitle={name}>
+      <SWRConfig
+        value={{
+          fallback: {
+            [unstable_serialize(ictFetchKey)]: ict,
+          },
+        }}
+      >
+        <Container maxWidth="md" sx={{ mt: 2 }}>
+          <DataSection
+            name={ict.name}
+            createdAt={ict.createdAt}
+            avatar={{
+              src: ict.image,
+              canEdit: isTheProfileOwner,
+            }}
+            entity="ict"
+            data={makeICTDataSectionData(ict!, isTheProfileOwner)}
+          >
+            <DataSectionFooter justifyContent="flex-end">
+              <NextLink
+                href={{
+                  pathname: `${pages.proposalRegistration}`,
+                  query: { research: true },
+                }}
+                passHref
+                legacyBehavior
+              >
+                <Button component="a" variant="outlined" color="primary">
+                  Enviar uma proposta para a ICT
+                </Button>
+              </NextLink>
+            </DataSectionFooter>
+          </DataSection>
 
-      <Container maxWidth="md" sx={{ mt: 2 }}>
-        <DataSection
-          user={profileUser}
-          data={[
-            ...(isTheProfileOwner ? [{ icon: EmailIcon, value: profileUser.email }] : []),
-            ...(!!profileUser.website
-              ? [{ icon: LanguageIcon, value: <Link href={profileUser.website}>{profileUser.website}</Link> }]
-              : []),
-            { icon: BusinessIcon, value: formatCNPJ(profileUser.cnpj) },
-            { icon: PlaceIcon, value: `${profileUser.address.city} - ${profileUser.address.uf}` },
-          ]}
-        />
-
-        {isTheProfileOwner && <AnalystsTableSection analysts={analysts} />}
-        <LabsSection labs={labs} />
-        {isTheProfileOwner && <DeleteProfileSection user={user} />}
-      </Container>
+          {isTheProfileOwner && <AnalystsTableSection analysts={analysts as any} />}
+          <LabsSection labs={laboratories} />
+          {isTheProfileOwner && <DeleteProfileSection user={user} entityToDelete="ict" />}
+        </Container>
+      </SWRConfig>
     </Layout>
   )
 }
 
 export default ICTProfilePage
 
+type Params = {
+  slug: string
+}
+
 export const getServerSideProps = withSession(async context => {
-  // TODO: get user from database
-  const { ict } = fakeData
+  const { slug } = context.params as Params
+
+  const { data: icts } = await ictService.getBySlug(slug)
+  const { ict: fakeICT } = fakeData
+
   return {
     props: {
-      profileUser: ict,
+      ict: {
+        ...icts[0],
+        laboratories: fakeICT.laboratories,
+        analysts: fakeICT.analysts,
+      },
       user: context.session?.user,
     },
   }
