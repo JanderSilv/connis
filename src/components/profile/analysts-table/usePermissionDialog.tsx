@@ -15,7 +15,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 
-import { AnalystUser, UserPermission } from 'src/models/types'
+import { User, UserPermission } from 'src/models/types'
 
 import { fakeData } from 'src/data/fake'
 
@@ -24,7 +24,7 @@ import { DialogCloseButton, SlideTransition } from 'src/components/shared'
 import { FingerprintIcon } from 'src/assets/icons'
 
 type AnalystPermissionsDialogProps = {
-  analyst: AnalystUser
+  analyst: User
   open: boolean
   onClose: () => void
 }
@@ -164,9 +164,9 @@ const makePermissionsGroups = (userPermissions: UserPermission[]) =>
   }, [] as GroupPermission[])
 
 export const useAnalystPermissionsDialog = () => {
-  const [analyst, setAnalyst] = useState<AnalystUser | null>(null)
+  const [analyst, setAnalyst] = useState<User | null>(null)
 
-  const open = useCallback((analyst: AnalystUser) => setAnalyst(analyst), [])
+  const open = useCallback((analyst: User) => setAnalyst(analyst), [])
   const close = useCallback(() => setAnalyst(null), [])
 
   return {

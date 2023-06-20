@@ -18,7 +18,7 @@ import {
   Typography,
 } from '@mui/material'
 
-import { AnalystUser } from 'src/models/types'
+import { User } from 'src/models/types'
 
 import { userFakeData } from 'src/data/fake/user'
 
@@ -27,7 +27,7 @@ import { UserAvatar } from 'src/components/shared'
 import { useLoadingBackdrop } from 'src/contexts'
 
 type InviteAnalystSchema = {
-  analyst: AnalystUser | null
+  analyst: User | null
 }
 
 // TODO: Removes fake data
@@ -50,7 +50,7 @@ export const InviteAnalystDialog = () => {
 
   const [isOpen, setIsOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const [options, setOptions] = useState<AnalystUser[]>([])
+  const [options, setOptions] = useState<User[]>([])
   const [loading, setLoading] = useState(false)
 
   const selectedAnalyst = watch('analyst')
@@ -158,7 +158,7 @@ export const InviteAnalystDialog = () => {
                             <Typography variant="body2" lineHeight="1" fontWeight={600}>
                               {option.name}
                             </Typography>
-                            <Typography variant="caption">@{option.username}</Typography>
+                            <Typography variant="caption">@{option.userName}</Typography>
                           </Box>
                         </Stack>
                       </li>
@@ -183,7 +183,7 @@ export const InviteAnalystDialog = () => {
                   <Typography variant="body2" lineHeight="1" fontWeight={600}>
                     {selectedAnalyst.name}
                   </Typography>
-                  <Typography variant="caption">@{selectedAnalyst.username}</Typography>
+                  <Typography variant="caption">@{selectedAnalyst.userName}</Typography>
                 </Box>
               </Alert>
             )}

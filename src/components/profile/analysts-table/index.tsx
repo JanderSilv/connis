@@ -12,12 +12,13 @@ import {
   Typography,
 } from '@mui/material'
 
-import { AnalystUser } from 'src/models/types'
+import { User } from 'src/models/types'
 
+import { pages } from 'src/constants'
 import { useConfirmDialog } from 'src/contexts/confirm-dialog'
 import { usePagination } from 'src/hooks/usePagination'
 
-import { UserAvatar } from 'src/components/shared'
+import { Link, UserAvatar } from 'src/components/shared'
 import { InviteAnalystDialog } from './invite-dialog'
 
 import { DeleteIcon, KeyIcon } from 'src/assets/icons'
@@ -25,7 +26,7 @@ import { Section } from 'src/styles/common'
 import { useAnalystPermissionsDialog } from './usePermissionDialog'
 
 type AnalystsTableProps = {
-  analysts: AnalystUser[]
+  analysts: User[]
 }
 
 export const AnalystsTableSection = (props: AnalystsTableProps) => {
@@ -62,7 +63,9 @@ export const AnalystsTableSection = (props: AnalystsTableProps) => {
                 {analysts.map(analyst => (
                   <TableRow key={analyst.id} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell scope="row">
-                      <UserAvatar name={analyst.name} src={analyst.image} />
+                      <Link href={`${pages.userProfile}/${analyst.userName}`}>
+                        <UserAvatar name={analyst.name} src={analyst.image} />
+                      </Link>
                     </TableCell>
                     <TableCell>{analyst.name}</TableCell>
                     <TableCell>{analyst.email}</TableCell>
