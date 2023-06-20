@@ -3,7 +3,7 @@ import { User, Company, ICT } from 'src/models/types'
 import { ictFakeData } from './ict'
 
 const user: User = {
-  id: '1',
+  id: 'bce04a50-b0f0-40fa-8042-cee73955b525',
   name: 'Usuário',
   type: UserType.ICTAdmin,
   createdAt: new Date(2022, 10).toLocaleString(),
