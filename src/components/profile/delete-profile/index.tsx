@@ -1,6 +1,6 @@
 import { Alert, Button, Stack, Typography } from '@mui/material'
 
-import { User } from 'src/models/types'
+import { Organization, User } from 'src/models/types'
 
 import { useDeleteDialog } from 'src/hooks'
 
@@ -9,7 +9,7 @@ import { Section } from 'src/styles/common'
 
 type DeleteProfileSectionProps = {
   user: User
-  entityToDelete: 'user' | 'organization'
+  entityToDelete: 'user' | Organization
   dialogDescription?: React.ReactNode
 }
 
