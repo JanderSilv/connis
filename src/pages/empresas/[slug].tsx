@@ -1,68 +1,123 @@
 import { NextPage } from 'next'
-import { Container } from '@mui/material'
+import { SWRConfig, unstable_serialize } from 'swr'
+import { Button, Container } from '@mui/material'
 
-import { CompanyUser } from 'src/models/types'
+import { UserType } from 'src/models/enums'
+import { Company, User } from 'src/models/types'
 
-import { fakeData } from 'src/data/fake'
+import { makeCompanyDataSectionData } from 'src/data/company'
+import { formatString } from 'src/helpers/formatters'
 import { withSession } from 'src/helpers/auth'
-import { formatCNPJ } from 'src/helpers/formatters/cnpj'
+import { companyService } from 'src/services'
 
-import { AnalystsTableSection, DataSection, DeleteProfileSection } from 'src/components/profile'
+import { AnalystsTableSection, DataSection, DataSectionFooter, DeleteProfileSection } from 'src/components/profile'
+import { Link } from 'src/components/shared'
 import { Layout } from 'src/layouts/app'
-
-import { AssignmentIcon, BusinessIcon, EmailIcon, PlaceIcon } from 'src/assets/icons'
+import { pages } from 'src/constants'
 
 type CompanyProfilePageProps = {
-  profileUser: CompanyUser
-  user: CompanyUser | null
+  company: Company
+  user: User | null
+  analysts: User[]
 }
 
 const CompanyProfilePage: NextPage<CompanyProfilePageProps> = props => {
-  const { user, profileUser } = props
-  const { name, analysts } = profileUser
+  const { user, company, analysts } = props
 
-  const isTheProfileOwner = user?.id === profileUser.id
+  const { name, createdAt, id, image } = company
+  const companyFetchKey = [companyService.baseUrl, company.slug]
+
+  const isUserTheOwner = user?.type === UserType.CompanyAdmin && user.companyId === id
 
   return (
-    <Layout documentTitle={name}>
-      <Container maxWidth="md" sx={{ pt: 2, pb: 8 }}>
-        <DataSection
-          user={profileUser}
-          data={[
-            ...(isTheProfileOwner ? [{ icon: EmailIcon, value: profileUser.email }] : []),
-            { icon: BusinessIcon, value: formatCNPJ(profileUser.cnpj) },
-            { icon: AssignmentIcon, value: profileUser.cnae?.label.split(':: ')[1] },
-            { icon: PlaceIcon, value: `${profileUser.address.city} - ${profileUser.address.uf}` },
-          ]}
-        />
+    <Layout documentTitle={formatString.capitalizeFirstLetters(name)}>
+      <SWRConfig
+        value={{
+          fallback: {
+            [unstable_serialize(companyFetchKey)]: company,
+          },
+        }}
+      >
+        <Container maxWidth="md" sx={{ pt: 2, pb: 8 }}>
+          <DataSection
+            name={name}
+            createdAt={createdAt}
+            avatar={{
+              src: image,
+              canEdit: isUserTheOwner,
+            }}
+            entity="company"
+            data={makeCompanyDataSectionData(company, isUserTheOwner)}
+          >
+            <DataSectionFooter justifyContent="flex-end">
+              <Button
+                component={Link}
+                href={`${pages.proposals}?company=${company.slug}`}
+                variant="outlined"
+                color="primary"
+                noEffect
+              >
+                Ver propostas da empresa
+              </Button>
+            </DataSectionFooter>
+          </DataSection>
 
-        {isTheProfileOwner && (
-          <>
-            <AnalystsTableSection analysts={analysts} />
-            <DeleteProfileSection
-              user={user}
-              dialogDescription={
-                <>
-                  Connis irá <strong>deletar</strong> todas as suas propostas, ofertas, negociações e todos os recursos
-                  que pertencem a sua conta.
-                </>
-              }
-            />
-          </>
-        )}
-      </Container>
+          {isUserTheOwner && (
+            <>
+              <AnalystsTableSection analysts={analysts} />
+              <DeleteProfileSection
+                user={user}
+                entityToDelete="company"
+                dialogDescription={
+                  <>
+                    Connis irá <strong>deletar</strong> todas as suas propostas, ofertas, negociações e todos os
+                    recursos que pertencem a sua conta.
+                  </>
+                }
+              />
+            </>
+          )}
+        </Container>
+      </SWRConfig>
     </Layout>
   )
 }
 
 export default CompanyProfilePage
 
+type Params = {
+  slug: string
+}
+
 export const getServerSideProps = withSession(async context => {
-  const { company } = fakeData
+  const { slug } = context.params as Params
+
+  const { data: companies } = await companyService.getBySlug(slug)
+
+  const company = companies[0]
+
+  if (!company) {
+    return {
+      notFound: true,
+    }
+  }
+
+  const baseProps = {
+    company,
+  }
+
+  if (context.session?.user?.companyId === company.id) {
+    const { data: analysts } = await companyService.getAnalysts(company.id)
+    return {
+      props: {
+        ...baseProps,
+        analysts,
+        user: context.session?.user,
+      },
+    }
+  }
+
   return {
-    props: {
-      profileUser: company,
-      user: context.session?.user,
-    },
+    props: baseProps,
   }
 })
