@@ -1,17 +1,21 @@
 import { NextPage } from 'next'
+import Link from 'next/link'
 import useImmutableSWR from 'swr/immutable'
-import { ParsedUrlQuery } from 'querystring'
-import { Container } from '@mui/material'
+import { Button, Collapse, Container } from '@mui/material'
 
 import { User } from 'src/models/types'
 
+import { pages } from 'src/constants'
+import { makeCompanyDataSectionData } from 'src/data/company'
 import { withSession } from 'src/helpers/auth'
+import { companyService, ictService, userService } from 'src/services'
 
-import { DataSection, DeleteProfileSection } from 'src/components/profile'
+import { DataSection, DataSectionFooter, DeleteProfileSection } from 'src/components/profile'
 import { Layout } from 'src/layouts/app'
 
-import { EmailIcon } from 'src/assets/icons'
-import { userService } from 'src/services'
+import { EmailIcon, PersonIcon } from 'src/assets/icons'
+import { makeICTDataSectionData } from 'src/data/ict'
+import { UserType } from 'src/models/enums'
 
 type AnalystProfilePageProps = {
   initialProfileUser: User
@@ -28,8 +32,17 @@ const UserProfilePage: NextPage<AnalystProfilePageProps> = props => {
       fallbackData: initialProfileUser,
     }
   )
+  const { data: company } = useImmutableSWR(
+    isUserTheOwner && !!profileUser.companyId ? `${companyService.baseUrl}/${profileUser.companyId}` : null,
+    companyService.getFetcher
+  )
+  const { data: ict } = useImmutableSWR(
+    isUserTheOwner && !!profileUser.ictId ? `${ictService.baseUrl}/${profileUser.ictId}` : null,
+    ictService.getFetcher
+  )
 
   const { name, createdAt, image, email } = profileUser
+  const organization = ict || company
 
   return (
     <Layout documentTitle={name}>
@@ -43,6 +56,52 @@ const UserProfilePage: NextPage<AnalystProfilePageProps> = props => {
           }}
           data={isUserTheOwner ? [{ icon: EmailIcon, value: email }] : []}
         />
+
+        {!!organization && (
+          <Collapse in={!!organization}>
+            <DataSection
+              name={organization!.name}
+              createdAt={''}
+              avatar={{
+                src: organization!.image,
+              }}
+              data={
+                !!company
+                  ? makeCompanyDataSectionData(company!, isUserTheOwner, [
+                      {
+                        icon: PersonIcon,
+                        value: profileUser.type === UserType.CompanyAdmin ? 'Administrador' : 'Analista',
+                        order: 0,
+                      },
+                    ])
+                  : makeICTDataSectionData(ict!, isUserTheOwner, [
+                      {
+                        icon: PersonIcon,
+                        value: profileUser.type === UserType.ICTAdmin ? 'Administrador' : 'Analista',
+                        order: 0,
+                      },
+                    ])
+              }
+              componentProps={{
+                wrapper: {
+                  sx: {
+                    mt: 3,
+                  },
+                },
+              }}
+            >
+              <DataSectionFooter justifyContent="flex-end">
+                <Button
+                  component={Link}
+                  href={!!company ? `${pages.companyProfile}/${company?.slug}` : `${pages.ictProfile}/${ict?.slug}`}
+                  variant="outlined"
+                >
+                  Ver perfil da organização
+                </Button>
+              </DataSectionFooter>
+            </DataSection>
+          </Collapse>
+        )}
 
         {isUserTheOwner && (
           <>
@@ -66,7 +125,7 @@ export default UserProfilePage
 
 type Params = {
   username: string
-} & ParsedUrlQuery
+}
 
 export const getServerSideProps = withSession(async context => {
   const { username } = context.params as Params
