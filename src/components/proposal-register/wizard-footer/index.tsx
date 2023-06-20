@@ -29,6 +29,7 @@ export const WizardFooter = (props: WizardStepsProps) => {
   const { nextStep, previousStep, isFirstStep, isLastStep, activeStep, stepCount } = useWizard()
   const { trigger, clearErrors, getValues } = useFormContext<Proposal>()
 
+  const [buttonType, setButtonType] = useState<'button' | 'submit'>('button')
   const [buttonsAreDisabled, setButtonsAreDisabled] = useState(false)
 
   useEffect(() => {
@@ -39,6 +40,7 @@ export const WizardFooter = (props: WizardStepsProps) => {
 
   const handleNext = async () => {
     if (isLastStep) return
+    if (activeStep === stepCount - 2) setTimeout(() => setButtonType('submit'), 0)
     const canGoNext = await (async () => {
       const item = steps[activeStep]
       if (Array.isArray(item)) item.forEach(async key => await trigger(key))
@@ -57,16 +59,17 @@ export const WizardFooter = (props: WizardStepsProps) => {
       <Box>
         <button type="submit" style={{ opacity: 0, all: 'unset' }} disabled={buttonsAreDisabled} />
         <Fade in={!isFirstStep}>
-          <Button onClick={previousStep} disabled={buttonsAreDisabled}>
+          <Button
+            onClick={() => {
+              previousStep()
+              setButtonType('button')
+            }}
+            disabled={buttonsAreDisabled}
+          >
             Voltar
           </Button>
         </Fade>
-        <Button
-          type={!isLastStep ? 'button' : 'submit'}
-          ref={nextButtonRef}
-          onClick={handleNext}
-          disabled={buttonsAreDisabled}
-        >
+        <Button type={buttonType} ref={nextButtonRef} onClick={handleNext} disabled={buttonsAreDisabled}>
           {!isLastStep ? 'Próximo' : 'Cadastrar'}
         </Button>
       </Box>
