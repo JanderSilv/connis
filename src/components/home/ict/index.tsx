@@ -1,6 +1,8 @@
+import { useSession } from 'next-auth/react'
 import { AnimatePresence } from 'framer-motion'
-import { Box, Container, useScrollTrigger } from '@mui/material'
+import { Box, Collapse, Container, Stack, Typography, useScrollTrigger } from '@mui/material'
 
+import { ProposalType } from 'src/models/enums'
 import { ICTHomeProps } from 'src/models/types/home'
 
 import { useTab } from 'src/hooks/proposal'
@@ -18,9 +20,10 @@ import { Tab, Tabs } from 'src/styles/proposal'
 import { Wrapper } from 'src/styles/proposals'
 
 export const ICTHome = (props: Omit<ICTHomeProps, 'userType'>) => {
-  const { catalog, negotiations, opportunities, requests } = props.data
+  const { catalog, negotiations } = props.data
 
   const scrollTrigger = useScrollTrigger()
+  const { data: session } = useSession()
 
   const { a11yTabProps, handleChangeTab, selectedTab, tabs } = useTab([
     {
@@ -40,15 +43,33 @@ export const ICTHome = (props: Omit<ICTHomeProps, 'userType'>) => {
       icon: LibraryBooksIcon,
     },
   ])
-  const { filteredNegotiations: negotiationsFilteredProposals } = useNegotiationsFilters(negotiations)
+  const { filteredNegotiations: negotiationsFilteredProposals } = useNegotiationsFilters(negotiations, {
+    defaultParams: {
+      iCTInterestedId: session?.user.ictId!,
+    },
+  })
   const { ProposalsFilters: RequestsProposalsFilters, filteredProposals: requestsFilteredProposals } =
-    useProposalsFilters(requests, {
+    useProposalsFilters([], {
       organization: 'ict',
+      defaultParams: {
+        type: [ProposalType.research],
+      },
     })
-  const { filteredNegotiations: opportunitiesFilteredProposals } = useNegotiationsFilters(opportunities)
+  const {
+    filteredNegotiations: opportunitiesFilteredProposals,
+    OrderDirectionButton: OpportunitiesOrderDirectionButton,
+    isFetching: opportunitiesIsFetching,
+  } = useNegotiationsFilters([], {
+    defaultParams: {
+      onFormalization: true,
+    },
+  })
   const { ProposalsFilters: CatalogProposalsFilters, filteredProposals: catalogFilteredProposals } =
     useProposalsFilters(catalog, {
-      organization: 'company',
+      fetchAllTypes: true,
+      defaultParams: {
+        type: [ProposalType.buyOrSell, ProposalType.donate, ProposalType.exchange],
+      },
     })
 
   const filters = {
@@ -100,6 +121,24 @@ export const ICTHome = (props: Omit<ICTHomeProps, 'userType'>) => {
 
           <AnimatePresence mode="wait">
             <TabPanel key={selectedTab === 2 ? 'opportunities' : 'none'} value={selectedTab} index={2}>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="flex-end"
+                mt={2}
+                px={{
+                  xs: 2,
+                  md: 6,
+                }}
+                spacing={2}
+              >
+                <Collapse in={opportunitiesIsFetching}>
+                  <Typography variant="body2" color="grey.700">
+                    Carregando...
+                  </Typography>
+                </Collapse>
+                <OpportunitiesOrderDirectionButton />
+              </Stack>
               <MotionGridContainer>
                 {opportunitiesFilteredProposals.map(negotiation => (
                   <MotionGridItem key={negotiation.id}>
